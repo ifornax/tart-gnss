@@ -1,0 +1,87 @@
+# TART station configuration for tart_gnss.
+#
+# Coordinates are WGS84 geodetic latitude/longitude (degrees, east-positive)
+# and height (metres) exactly as published by the TART project. They were NOT
+# estimated or invented by this software.
+#
+# Authoritative source: the TART network-monitor registry
+#   https://map.elec.ac.nz/api/v1/telescopes
+# field `telescopes[].telescopeInfo.info.location`, which mirrors each
+# telescope's own `/api/v1/info` endpoint (https://api.elec.ac.nz/tart/<id>/api/v1/info).
+# Retrieved 2026-10-07T10:03Z.
+#
+# NOTE: these are the coordinates configured on each telescope by its
+# operators; their geodetic accuracy (and the vertical datum of `alt`) is not
+# documented by the source. Replace them with surveyed values when available.
+#
+# To add a station, add an entry below; no code change is required.
+# `tart_api` records the TART REST API base URL for Stage-2 data retrieval. It
+# follows the URL pattern https://api.elec.ac.nz/tart/<tart_id> used by tart2ms.
+# At retrieval time (2026-10-07T10:05Z) /api/v1/info answered HTTP 200 only for
+# za-rhodes and ghana; the others were offline (502/timeout), so their API URLs
+# are unverified and should be checked before Stage 2.
+
+stations:
+
+  mauritius:
+    name: "TART Mauritius (Bel Air)"
+    tart_id: "mu-udm"
+    tart_api: "https://api.elec.ac.nz/tart/mu-udm"
+    latitude_deg: -20.2587508
+    longitude_deg: 57.7591989
+    altitude_m: 20.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z"
+
+  madagascar:
+    name: "TART Madagascar (Antananarivo)"
+    tart_id: "mg-tana"
+    tart_api: "https://api.elec.ac.nz/tart/mg-tana"
+    latitude_deg: -18.8971446
+    longitude_deg: 47.5551677
+    altitude_m: 1280.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z"
+
+  south_africa:
+    name: "TART South Africa (Rhodes University, Makhanda)"
+    tart_id: "za-rhodes"
+    tart_api: "https://api.elec.ac.nz/tart/za-rhodes"
+    latitude_deg: -33.319413
+    longitude_deg: 26.507688
+    altitude_m: 642.26
+    source: "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z"
+
+  south_africa_hammanskraal:
+    name: "TART South Africa (Kwalata, Hammanskraal)"
+    tart_id: "za-hammanskraal"
+    tart_api: "https://api.elec.ac.nz/tart/za-hammanskraal"
+    latitude_deg: -25.38948
+    longitude_deg: 28.32231
+    altitude_m: 1163.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-hammanskraal), retrieved 2026-10-07T10:03Z"
+
+  namibia:
+    name: "TART Namibia (UNAM)"
+    tart_id: "na-unam"
+    tart_api: "https://api.elec.ac.nz/tart/na-unam"
+    latitude_deg: -22.612053
+    longitude_deg: 17.856784
+    altitude_m: 1655.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node na-unam), retrieved 2026-10-07T10:03Z"
+
+  zambia:
+    name: "TART Zambia (Copperbelt University)"
+    tart_id: "zm-cbu"
+    tart_api: "https://api.elec.ac.nz/tart/zm-cbu"
+    latitude_deg: -12.80527778
+    longitude_deg: 28.23722222
+    altitude_m: 1270.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node zm-cbu), retrieved 2026-10-07T10:03Z"
+
+  ghana:
+    name: "TART Ghana (GRAO)"
+    tart_id: "ghana"
+    tart_api: "https://api.elec.ac.nz/tart/ghana"
+    latitude_deg: 5.749725
+    longitude_deg: -0.305557
+    altitude_m: 72.0
+    source: "TART registry https://map.elec.ac.nz/api/v1/telescopes (node ghana), retrieved 2026-10-07T10:03Z"

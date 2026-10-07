@@ -1,0 +1,101 @@
+{
+  "software": {
+    "tart_gnss": "0.1.0",
+    "python": "3.12.3",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.5.3",
+    "pyyaml": "6.0.3"
+  },
+  "run_timestamp_utc": "2026-10-07T10:11:56.013Z",
+  "command_line": [
+    "common-gnss",
+    "--stations",
+    "mauritius",
+    "madagascar",
+    "south_africa",
+    "--start",
+    "2026-10-01T00:00:00Z",
+    "--end",
+    "2026-10-02T00:00:00Z",
+    "--min-elevation",
+    "20",
+    "--step",
+    "10"
+  ],
+  "start_utc": "2026-10-01T00:00:00.000Z",
+  "end_utc": "2026-10-02T00:00:00.000Z",
+  "station_ids": [
+    "mauritius",
+    "madagascar",
+    "south_africa"
+  ],
+  "stations": [
+    {
+      "id": "mauritius",
+      "name": "TART Mauritius (Bel Air)",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z",
+      "tart_id": "mu-udm",
+      "tart_api": "https://api.elec.ac.nz/tart/mu-udm"
+    },
+    {
+      "id": "madagascar",
+      "name": "TART Madagascar (Antananarivo)",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z",
+      "tart_id": "mg-tana",
+      "tart_api": "https://api.elec.ac.nz/tart/mg-tana"
+    },
+    {
+      "id": "south_africa",
+      "name": "TART South Africa (Rhodes University, Makhanda)",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "source": "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z",
+      "tart_id": "za-rhodes",
+      "tart_api": "https://api.elec.ac.nz/tart/za-rhodes"
+    }
+  ],
+  "station_file": "/home/nadeem/GitHub/TART/sat_position/src/tart_gnss/config/stations.yaml",
+  "station_file_sha256": "db6457ccb1b43e6863148330471332fad458872b09cee59cada778f862aec8d6",
+  "min_elevation_deg": 20.0,
+  "elevation_definition": "geometric (unrefracted) topocentric elevation above the WGS84 local horizon",
+  "sampling_interval_s": 10.0,
+  "boundary_tolerance_s": 0.1,
+  "min_duration_s": 0.0,
+  "constellations": "all",
+  "timescale": "Skyfield built-in leap-second and Delta-T tables (load.timescale(builtin=True))",
+  "coordinate_frame": "ITRS",
+  "coordinate_frame_description": "ITRS (International Terrestrial Reference System) Earth-centred, Earth-fixed Cartesian coordinates as implemented by Skyfield (skyfield.framelib.itrs; TEME->ITRS via SGP4/Skyfield; polar motion neglected). Station positions from WGS84 geodetic coordinates.",
+  "tle_file": "data/tle/gnss_2026-10-07T101156Z.tle",
+  "tle_sha256": "1a6c259b56127ae2901d3f9d46ed7a39c766445cc2c125393b664899d6b8f2ea",
+  "tle_source": "CelesTrak GP data: https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=beidou&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=tle",
+  "tle_retrieved_utc": "2026-10-07T10:11:56.000Z",
+  "tle_metadata_file": "data/tle/gnss_2026-10-07T101156Z.tle.meta.json",
+  "n_satellites": 145,
+  "n_satellites_searched": 145,
+  "n_common_windows": 154,
+  "tle_age_summary": {
+    "tle_epoch_min_utc": "2026-09-13T16:04:22.733Z",
+    "tle_epoch_max_utc": "2026-10-07T00:09:25.183Z",
+    "max_abs_tle_age_days": 18.330292440023147,
+    "median_abs_tle_age_days": 5.442145979965278,
+    "n_backward_propagated": 127,
+    "n_exceeding_warning_threshold": 137,
+    "warning_threshold_days": 3.0
+  },
+  "output_files": {
+    "csv": "results/common_gnss_20261001.csv",
+    "json": "results/common_gnss_20261001.json",
+    "metadata": "results/run_metadata_20261001.json"
+  },
+  "failed_propagations": []
+}
