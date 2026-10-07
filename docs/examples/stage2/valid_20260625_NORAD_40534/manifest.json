@@ -1,0 +1,3139 @@
+{
+  "stage": 2,
+  "manifest_version": "1.0",
+  "three_station_valid": true,
+  "validity_reasons": [],
+  "satellite": {
+    "satellite_name": "GPS BIIF-9  (PRN 26)",
+    "norad_id": 40534,
+    "constellation": "GPS",
+    "signal_relevance": "GPS_L1",
+    "signal_relevance_note": "GPS L1 C/A at 1575.42 MHz",
+    "tle_epoch": "2026-10-06T17:48:11.977045Z",
+    "tle_source": "CelesTrak GP data: https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=beidou&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=tle",
+    "tle_line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+    "tle_line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063"
+  },
+  "prediction": {
+    "predicted_common_start_utc": "2026-06-25T06:40:34.218Z",
+    "predicted_common_end_utc": "2026-06-25T11:57:30.703Z",
+    "predicted_duration_seconds": 19016.484375,
+    "predicted_window_clipped": false,
+    "stage1_rank": 8,
+    "stage1_window_index": 1,
+    "min_elevation_deg": 20.0,
+    "query_start_utc": "2026-06-25T09:14:02.460Z",
+    "query_end_utc": "2026-06-25T09:24:02.460Z",
+    "padding_seconds": 120.0,
+    "max_duration_seconds": 600.0,
+    "stage1_result_file": "results/common_gnss_20260625.json",
+    "stage1_result_sha256": "a7733d5b3345464f2c049894874f560b075ada8dbc31ca7fbacce577fc149bf9",
+    "stage1_window_file": "data/observations/20260625/NORAD_40534/stage1_window.json",
+    "satellite_position_itrs": {
+      "coordinate_frame": "ITRS",
+      "units": {
+        "position": "km",
+        "velocity": "km/s"
+      },
+      "start": {
+        "position_km": [
+          26486.33997687403,
+          2788.1810353162496,
+          2651.5294830759417
+        ],
+        "velocity_km_s": [
+          0.2950869733149237,
+          0.4082849120302054,
+          -3.049030054160235
+        ]
+      },
+      "mid": {
+        "position_km": [
+          15178.136788288855,
+          8870.203425606021,
+          -20254.4868007363
+        ],
+        "velocity_km_s": [
+          -2.145652940937705,
+          1.3272679298676981,
+          -0.9967104101942719
+        ]
+      },
+      "end": {
+        "position_km": [
+          -613.7175374803709,
+          24184.983187310187,
+          -10705.150605235325
+        ],
+        "velocity_km_s": [
+          -0.8157170295197852,
+          1.1294505152592487,
+          2.7013233309815363
+        ]
+      }
+    },
+    "line_of_sight_mid": {
+      "coordinate_frame": "ITRS",
+      "mauritius": {
+        "vector_km": [
+          11984.734652374835,
+          3807.166326673647,
+          -18059.88757878874
+        ],
+        "unit_vector": [
+          0.5445987060305991,
+          0.17300156534870692,
+          -0.8206599221216387
+        ],
+        "range_km": 22006.542651795164
+      },
+      "madagascar": {
+        "vector_km": [
+          11103.416682159843,
+          4414.821750529483,
+          -18201.491036367745
+        ],
+        "unit_vector": [
+          0.5099587407067983,
+          0.2027643386528352,
+          -0.8359597512724012
+        ],
+        "range_km": 21773.16672084217
+      },
+      "south_africa": {
+        "vector_km": [
+          10403.413365184144,
+          6488.814151286861,
+          -16770.5191950831
+        ],
+        "unit_vector": [
+          0.5007744518226472,
+          0.3123429047301147,
+          -0.8072588545605935
+        ],
+        "range_km": 20774.648801110536
+      }
+    }
+  },
+  "stations": {
+    "mauritius": {
+      "station_id": "mauritius",
+      "tart_id": "mu-udm",
+      "station_name": "TART Mauritius (Bel Air)",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "coordinate_source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z",
+      "archive_name": "mu-udm",
+      "api_url": "https://api.elec.ac.nz/tart/mu-udm",
+      "archive_query_status": "FOUND",
+      "archive_query_error": null,
+      "archive_query_start": "2026-06-25T09:14:02.460Z",
+      "archive_query_end": "2026-06-25T09:24:02.460Z",
+      "archive_files_found": 12,
+      "archive_records": [
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_14_21.984865.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_14_21.984865.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_14_21.984865.hdf",
+          "filename_utc": "2026-06-25T09:14:21.984865Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "574072faf6ecf59a02111483d6a9c5fd",
+          "last_modified_utc": "2026-06-25T09:15:19.000000Z",
+          "start_utc": "2026-06-25T09:13:21.511428Z",
+          "end_utc": "2026-06-25T09:14:21.984865Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_15_23.483730.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_15_23.483730.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_15_23.483730.hdf",
+          "filename_utc": "2026-06-25T09:15:23.483730Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "40f5e54831eb51e52ad609a70b5a4d3b",
+          "last_modified_utc": "2026-06-25T09:18:10.000000Z",
+          "start_utc": "2026-06-25T09:14:23.016693Z",
+          "end_utc": "2026-06-25T09:15:23.483730Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_16_24.990724.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_16_24.990724.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_16_24.990724.hdf",
+          "filename_utc": "2026-06-25T09:16:24.990724Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "73bbaef09bfb8889d7c2e71176717d9e",
+          "last_modified_utc": "2026-06-25T09:18:15.000000Z",
+          "start_utc": "2026-06-25T09:15:24.509642Z",
+          "end_utc": "2026-06-25T09:16:24.990724Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_17_26.496107.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_17_26.496107.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_17_26.496107.hdf",
+          "filename_utc": "2026-06-25T09:17:26.496107Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "70ee61eb14703344f6a3d2bc62310c53",
+          "last_modified_utc": "2026-06-25T09:18:19.000000Z",
+          "start_utc": "2026-06-25T09:16:26.013421Z",
+          "end_utc": "2026-06-25T09:17:26.496107Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_18_27.989614.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_18_27.989614.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_18_27.989614.hdf",
+          "filename_utc": "2026-06-25T09:18:27.989614Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "1b2e2bc4845f9f3f045d1e5b0f22e793",
+          "last_modified_utc": "2026-06-25T09:21:11.000000Z",
+          "start_utc": "2026-06-25T09:17:27.510550Z",
+          "end_utc": "2026-06-25T09:18:27.989614Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_19_29.493395.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_19_29.493395.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_19_29.493395.hdf",
+          "filename_utc": "2026-06-25T09:19:29.493395Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "117c16e6c59a57ef3302d1fa271f0276",
+          "last_modified_utc": "2026-06-25T09:21:15.000000Z",
+          "start_utc": "2026-06-25T09:18:29.018223Z",
+          "end_utc": "2026-06-25T09:19:29.493395Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_20_30.995692.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_20_30.995692.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_20_30.995692.hdf",
+          "filename_utc": "2026-06-25T09:20:30.995692Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "9cb34dde6bd6e64dbdb1509cef6c98b5",
+          "last_modified_utc": "2026-06-25T09:21:19.000000Z",
+          "start_utc": "2026-06-25T09:19:30.508811Z",
+          "end_utc": "2026-06-25T09:20:30.995692Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_21_32.488219.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_21_32.488219.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_21_32.488219.hdf",
+          "filename_utc": "2026-06-25T09:21:32.488219Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "11d549e05f9c6c59c70c72388fa825a1",
+          "last_modified_utc": "2026-06-25T09:24:10.000000Z",
+          "start_utc": "2026-06-25T09:20:32.005486Z",
+          "end_utc": "2026-06-25T09:21:32.488219Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_22_33.992215.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_22_33.992215.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_22_33.992215.hdf",
+          "filename_utc": "2026-06-25T09:22:33.992215Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "a541e64593c524493b4a7504b7da15c4",
+          "last_modified_utc": "2026-06-25T09:24:15.000000Z",
+          "start_utc": "2026-06-25T09:21:33.511526Z",
+          "end_utc": "2026-06-25T09:22:33.992215Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_23_35.498099.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_23_35.498099.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_23_35.498099.hdf",
+          "filename_utc": "2026-06-25T09:23:35.498099Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "b08fa8784caad35f3ab09f5c69bcf1d9",
+          "last_modified_utc": "2026-06-25T09:24:19.000000Z",
+          "start_utc": "2026-06-25T09:22:35.007008Z",
+          "end_utc": "2026-06-25T09:23:35.498099Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_24_36.993127.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_24_36.993127.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_24_36.993127.hdf",
+          "filename_utc": "2026-06-25T09:24:36.993127Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "e6044257ff4e97f4490316c73934c23e",
+          "last_modified_utc": "2026-06-25T09:27:11.000000Z",
+          "start_utc": "2026-06-25T09:23:36.506644Z",
+          "end_utc": "2026-06-25T09:24:36.993127Z"
+        },
+        {
+          "station_id": "mauritius",
+          "tart_id": "mu-udm",
+          "archive_name": "mu-udm",
+          "filename": "vis_2026-06-25_09_25_38.487282.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_25_38.487282.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_25_38.487282.hdf",
+          "filename_utc": "2026-06-25T09:25:38.487282Z",
+          "format": "hdf5",
+          "size_bytes": 144352,
+          "etag": "473cbdf0980e47eaa5b8ba9fd0e9b490",
+          "last_modified_utc": "2026-06-25T09:27:15.000000Z",
+          "start_utc": "2026-06-25T09:24:38.017978Z",
+          "end_utc": "2026-06-25T09:25:38.487282Z"
+        }
+      ],
+      "raw_files": [
+        {
+          "original_filename": "vis_2026-06-25_09_14_21.984865.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_14_21.984865.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_14_21.984865.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_14_21.984865.hdf",
+          "retrieval_utc": "2026-10-07T12:01:40.647Z",
+          "sha256": "bae0d1358a5cc5afedcffd4fae8d9e386114ee29093a43824ee960ef00df43a4",
+          "size_bytes": 144352,
+          "etag": "574072faf6ecf59a02111483d6a9c5fd",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_15_23.483730.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_15_23.483730.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_15_23.483730.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_15_23.483730.hdf",
+          "retrieval_utc": "2026-10-07T12:01:41.359Z",
+          "sha256": "46f46525f490e8aba34fb85bf28459a210b564602536d1cd616135b48afaae24",
+          "size_bytes": 144352,
+          "etag": "40f5e54831eb51e52ad609a70b5a4d3b",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_16_24.990724.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_16_24.990724.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_16_24.990724.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_16_24.990724.hdf",
+          "retrieval_utc": "2026-10-07T12:01:41.966Z",
+          "sha256": "0b12152d367376560c490be1f7b9fc066ccae0a36553c13dd7b428c9e26c2efd",
+          "size_bytes": 144352,
+          "etag": "73bbaef09bfb8889d7c2e71176717d9e",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_17_26.496107.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_17_26.496107.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_17_26.496107.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_17_26.496107.hdf",
+          "retrieval_utc": "2026-10-07T12:01:42.598Z",
+          "sha256": "82f119dadf7c8a6789c6dd137ab3d1cf97c4ac7ffcdabc8cb4cd872ef55d3352",
+          "size_bytes": 144352,
+          "etag": "70ee61eb14703344f6a3d2bc62310c53",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_18_27.989614.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_18_27.989614.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_18_27.989614.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_18_27.989614.hdf",
+          "retrieval_utc": "2026-10-07T12:01:43.239Z",
+          "sha256": "a768dfd9fb13009e283805b7751121bcbffce7590309c0784c458f295855efd5",
+          "size_bytes": 144352,
+          "etag": "1b2e2bc4845f9f3f045d1e5b0f22e793",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_19_29.493395.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_19_29.493395.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_19_29.493395.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_19_29.493395.hdf",
+          "retrieval_utc": "2026-10-07T12:01:43.847Z",
+          "sha256": "1f34adac563711e8b1cc55bbb0ac36bd29585823701c4c39a7e91f7d96eee88f",
+          "size_bytes": 144352,
+          "etag": "117c16e6c59a57ef3302d1fa271f0276",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_20_30.995692.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_20_30.995692.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_20_30.995692.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_20_30.995692.hdf",
+          "retrieval_utc": "2026-10-07T12:01:44.459Z",
+          "sha256": "4febe5f287f174286a6fabace12178964a81c2d89eb1e3d8c8a89f54f599741b",
+          "size_bytes": 144352,
+          "etag": "9cb34dde6bd6e64dbdb1509cef6c98b5",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_21_32.488219.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_21_32.488219.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_21_32.488219.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_21_32.488219.hdf",
+          "retrieval_utc": "2026-10-07T12:01:45.111Z",
+          "sha256": "08e17dba7e3df41fa0a91e9ceb61d6f48e2d31c9ab3f20a2b3824a75ee20bb0f",
+          "size_bytes": 144352,
+          "etag": "11d549e05f9c6c59c70c72388fa825a1",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_22_33.992215.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_22_33.992215.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_22_33.992215.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_22_33.992215.hdf",
+          "retrieval_utc": "2026-10-07T12:01:45.865Z",
+          "sha256": "1c4c83544ddfbc1acbc077bc113b6cf1d07048736ef59153b5fbc9dda4e627f9",
+          "size_bytes": 144352,
+          "etag": "a541e64593c524493b4a7504b7da15c4",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_23_35.498099.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_23_35.498099.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_23_35.498099.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_23_35.498099.hdf",
+          "retrieval_utc": "2026-10-07T12:01:46.478Z",
+          "sha256": "22e049c408c57f41638c856191f8105e339c781e67c049b06698b24c79297c96",
+          "size_bytes": 144352,
+          "etag": "b08fa8784caad35f3ab09f5c69bcf1d9",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_24_36.993127.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_24_36.993127.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_24_36.993127.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_24_36.993127.hdf",
+          "retrieval_utc": "2026-10-07T12:01:47.089Z",
+          "sha256": "44a574c8338de8e578f43db3e67933dd25b274067855ec854203750cad4d24d0",
+          "size_bytes": 144352,
+          "etag": "e6044257ff4e97f4490316c73934c23e",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_25_38.487282.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_25_38.487282.hdf",
+          "remote_identifier": "mu-udm/vis/2026/6/25/vis_2026-06-25_09_25_38.487282.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/6/25/vis_2026-06-25_09_25_38.487282.hdf",
+          "retrieval_utc": "2026-10-07T12:01:47.700Z",
+          "sha256": "b16c20cb7e23e8d85d934f6daaa1a1b257a719d089d5abe12878ace5eb4184f4",
+          "size_bytes": 144352,
+          "etag": "473cbdf0980e47eaa5b8ba9fd0e9b490",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid; outside query interval (not used)"
+        }
+      ],
+      "observation": {
+        "files": [
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_14_21.984865.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:13:21.511428Z",
+            "last_timestamp_utc": "2026-06-25T09:14:21.984865Z",
+            "median_spacing_s": 1.025521993637085,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "9c80ff928e934ec8",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_15_23.483730.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:14:23.016693Z",
+            "last_timestamp_utc": "2026-06-25T09:15:23.483730Z",
+            "median_spacing_s": 1.0241351127624512,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "9c80ff928e934ec8",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_16_24.990724.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:15:24.509642Z",
+            "last_timestamp_utc": "2026-06-25T09:16:24.990724Z",
+            "median_spacing_s": 1.0248401165008545,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_17_26.496107.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:16:26.013421Z",
+            "last_timestamp_utc": "2026-06-25T09:17:26.496107Z",
+            "median_spacing_s": 1.0249338150024414,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_18_27.989614.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:17:27.510550Z",
+            "last_timestamp_utc": "2026-06-25T09:18:27.989614Z",
+            "median_spacing_s": 1.0249600410461426,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_19_29.493395.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:18:29.018223Z",
+            "last_timestamp_utc": "2026-06-25T09:19:29.493395Z",
+            "median_spacing_s": 1.02435302734375,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_20_30.995692.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:19:30.508811Z",
+            "last_timestamp_utc": "2026-06-25T09:20:30.995692Z",
+            "median_spacing_s": 1.0242700576782227,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_21_32.488219.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:20:32.005486Z",
+            "last_timestamp_utc": "2026-06-25T09:21:32.488219Z",
+            "median_spacing_s": 1.025325059890747,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_22_33.992215.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:21:33.511526Z",
+            "last_timestamp_utc": "2026-06-25T09:22:33.992215Z",
+            "median_spacing_s": 1.024864912033081,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_23_35.498099.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:22:35.007008Z",
+            "last_timestamp_utc": "2026-06-25T09:23:35.498099Z",
+            "median_spacing_s": 1.0247910022735596,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_24_36.993127.hdf",
+            "station_id": "mauritius",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:23:36.506644Z",
+            "last_timestamp_utc": "2026-06-25T09:24:36.993127Z",
+            "median_spacing_s": 1.024496078491211,
+            "telescope_name": "Bel Air - Mauritius",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -20.2587508,
+            "file_longitude_deg": 57.7591989,
+            "file_altitude_m": 20.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "57e483d21a5280a3",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          }
+        ],
+        "coverage": {
+          "first_timestamp_utc": "2026-06-25T09:13:21.511428Z",
+          "last_timestamp_utc": "2026-06-25T09:24:36.993127Z",
+          "number_of_timestamps": 660,
+          "median_time_spacing_seconds": 1.0247290134429932,
+          "gap_threshold_seconds": 3.0741870403289795,
+          "n_gaps": 0,
+          "gaps": [],
+          "segments": [
+            [
+              "2026-06-25T09:13:21.511428Z",
+              "2026-06-25T09:24:36.993127Z"
+            ]
+          ],
+          "frequencies_hz": [
+            1575420000.0
+          ],
+          "bandwidths_hz": [
+            2500000.0
+          ],
+          "n_antennas": [
+            24
+          ],
+          "calibration_fingerprints": [
+            "57e483d21a5280a3",
+            "9c80ff928e934ec8"
+          ],
+          "zero_gain_antennas": [],
+          "duplicate_timestamps": 0
+        },
+        "calibration_status": "native gains/phases present (2 distinct solution sets); applied by tart2ms (unverified)",
+        "calibration_source": "per-antenna 'gains'/'phases' datasets stored in each native HDF5 file (solutions in use on the telescope at recording time); not independently verified"
+      },
+      "measurement_set_status": "VALID",
+      "measurement_set": {
+        "path": "data/observations/20260625/NORAD_40534/mauritius/ms/mauritius.ms",
+        "valid": true,
+        "number_of_rows": 182160,
+        "number_of_times": 660,
+        "number_of_antennas": 24,
+        "number_of_channels": [
+          1
+        ],
+        "frequency_hz": [
+          1575420000.0
+        ],
+        "total_bandwidth_hz": [
+          2500000.0
+        ],
+        "first_time_utc": "2026-06-25T09:13:21.511428Z",
+        "last_time_utc": "2026-06-25T09:24:36.993128Z",
+        "flagged_fraction": 0.0,
+        "max_baseline_m": 3.4063648022425865,
+        "telescope_name": [
+          "TART"
+        ],
+        "columns": [
+          "ANTENNA2",
+          "SIGMA",
+          "INTERVAL",
+          "DATA_DESC_ID",
+          "FLAG_CATEGORY",
+          "SCAN_NUMBER",
+          "OBSERVATION_ID",
+          "EXPOSURE",
+          "TIME_CENTROID",
+          "FLAG",
+          "FLAG_ROW",
+          "PROCESSOR_ID",
+          "TIME",
+          "ANTENNA1",
+          "FEED1",
+          "WEIGHT",
+          "STATE_ID",
+          "ARRAY_ID",
+          "UVW",
+          "FEED2",
+          "FIELD_ID",
+          "DATA",
+          "WEIGHT_SPECTRUM",
+          "SIGMA_SPECTRUM"
+        ],
+        "station_id": "mauritius",
+        "conversion_command": [
+          "/home/nadeem/GitHub/TART/sat_position/.venv/bin/tart2ms",
+          "--hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_14_21.984865.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_15_23.483730.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_16_24.990724.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_17_26.496107.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_18_27.989614.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_19_29.493395.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_20_30.995692.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_21_32.488219.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_22_33.992215.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_23_35.498099.hdf",
+          "data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_24_36.993127.hdf",
+          "--ms",
+          "data/observations/20260625/NORAD_40534/mauritius/ms/mauritius.ms",
+          "--skip-online-source-catalog",
+          "--skip-celestial-source-catalog"
+        ],
+        "conversion_started_utc": "2026-10-07T12:02:03.416Z",
+        "calibration_applied_by_tart2ms": true,
+        "conversion_log": "data/observations/20260625/NORAD_40534/mauritius/ms/tart2ms.log"
+      },
+      "predicted_geometry": {
+        "start": {
+          "azimuth_deg": 291.36746742985946,
+          "elevation_deg": 20.00030662851509,
+          "range_km": 23900.22775620873,
+          "range_rate_km_s": -0.36950856865222004
+        },
+        "mid": {
+          "azimuth_deg": 210.7700139936527,
+          "elevation_deg": 43.947273642104435,
+          "range_km": 22006.542651795127,
+          "range_rate_km_s": -0.12094009811331638
+        },
+        "end": {
+          "azimuth_deg": 102.95345082462843,
+          "elevation_deg": 49.65734197926666,
+          "range_km": 21273.750662775827,
+          "range_rate_km_s": 0.0805252082365817
+        }
+      },
+      "errors": []
+    },
+    "madagascar": {
+      "station_id": "madagascar",
+      "tart_id": "mg-tana",
+      "station_name": "TART Madagascar (Antananarivo)",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "coordinate_source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z",
+      "archive_name": "mg-tana",
+      "api_url": "https://api.elec.ac.nz/tart/mg-tana",
+      "archive_query_status": "FOUND",
+      "archive_query_error": null,
+      "archive_query_start": "2026-06-25T09:14:02.460Z",
+      "archive_query_end": "2026-06-25T09:24:02.460Z",
+      "archive_files_found": 12,
+      "archive_records": [
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_14_39.625599.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_14_39.625599.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_14_39.625599.hdf",
+          "filename_utc": "2026-06-25T09:14:39.625599Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "c42ca7b8b2b505b6cbbbf4bbb1c0c2aa",
+          "last_modified_utc": "2026-06-25T09:15:14.000000Z",
+          "start_utc": "2026-06-25T09:13:39.145926Z",
+          "end_utc": "2026-06-25T09:14:39.625599Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_15_41.121126.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_15_41.121126.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_15_41.121126.hdf",
+          "filename_utc": "2026-06-25T09:15:41.121126Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "c7d0c3bd5a59ba7b4a43cef34734f82a",
+          "last_modified_utc": "2026-06-25T09:18:08.000000Z",
+          "start_utc": "2026-06-25T09:14:40.645934Z",
+          "end_utc": "2026-06-25T09:15:41.121126Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_16_42.615656.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_16_42.615656.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_16_42.615656.hdf",
+          "filename_utc": "2026-06-25T09:16:42.615656Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "4437bd7a382f4dd059df3520f8530201",
+          "last_modified_utc": "2026-06-25T09:18:10.000000Z",
+          "start_utc": "2026-06-25T09:15:42.151203Z",
+          "end_utc": "2026-06-25T09:16:42.615656Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_17_44.122813.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_17_44.122813.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_17_44.122813.hdf",
+          "filename_utc": "2026-06-25T09:17:44.122813Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "051cab4b1cac5e8e044cbbdc317d14f3",
+          "last_modified_utc": "2026-06-25T09:18:12.000000Z",
+          "start_utc": "2026-06-25T09:16:43.645212Z",
+          "end_utc": "2026-06-25T09:17:44.122813Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_18_45.623511.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_18_45.623511.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_18_45.623511.hdf",
+          "filename_utc": "2026-06-25T09:18:45.623511Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "8c2138ecc7c1a7c79912261f527931a6",
+          "last_modified_utc": "2026-06-25T09:21:09.000000Z",
+          "start_utc": "2026-06-25T09:17:45.143089Z",
+          "end_utc": "2026-06-25T09:18:45.623511Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_19_47.124451.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_19_47.124451.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_19_47.124451.hdf",
+          "filename_utc": "2026-06-25T09:19:47.124451Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "7ab7b528f12305d0fe02f95b23d61d31",
+          "last_modified_utc": "2026-06-25T09:21:11.000000Z",
+          "start_utc": "2026-06-25T09:18:46.643542Z",
+          "end_utc": "2026-06-25T09:19:47.124451Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_20_48.622586.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_20_48.622586.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_20_48.622586.hdf",
+          "filename_utc": "2026-06-25T09:20:48.622586Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "490472cd36a4095a53eed31eed12b231",
+          "last_modified_utc": "2026-06-25T09:21:14.000000Z",
+          "start_utc": "2026-06-25T09:19:48.155236Z",
+          "end_utc": "2026-06-25T09:20:48.622586Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_21_50.123128.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_21_50.123128.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_21_50.123128.hdf",
+          "filename_utc": "2026-06-25T09:21:50.123128Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "da3797ed0d2b9163c957ce8f19dfa0ab",
+          "last_modified_utc": "2026-06-25T09:24:08.000000Z",
+          "start_utc": "2026-06-25T09:20:49.643449Z",
+          "end_utc": "2026-06-25T09:21:50.123128Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_22_51.629885.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_22_51.629885.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_22_51.629885.hdf",
+          "filename_utc": "2026-06-25T09:22:51.629885Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "04f159265905343f28780adf3565959f",
+          "last_modified_utc": "2026-06-25T09:24:10.000000Z",
+          "start_utc": "2026-06-25T09:21:51.153110Z",
+          "end_utc": "2026-06-25T09:22:51.629885Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_23_53.127635.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_23_53.127635.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_23_53.127635.hdf",
+          "filename_utc": "2026-06-25T09:23:53.127635Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "6cb6bbf6f2e71aff82eb0ed899cf981c",
+          "last_modified_utc": "2026-06-25T09:24:13.000000Z",
+          "start_utc": "2026-06-25T09:22:52.649229Z",
+          "end_utc": "2026-06-25T09:23:53.127635Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_24_54.620394.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_24_54.620394.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_24_54.620394.hdf",
+          "filename_utc": "2026-06-25T09:24:54.620394Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "bfcf54d9e852db188ae519ab276c6fd8",
+          "last_modified_utc": "2026-06-25T09:27:09.000000Z",
+          "start_utc": "2026-06-25T09:23:54.147873Z",
+          "end_utc": "2026-06-25T09:24:54.620394Z"
+        },
+        {
+          "station_id": "madagascar",
+          "tart_id": "mg-tana",
+          "archive_name": "mg-tana",
+          "filename": "vis_2026-06-25_09_25_56.122452.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_25_56.122452.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_25_56.122452.hdf",
+          "filename_utc": "2026-06-25T09:25:56.122452Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "ca86223ca12682ab845359b01d75260b",
+          "last_modified_utc": "2026-06-25T09:27:11.000000Z",
+          "start_utc": "2026-06-25T09:24:55.650037Z",
+          "end_utc": "2026-06-25T09:25:56.122452Z"
+        }
+      ],
+      "raw_files": [
+        {
+          "original_filename": "vis_2026-06-25_09_14_39.625599.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_14_39.625599.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_14_39.625599.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_14_39.625599.hdf",
+          "retrieval_utc": "2026-10-07T12:01:48.326Z",
+          "sha256": "3c00726f0ff06ee614bde07b2d9cc28e9ce2572d8d012aa2ddb47257b181dee2",
+          "size_bytes": 146560,
+          "etag": "c42ca7b8b2b505b6cbbbf4bbb1c0c2aa",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_15_41.121126.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_15_41.121126.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_15_41.121126.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_15_41.121126.hdf",
+          "retrieval_utc": "2026-10-07T12:01:48.979Z",
+          "sha256": "a82a9fa5d64229b302e54e9c2f6df790fba678065ef301fec453ed116d28eaaf",
+          "size_bytes": 146560,
+          "etag": "c7d0c3bd5a59ba7b4a43cef34734f82a",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_16_42.615656.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_16_42.615656.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_16_42.615656.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_16_42.615656.hdf",
+          "retrieval_utc": "2026-10-07T12:01:49.612Z",
+          "sha256": "2353f859379ef936cd4e680b7c452438c686401a7f1618c35815c14c85e7c462",
+          "size_bytes": 146560,
+          "etag": "4437bd7a382f4dd059df3520f8530201",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_17_44.122813.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_17_44.122813.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_17_44.122813.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_17_44.122813.hdf",
+          "retrieval_utc": "2026-10-07T12:01:50.223Z",
+          "sha256": "dcb173b064473ea2474f1e0ccf327c8e5c3e2abc268272ef2940cb4ad98e5fbf",
+          "size_bytes": 146560,
+          "etag": "051cab4b1cac5e8e044cbbdc317d14f3",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_18_45.623511.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_18_45.623511.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_18_45.623511.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_18_45.623511.hdf",
+          "retrieval_utc": "2026-10-07T12:01:50.861Z",
+          "sha256": "ab38a8fde1111f15a04b5b58a1dc6f2b19652843fe048332c12aa9ed405de464",
+          "size_bytes": 146560,
+          "etag": "8c2138ecc7c1a7c79912261f527931a6",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_19_47.124451.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_19_47.124451.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_19_47.124451.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_19_47.124451.hdf",
+          "retrieval_utc": "2026-10-07T12:01:51.471Z",
+          "sha256": "a6af888ee5451e924e020927f9b2bb33591feaaac9d92554c9d43533af1519aa",
+          "size_bytes": 146560,
+          "etag": "7ab7b528f12305d0fe02f95b23d61d31",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_20_48.622586.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_20_48.622586.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_20_48.622586.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_20_48.622586.hdf",
+          "retrieval_utc": "2026-10-07T12:01:52.104Z",
+          "sha256": "0421aa5eba498e7cde12a3cfc3b615d72f74252f304c6536da0358eafdc90ab7",
+          "size_bytes": 146560,
+          "etag": "490472cd36a4095a53eed31eed12b231",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_21_50.123128.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_21_50.123128.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_21_50.123128.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_21_50.123128.hdf",
+          "retrieval_utc": "2026-10-07T12:01:52.719Z",
+          "sha256": "55844f3b30a777d23cef690f41c51c73e6809fac02682d2bd24853397333210b",
+          "size_bytes": 146560,
+          "etag": "da3797ed0d2b9163c957ce8f19dfa0ab",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_22_51.629885.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_22_51.629885.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_22_51.629885.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_22_51.629885.hdf",
+          "retrieval_utc": "2026-10-07T12:01:53.320Z",
+          "sha256": "e3af767e479d9ba553b18534d884ebeafcfc1629daf2223bb7c42072a9deadbd",
+          "size_bytes": 146560,
+          "etag": "04f159265905343f28780adf3565959f",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_23_53.127635.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_23_53.127635.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_23_53.127635.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_23_53.127635.hdf",
+          "retrieval_utc": "2026-10-07T12:01:53.945Z",
+          "sha256": "1a3217cc3734f888250e00e28a899cde158ff3807f5bb47af8303b7a51291914",
+          "size_bytes": 146560,
+          "etag": "6cb6bbf6f2e71aff82eb0ed899cf981c",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_24_54.620394.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_24_54.620394.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_24_54.620394.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_24_54.620394.hdf",
+          "retrieval_utc": "2026-10-07T12:01:54.564Z",
+          "sha256": "a27acd19d66da12d86438ec2d132e993a565f014b8b2559710ab5f2f0ab8bbec",
+          "size_bytes": 146560,
+          "etag": "bfcf54d9e852db188ae519ab276c6fd8",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_25_56.122452.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_25_56.122452.hdf",
+          "remote_identifier": "mg-tana/vis/2026/6/25/vis_2026-06-25_09_25_56.122452.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/6/25/vis_2026-06-25_09_25_56.122452.hdf",
+          "retrieval_utc": "2026-10-07T12:01:55.183Z",
+          "sha256": "cbba3e3b106ba5de83cc7dc6c1f8d8ca0b6c8a66c4294240f381eede8222077c",
+          "size_bytes": 146560,
+          "etag": "ca86223ca12682ab845359b01d75260b",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid; outside query interval (not used)"
+        }
+      ],
+      "observation": {
+        "files": [
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_14_39.625599.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:13:39.145926Z",
+            "last_timestamp_utc": "2026-06-25T09:14:39.625599Z",
+            "median_spacing_s": 1.0251598358154297,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "92c5b5cb1e70234e",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_15_41.121126.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:14:40.645934Z",
+            "last_timestamp_utc": "2026-06-25T09:15:41.121126Z",
+            "median_spacing_s": 1.0254640579223633,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "92c5b5cb1e70234e",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_16_42.615656.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:15:42.151203Z",
+            "last_timestamp_utc": "2026-06-25T09:16:42.615656Z",
+            "median_spacing_s": 1.0242371559143066,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_17_44.122813.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:16:43.645212Z",
+            "last_timestamp_utc": "2026-06-25T09:17:44.122813Z",
+            "median_spacing_s": 1.0245859622955322,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_18_45.623511.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:17:45.143089Z",
+            "last_timestamp_utc": "2026-06-25T09:18:45.623511Z",
+            "median_spacing_s": 1.0257899761199951,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_19_47.124451.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:18:46.643542Z",
+            "last_timestamp_utc": "2026-06-25T09:19:47.124451Z",
+            "median_spacing_s": 1.0255389213562012,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_20_48.622586.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:19:48.155236Z",
+            "last_timestamp_utc": "2026-06-25T09:20:48.622586Z",
+            "median_spacing_s": 1.023819923400879,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_21_50.123128.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:20:49.643449Z",
+            "last_timestamp_utc": "2026-06-25T09:21:50.123128Z",
+            "median_spacing_s": 1.0244510173797607,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_22_51.629885.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:21:51.153110Z",
+            "last_timestamp_utc": "2026-06-25T09:22:51.629885Z",
+            "median_spacing_s": 1.0247228145599365,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_23_53.127635.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:22:52.649229Z",
+            "last_timestamp_utc": "2026-06-25T09:23:53.127635Z",
+            "median_spacing_s": 1.0246329307556152,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_24_54.620394.hdf",
+            "station_id": "madagascar",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:23:54.147873Z",
+            "last_timestamp_utc": "2026-06-25T09:24:54.620394Z",
+            "median_spacing_s": 1.0245859622955322,
+            "telescope_name": "Madagascar - Antananarivo",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -18.8971446,
+            "file_longitude_deg": 47.5551677,
+            "file_altitude_m": 1280.0,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [],
+            "calibration_fingerprint": "cdd0e15fd266ce64",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          }
+        ],
+        "coverage": {
+          "first_timestamp_utc": "2026-06-25T09:13:39.145926Z",
+          "last_timestamp_utc": "2026-06-25T09:24:54.620394Z",
+          "number_of_timestamps": 660,
+          "median_time_spacing_seconds": 1.0247228145599365,
+          "gap_threshold_seconds": 3.0741684436798096,
+          "n_gaps": 0,
+          "gaps": [],
+          "segments": [
+            [
+              "2026-06-25T09:13:39.145926Z",
+              "2026-06-25T09:24:54.620394Z"
+            ]
+          ],
+          "frequencies_hz": [
+            1575420000.0
+          ],
+          "bandwidths_hz": [
+            2500000.0
+          ],
+          "n_antennas": [
+            24
+          ],
+          "calibration_fingerprints": [
+            "92c5b5cb1e70234e",
+            "cdd0e15fd266ce64"
+          ],
+          "zero_gain_antennas": [],
+          "duplicate_timestamps": 0
+        },
+        "calibration_status": "native gains/phases present (2 distinct solution sets); applied by tart2ms (unverified)",
+        "calibration_source": "per-antenna 'gains'/'phases' datasets stored in each native HDF5 file (solutions in use on the telescope at recording time); not independently verified"
+      },
+      "measurement_set_status": "VALID",
+      "measurement_set": {
+        "path": "data/observations/20260625/NORAD_40534/madagascar/ms/madagascar.ms",
+        "valid": true,
+        "number_of_rows": 182160,
+        "number_of_times": 660,
+        "number_of_antennas": 24,
+        "number_of_channels": [
+          1
+        ],
+        "frequency_hz": [
+          1575420000.0
+        ],
+        "total_bandwidth_hz": [
+          2500000.0
+        ],
+        "first_time_utc": "2026-06-25T09:13:39.145926Z",
+        "last_time_utc": "2026-06-25T09:24:54.620395Z",
+        "flagged_fraction": 0.0,
+        "max_baseline_m": 3.2138102987695,
+        "telescope_name": [
+          "TART"
+        ],
+        "columns": [
+          "DATA_DESC_ID",
+          "FIELD_ID",
+          "ANTENNA2",
+          "PROCESSOR_ID",
+          "TIME",
+          "FLAG_ROW",
+          "ARRAY_ID",
+          "UVW",
+          "TIME_CENTROID",
+          "SCAN_NUMBER",
+          "SIGMA",
+          "EXPOSURE",
+          "ANTENNA1",
+          "FEED2",
+          "FLAG_CATEGORY",
+          "INTERVAL",
+          "WEIGHT",
+          "FLAG",
+          "STATE_ID",
+          "FEED1",
+          "OBSERVATION_ID",
+          "DATA",
+          "WEIGHT_SPECTRUM",
+          "SIGMA_SPECTRUM"
+        ],
+        "station_id": "madagascar",
+        "conversion_command": [
+          "/home/nadeem/GitHub/TART/sat_position/.venv/bin/tart2ms",
+          "--hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_14_39.625599.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_15_41.121126.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_16_42.615656.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_17_44.122813.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_18_45.623511.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_19_47.124451.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_20_48.622586.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_21_50.123128.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_22_51.629885.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_23_53.127635.hdf",
+          "data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_24_54.620394.hdf",
+          "--ms",
+          "data/observations/20260625/NORAD_40534/madagascar/ms/madagascar.ms",
+          "--skip-online-source-catalog",
+          "--skip-celestial-source-catalog"
+        ],
+        "conversion_started_utc": "2026-10-07T12:02:12.533Z",
+        "calibration_applied_by_tart2ms": true,
+        "conversion_log": "data/observations/20260625/NORAD_40534/madagascar/ms/tart2ms.log"
+      },
+      "predicted_geometry": {
+        "start": {
+          "azimuth_deg": 296.87416572307984,
+          "elevation_deg": 30.40993126606208,
+          "range_km": 22960.67988992992,
+          "range_rate_km_s": -0.36634606214346593
+        },
+        "mid": {
+          "azimuth_deg": 200.78286846807828,
+          "elevation_deg": 47.55406486235914,
+          "range_km": 21773.16672084213,
+          "range_rate_km_s": 0.008137918856927596
+        },
+        "end": {
+          "azimuth_deg": 105.00174642864604,
+          "elevation_deg": 38.02971603210965,
+          "range_km": 22047.63948271741,
+          "range_rate_km_s": 0.12408490663284265
+        }
+      },
+      "errors": []
+    },
+    "south_africa": {
+      "station_id": "south_africa",
+      "tart_id": "za-rhodes",
+      "station_name": "TART South Africa (Rhodes University, Makhanda)",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "coordinate_source": "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z",
+      "archive_name": "za-rhodes",
+      "api_url": "https://api.elec.ac.nz/tart/za-rhodes",
+      "archive_query_status": "FOUND",
+      "archive_query_error": null,
+      "archive_query_start": "2026-06-25T09:14:02.460Z",
+      "archive_query_end": "2026-06-25T09:24:02.460Z",
+      "archive_files_found": 12,
+      "archive_records": [
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_14_09.122737.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_14_09.122737.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_14_09.122737.hdf",
+          "filename_utc": "2026-06-25T09:14:09.122737Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "a6af47e93fd0864462b3cb04752d4067",
+          "last_modified_utc": "2026-06-25T09:18:15.000000Z",
+          "start_utc": "2026-06-25T09:13:08.652903Z",
+          "end_utc": "2026-06-25T09:14:09.122737Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_15_10.622213.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_15_10.622213.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_15_10.622213.hdf",
+          "filename_utc": "2026-06-25T09:15:10.622213Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "7782c61c0507659c75bdbd0d912d7612",
+          "last_modified_utc": "2026-06-25T09:18:18.000000Z",
+          "start_utc": "2026-06-25T09:14:10.147771Z",
+          "end_utc": "2026-06-25T09:15:10.622213Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_16_12.120739.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_16_12.120739.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_16_12.120739.hdf",
+          "filename_utc": "2026-06-25T09:16:12.120739Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "f6e1632e2bedb922c0c7389a017e3636",
+          "last_modified_utc": "2026-06-25T09:18:21.000000Z",
+          "start_utc": "2026-06-25T09:15:11.643125Z",
+          "end_utc": "2026-06-25T09:16:12.120739Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_17_13.617651.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_17_13.617651.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_17_13.617651.hdf",
+          "filename_utc": "2026-06-25T09:17:13.617651Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "20635b5fda81b3e249fb4e961c263037",
+          "last_modified_utc": "2026-06-25T09:18:24.000000Z",
+          "start_utc": "2026-06-25T09:16:13.145142Z",
+          "end_utc": "2026-06-25T09:17:13.617651Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_18_15.121058.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_18_15.121058.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_18_15.121058.hdf",
+          "filename_utc": "2026-06-25T09:18:15.121058Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "516e3a5418b899e224fee51b254ccd17",
+          "last_modified_utc": "2026-06-25T09:21:08.000000Z",
+          "start_utc": "2026-06-25T09:17:14.645902Z",
+          "end_utc": "2026-06-25T09:18:15.121058Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_19_16.623295.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_19_16.623295.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_19_16.623295.hdf",
+          "filename_utc": "2026-06-25T09:19:16.623295Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "bfd8f066235623c0bb9ec8d4fdcb7287",
+          "last_modified_utc": "2026-06-25T09:21:11.000000Z",
+          "start_utc": "2026-06-25T09:18:16.147992Z",
+          "end_utc": "2026-06-25T09:19:16.623295Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_20_18.122578.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_20_18.122578.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_20_18.122578.hdf",
+          "filename_utc": "2026-06-25T09:20:18.122578Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "f0f978306a6872e088428abb1d166432",
+          "last_modified_utc": "2026-06-25T09:21:14.000000Z",
+          "start_utc": "2026-06-25T09:19:17.650696Z",
+          "end_utc": "2026-06-25T09:20:18.122578Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_21_19.625294.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_21_19.625294.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_21_19.625294.hdf",
+          "filename_utc": "2026-06-25T09:21:19.625294Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "4b90d40d45a69e8bbe4997b8e5490ed3",
+          "last_modified_utc": "2026-06-25T09:24:09.000000Z",
+          "start_utc": "2026-06-25T09:20:19.147441Z",
+          "end_utc": "2026-06-25T09:21:19.625294Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_22_21.120621.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_22_21.120621.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_22_21.120621.hdf",
+          "filename_utc": "2026-06-25T09:22:21.120621Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "d33cf2ad13c46fbe34547c3035acf39b",
+          "last_modified_utc": "2026-06-25T09:24:12.000000Z",
+          "start_utc": "2026-06-25T09:21:20.653043Z",
+          "end_utc": "2026-06-25T09:22:21.120621Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_23_22.620888.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_23_22.620888.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_23_22.620888.hdf",
+          "filename_utc": "2026-06-25T09:23:22.620888Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "d6684430dee3a2cc7aba19ff9f29c0e0",
+          "last_modified_utc": "2026-06-25T09:24:15.000000Z",
+          "start_utc": "2026-06-25T09:22:22.152037Z",
+          "end_utc": "2026-06-25T09:23:22.620888Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_24_24.128908.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_24_24.128908.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_24_24.128908.hdf",
+          "filename_utc": "2026-06-25T09:24:24.128908Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "25a9b7645ed00f2610f3c5f234e614aa",
+          "last_modified_utc": "2026-06-25T09:27:09.000000Z",
+          "start_utc": "2026-06-25T09:23:23.647511Z",
+          "end_utc": "2026-06-25T09:24:24.128908Z"
+        },
+        {
+          "station_id": "south_africa",
+          "tart_id": "za-rhodes",
+          "archive_name": "za-rhodes",
+          "filename": "vis_2026-06-25_09_25_25.620656.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_25_25.620656.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_25_25.620656.hdf",
+          "filename_utc": "2026-06-25T09:25:25.620656Z",
+          "format": "hdf5",
+          "size_bytes": 146560,
+          "etag": "6b62799af22f72071b8b1bbe1db8eae4",
+          "last_modified_utc": "2026-06-25T09:27:12.000000Z",
+          "start_utc": "2026-06-25T09:24:25.145603Z",
+          "end_utc": "2026-06-25T09:25:25.620656Z"
+        }
+      ],
+      "raw_files": [
+        {
+          "original_filename": "vis_2026-06-25_09_14_09.122737.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_14_09.122737.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_14_09.122737.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_14_09.122737.hdf",
+          "retrieval_utc": "2026-10-07T12:01:55.815Z",
+          "sha256": "bba87b9dd221de03c5658de89f6e380ec8fa64749129bd1de465359ebc11ab7e",
+          "size_bytes": 146560,
+          "etag": "a6af47e93fd0864462b3cb04752d4067",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_15_10.622213.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_15_10.622213.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_15_10.622213.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_15_10.622213.hdf",
+          "retrieval_utc": "2026-10-07T12:01:56.434Z",
+          "sha256": "2457e653f0a9f0f44a8dcd67ba9304476cf2020ff2b7ed649b3a892ef35e4abe",
+          "size_bytes": 146560,
+          "etag": "7782c61c0507659c75bdbd0d912d7612",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_16_12.120739.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_16_12.120739.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_16_12.120739.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_16_12.120739.hdf",
+          "retrieval_utc": "2026-10-07T12:01:57.042Z",
+          "sha256": "e748450ffa2ede30f1e578ebbe54a5b893584ee7ab0c0f03f912ab7c448e5a83",
+          "size_bytes": 146560,
+          "etag": "f6e1632e2bedb922c0c7389a017e3636",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_17_13.617651.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_17_13.617651.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_17_13.617651.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_17_13.617651.hdf",
+          "retrieval_utc": "2026-10-07T12:01:57.623Z",
+          "sha256": "03e03f57376335e59b83679d4e02865660c3c506407c72ec504238a4908aa7fb",
+          "size_bytes": 146560,
+          "etag": "20635b5fda81b3e249fb4e961c263037",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_18_15.121058.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_18_15.121058.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_18_15.121058.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_18_15.121058.hdf",
+          "retrieval_utc": "2026-10-07T12:01:58.247Z",
+          "sha256": "ca1873b11dbe849fe9f8a7ae3c54e093445a85aa313e740be7d823c38c8c6cee",
+          "size_bytes": 146560,
+          "etag": "516e3a5418b899e224fee51b254ccd17",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_19_16.623295.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_19_16.623295.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_19_16.623295.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_19_16.623295.hdf",
+          "retrieval_utc": "2026-10-07T12:01:58.871Z",
+          "sha256": "75a68a559db90cab3dea4a1613ad07721edf91c387855c2645d84103b12b907d",
+          "size_bytes": 146560,
+          "etag": "bfd8f066235623c0bb9ec8d4fdcb7287",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_20_18.122578.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_20_18.122578.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_20_18.122578.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_20_18.122578.hdf",
+          "retrieval_utc": "2026-10-07T12:01:59.522Z",
+          "sha256": "76e1407d9e6fcde7c3da0756de6ee4b2ef7867a6f3f5f96fec3f71e7e3ede367",
+          "size_bytes": 146560,
+          "etag": "f0f978306a6872e088428abb1d166432",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_21_19.625294.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_21_19.625294.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_21_19.625294.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_21_19.625294.hdf",
+          "retrieval_utc": "2026-10-07T12:02:00.165Z",
+          "sha256": "7a558c570d3ef094393b2cee8e436759cd33b3491fe2bcbea31c753a6c8620e1",
+          "size_bytes": 146560,
+          "etag": "4b90d40d45a69e8bbe4997b8e5490ed3",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_22_21.120621.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_22_21.120621.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_22_21.120621.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_22_21.120621.hdf",
+          "retrieval_utc": "2026-10-07T12:02:00.822Z",
+          "sha256": "30fe14d5adef59cd5daea469df9c9b2347602434eb26a4e6e6826268b92f61c4",
+          "size_bytes": 146560,
+          "etag": "d33cf2ad13c46fbe34547c3035acf39b",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_23_22.620888.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_23_22.620888.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_23_22.620888.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_23_22.620888.hdf",
+          "retrieval_utc": "2026-10-07T12:02:01.502Z",
+          "sha256": "34af5536852ecb12eae9b00353b8bae090117525c0790da3fec9a0bcd788d20a",
+          "size_bytes": 146560,
+          "etag": "d6684430dee3a2cc7aba19ff9f29c0e0",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_24_24.128908.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_24_24.128908.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_24_24.128908.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_24_24.128908.hdf",
+          "retrieval_utc": "2026-10-07T12:02:02.108Z",
+          "sha256": "4d0a9dd07bb1361b5e6083ca771ef0da43bdd7f2081db5395fe517549fcf8087",
+          "size_bytes": 146560,
+          "etag": "25a9b7645ed00f2610f3c5f234e614aa",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid"
+        },
+        {
+          "original_filename": "vis_2026-06-25_09_25_25.620656.hdf",
+          "local_path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_25_25.620656.hdf",
+          "remote_identifier": "za-rhodes/vis/2026/6/25/vis_2026-06-25_09_25_25.620656.hdf",
+          "archive_url": "https://s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/6/25/vis_2026-06-25_09_25_25.620656.hdf",
+          "retrieval_utc": "2026-10-07T12:02:02.792Z",
+          "sha256": "657b14f69fbf2b054c6f51f48a153d295096c5613067b940ef35b97aa054ac05",
+          "size_bytes": 146560,
+          "etag": "6b62799af22f72071b8b1bbe1db8eae4",
+          "md5_matches_etag": true,
+          "reused": false,
+          "retained": true,
+          "validation": "valid; outside query interval (not used)"
+        }
+      ],
+      "observation": {
+        "files": [
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_14_09.122737.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:13:08.652903Z",
+            "last_timestamp_utc": "2026-06-25T09:14:09.122737Z",
+            "median_spacing_s": 1.0246620178222656,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_15_10.622213.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:14:10.147771Z",
+            "last_timestamp_utc": "2026-06-25T09:15:10.622213Z",
+            "median_spacing_s": 1.0254340171813965,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_16_12.120739.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:15:11.643125Z",
+            "last_timestamp_utc": "2026-06-25T09:16:12.120739Z",
+            "median_spacing_s": 1.0248398780822754,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_17_13.617651.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:16:13.145142Z",
+            "last_timestamp_utc": "2026-06-25T09:17:13.617651Z",
+            "median_spacing_s": 1.0246729850769043,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_18_15.121058.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:17:14.645902Z",
+            "last_timestamp_utc": "2026-06-25T09:18:15.121058Z",
+            "median_spacing_s": 1.0244090557098389,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_19_16.623295.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:18:16.147992Z",
+            "last_timestamp_utc": "2026-06-25T09:19:16.623295Z",
+            "median_spacing_s": 1.0244710445404053,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_20_18.122578.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:19:17.650696Z",
+            "last_timestamp_utc": "2026-06-25T09:20:18.122578Z",
+            "median_spacing_s": 1.02457594871521,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_21_19.625294.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:20:19.147441Z",
+            "last_timestamp_utc": "2026-06-25T09:21:19.625294Z",
+            "median_spacing_s": 1.0243949890136719,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_22_21.120621.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:21:20.653043Z",
+            "last_timestamp_utc": "2026-06-25T09:22:21.120621Z",
+            "median_spacing_s": 1.0242271423339844,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_23_22.620888.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:22:22.152037Z",
+            "last_timestamp_utc": "2026-06-25T09:23:22.620888Z",
+            "median_spacing_s": 1.024049997329712,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          },
+          {
+            "path": "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_24_24.128908.hdf",
+            "station_id": "south_africa",
+            "n_timestamps": 60,
+            "first_timestamp_utc": "2026-06-25T09:23:23.647511Z",
+            "last_timestamp_utc": "2026-06-25T09:24:24.128908Z",
+            "median_spacing_s": 1.0241107940673828,
+            "telescope_name": "Rhodes University, Grahamstown",
+            "n_antennas": 24,
+            "n_baselines": 276,
+            "vis_shape": [
+              60,
+              276
+            ],
+            "vis_finite_fraction": 1.0,
+            "vis_all_zero": false,
+            "frequency_hz": 1575420000.0,
+            "bandwidth_hz": 2500000.0,
+            "frequency_consistent": true,
+            "file_latitude_deg": -33.319413,
+            "file_longitude_deg": 26.507688,
+            "file_altitude_m": 642.26,
+            "position_offset_deg": 0.0,
+            "has_gains": true,
+            "has_phases": true,
+            "zero_gain_antennas": [
+              3,
+              4,
+              5,
+              7,
+              10,
+              14,
+              16,
+              18,
+              19
+            ],
+            "calibration_fingerprint": "21222eee36010ad7",
+            "phase_centre_el_az_deg": [
+              90.0,
+              0.0
+            ],
+            "flags_present": false,
+            "warnings": []
+          }
+        ],
+        "coverage": {
+          "first_timestamp_utc": "2026-06-25T09:13:08.652903Z",
+          "last_timestamp_utc": "2026-06-25T09:24:24.128908Z",
+          "number_of_timestamps": 660,
+          "median_time_spacing_seconds": 1.0246098041534424,
+          "gap_threshold_seconds": 3.073829412460327,
+          "n_gaps": 0,
+          "gaps": [],
+          "segments": [
+            [
+              "2026-06-25T09:13:08.652903Z",
+              "2026-06-25T09:24:24.128908Z"
+            ]
+          ],
+          "frequencies_hz": [
+            1575420000.0
+          ],
+          "bandwidths_hz": [
+            2500000.0
+          ],
+          "n_antennas": [
+            24
+          ],
+          "calibration_fingerprints": [
+            "21222eee36010ad7"
+          ],
+          "zero_gain_antennas": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            14,
+            16,
+            18,
+            19
+          ],
+          "duplicate_timestamps": 0
+        },
+        "calibration_status": "native gains/phases present (constant); applied by tart2ms (unverified)",
+        "calibration_source": "per-antenna 'gains'/'phases' datasets stored in each native HDF5 file (solutions in use on the telescope at recording time); not independently verified"
+      },
+      "measurement_set_status": "VALID",
+      "measurement_set": {
+        "path": "data/observations/20260625/NORAD_40534/south_africa/ms/south_africa.ms",
+        "valid": true,
+        "number_of_rows": 182160,
+        "number_of_times": 660,
+        "number_of_antennas": 24,
+        "number_of_channels": [
+          1
+        ],
+        "frequency_hz": [
+          1575420000.0
+        ],
+        "total_bandwidth_hz": [
+          2500000.0
+        ],
+        "first_time_utc": "2026-06-25T09:13:08.652903Z",
+        "last_time_utc": "2026-06-25T09:24:24.128908Z",
+        "flagged_fraction": 0.6195652173913043,
+        "max_baseline_m": 4.898544120751395,
+        "telescope_name": [
+          "TART"
+        ],
+        "columns": [
+          "TIME_CENTROID",
+          "ANTENNA2",
+          "OBSERVATION_ID",
+          "DATA_DESC_ID",
+          "FLAG_CATEGORY",
+          "STATE_ID",
+          "ARRAY_ID",
+          "FIELD_ID",
+          "INTERVAL",
+          "EXPOSURE",
+          "WEIGHT",
+          "FEED2",
+          "ANTENNA1",
+          "FLAG_ROW",
+          "UVW",
+          "PROCESSOR_ID",
+          "SCAN_NUMBER",
+          "SIGMA",
+          "FEED1",
+          "TIME",
+          "FLAG",
+          "DATA",
+          "WEIGHT_SPECTRUM",
+          "SIGMA_SPECTRUM"
+        ],
+        "station_id": "south_africa",
+        "conversion_command": [
+          "/home/nadeem/GitHub/TART/sat_position/.venv/bin/tart2ms",
+          "--hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_14_09.122737.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_15_10.622213.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_16_12.120739.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_17_13.617651.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_18_15.121058.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_19_16.623295.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_20_18.122578.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_21_19.625294.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_22_21.120621.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_23_22.620888.hdf",
+          "data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_24_24.128908.hdf",
+          "--ms",
+          "data/observations/20260625/NORAD_40534/south_africa/ms/south_africa.ms",
+          "--skip-online-source-catalog",
+          "--skip-celestial-source-catalog"
+        ],
+        "conversion_started_utc": "2026-10-07T12:02:21.745Z",
+        "calibration_applied_by_tart2ms": true,
+        "conversion_log": "data/observations/20260625/NORAD_40534/south_africa/ms/tart2ms.log"
+      },
+      "predicted_geometry": {
+        "start": {
+          "azimuth_deg": 329.6047593956367,
+          "elevation_deg": 35.229106271624225,
+          "range_km": 22565.551122020668,
+          "range_rate_km_s": -0.5377405941540315
+        },
+        "mid": {
+          "azimuth_deg": 170.9556404951645,
+          "elevation_deg": 69.12956923751126,
+          "range_km": 20774.648801110496,
+          "range_rate_km_s": 0.1446778493323206
+        },
+        "end": {
+          "azimuth_deg": 98.65848432392892,
+          "elevation_deg": 20.000253366456548,
+          "range_km": 23591.894528031957,
+          "range_rate_km_s": 0.4033068776345428
+        }
+      },
+      "errors": []
+    }
+  },
+  "synchronisation": {
+    "predicted_window_duration_s": 19016.485,
+    "retrieved_window_utc": [
+      "2026-06-25T09:14:02.460Z",
+      "2026-06-25T09:24:02.460Z"
+    ],
+    "retrieved_window_duration_s": 600.0,
+    "station_retrieved_window_coverage_fraction": {
+      "mauritius": 1.0,
+      "madagascar": 1.0,
+      "south_africa": 1.0
+    },
+    "stations": [
+      "mauritius",
+      "madagascar",
+      "south_africa"
+    ],
+    "station_coverage_fraction": {
+      "mauritius": 0.03552084935780719,
+      "madagascar": 0.03552046910877588,
+      "south_africa": 0.03552054993338674
+    },
+    "station_median_cadence_s": {
+      "mauritius": 1.0247290134429932,
+      "madagascar": 1.0247228145599365,
+      "south_africa": 1.0246098041534424
+    },
+    "actual_common_start_utc": "2026-06-25T09:13:39.145926Z",
+    "actual_common_end_utc": "2026-06-25T09:24:24.128908Z",
+    "actual_common_duration_seconds": 644.982982,
+    "common_segments": [
+      [
+        "2026-06-25T09:13:39.145926Z",
+        "2026-06-25T09:24:24.128908Z"
+      ]
+    ],
+    "three_station_coverage_fraction": 0.03391704523732961,
+    "three_station_retrieved_window_coverage_fraction": 1.0,
+    "median_nearest_timestamp_separation_s": 0.250327467918396,
+    "max_nearest_timestamp_separation_s": 0.4752538204193115,
+    "station_pair_time_offset_statistics": {
+      "mauritius__madagascar": {
+        "n_samples": 629,
+        "median_offset_s": 0.20849204063415527,
+        "median_abs_separation_s": 0.20849204063415527,
+        "max_abs_separation_s": 0.2238008975982666
+      },
+      "mauritius__south_africa": {
+        "n_samples": 629,
+        "median_offset_s": 0.4587099552154541,
+        "median_abs_separation_s": 0.4587099552154541,
+        "max_abs_separation_s": 0.4752538204193115
+      },
+      "madagascar__south_africa": {
+        "n_samples": 630,
+        "median_offset_s": 0.250327467918396,
+        "median_abs_separation_s": 0.250327467918396,
+        "max_abs_separation_s": 0.2654449939727783
+      }
+    },
+    "no_common_time_reason": null,
+    "three_station_valid": true
+  },
+  "stage1_window": {
+    "rank": 8,
+    "satellite": "GPS BIIF-9  (PRN 26)",
+    "norad_id": 40534,
+    "constellation": "GPS",
+    "start_utc": "2026-06-25T06:40:34.218Z",
+    "mid_utc": "2026-06-25T09:19:02.460Z",
+    "end_utc": "2026-06-25T11:57:30.703Z",
+    "duration_seconds": 19016.484375,
+    "start_clipped_by_search_interval": false,
+    "end_clipped_by_search_interval": false,
+    "stations": {
+      "mauritius": {
+        "start": {
+          "azimuth_deg": 291.36746742985946,
+          "elevation_deg": 20.00030662851509,
+          "range_km": 23900.22775620873,
+          "range_rate_km_s": -0.36950856865222004
+        },
+        "mid": {
+          "azimuth_deg": 210.7700139936527,
+          "elevation_deg": 43.947273642104435,
+          "range_km": 22006.542651795127,
+          "range_rate_km_s": -0.12094009811331638
+        },
+        "end": {
+          "azimuth_deg": 102.95345082462843,
+          "elevation_deg": 49.65734197926666,
+          "range_km": 21273.750662775827,
+          "range_rate_km_s": 0.0805252082365817
+        }
+      },
+      "madagascar": {
+        "start": {
+          "azimuth_deg": 296.87416572307984,
+          "elevation_deg": 30.40993126606208,
+          "range_km": 22960.67988992992,
+          "range_rate_km_s": -0.36634606214346593
+        },
+        "mid": {
+          "azimuth_deg": 200.78286846807828,
+          "elevation_deg": 47.55406486235914,
+          "range_km": 21773.16672084213,
+          "range_rate_km_s": 0.008137918856927596
+        },
+        "end": {
+          "azimuth_deg": 105.00174642864604,
+          "elevation_deg": 38.02971603210965,
+          "range_km": 22047.63948271741,
+          "range_rate_km_s": 0.12408490663284265
+        }
+      },
+      "south_africa": {
+        "start": {
+          "azimuth_deg": 329.6047593956367,
+          "elevation_deg": 35.229106271624225,
+          "range_km": 22565.551122020668,
+          "range_rate_km_s": -0.5377405941540315
+        },
+        "mid": {
+          "azimuth_deg": 170.9556404951645,
+          "elevation_deg": 69.12956923751126,
+          "range_km": 20774.648801110496,
+          "range_rate_km_s": 0.1446778493323206
+        },
+        "end": {
+          "azimuth_deg": 98.65848432392892,
+          "elevation_deg": 20.000253366456548,
+          "range_km": 23591.894528031957,
+          "range_rate_km_s": 0.4033068776345428
+        }
+      }
+    },
+    "satellite_position": {
+      "coordinate_frame": "ITRS",
+      "units": {
+        "position": "km",
+        "velocity": "km/s"
+      },
+      "start": {
+        "position_km": [
+          26486.33997687403,
+          2788.1810353162496,
+          2651.5294830759417
+        ],
+        "velocity_km_s": [
+          0.2950869733149237,
+          0.4082849120302054,
+          -3.049030054160235
+        ]
+      },
+      "mid": {
+        "position_km": [
+          15178.136788288855,
+          8870.203425606021,
+          -20254.4868007363
+        ],
+        "velocity_km_s": [
+          -2.145652940937705,
+          1.3272679298676981,
+          -0.9967104101942719
+        ]
+      },
+      "end": {
+        "position_km": [
+          -613.7175374803709,
+          24184.983187310187,
+          -10705.150605235325
+        ],
+        "velocity_km_s": [
+          -0.8157170295197852,
+          1.1294505152592487,
+          2.7013233309815363
+        ]
+      }
+    },
+    "line_of_sight_mid": {
+      "coordinate_frame": "ITRS",
+      "mauritius": {
+        "vector_km": [
+          11984.734652374835,
+          3807.166326673647,
+          -18059.88757878874
+        ],
+        "unit_vector": [
+          0.5445987060305991,
+          0.17300156534870692,
+          -0.8206599221216387
+        ],
+        "range_km": 22006.542651795164
+      },
+      "madagascar": {
+        "vector_km": [
+          11103.416682159843,
+          4414.821750529483,
+          -18201.491036367745
+        ],
+        "unit_vector": [
+          0.5099587407067983,
+          0.2027643386528352,
+          -0.8359597512724012
+        ],
+        "range_km": 21773.16672084217
+      },
+      "south_africa": {
+        "vector_km": [
+          10403.413365184144,
+          6488.814151286861,
+          -16770.5191950831
+        ],
+        "unit_vector": [
+          0.5007744518226472,
+          0.3123429047301147,
+          -0.8072588545605935
+        ],
+        "range_km": 20774.648801110536
+      }
+    },
+    "tle": {
+      "epoch": "2026-10-06T17:48:11.977045Z",
+      "line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+      "line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063",
+      "source": "CelesTrak GP data: https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=beidou&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=tle",
+      "age_start_days": -103.46363146167825,
+      "age_mid_days": -103.3535823620139,
+      "age_end_days": -103.24353326282407
+    }
+  },
+  "software": {
+    "tart_gnss": "0.2.0",
+    "python": "3.12.3",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.5.3",
+    "pyyaml": "6.0.3",
+    "h5py": "3.16.0",
+    "minio": "7.2.20",
+    "tart2ms": "0.9.4",
+    "tart-tools": "1.4.6",
+    "python-casacore": "3.8.1"
+  },
+  "provenance": {
+    "run_tag": "20261007T120136Z",
+    "run_timestamp_utc": "2026-10-07T12:01:36.293Z",
+    "command_line": [
+      "retrieve-tart",
+      "--visibility-results",
+      "results/common_gnss_20260625.json",
+      "--rank",
+      "8",
+      "--padding",
+      "120",
+      "--max-duration",
+      "600",
+      "--output-dir",
+      "data/observations",
+      "--download",
+      "--convert-ms",
+      "--keep-native"
+    ],
+    "station_file": "/home/nadeem/GitHub/TART/sat_position/src/tart_gnss/config/stations.yaml",
+    "station_file_sha256": "2c7a016c99148ca07764f79e797a1f2d716f1fec627703687acd7e2054389bf0",
+    "archive": {
+      "host": "s3.us-west-2.amazonaws.com",
+      "bucket": "tart",
+      "layout": "<archive_name>/vis/<year>/<month>/<day>/vis_<UTC>.hdf",
+      "file_span_margin_s": 120.0
+    },
+    "gap_factor": 3.0,
+    "download": true,
+    "convert_ms": true,
+    "keep_native": true,
+    "allow_partial": false,
+    "tart2ms_command": [
+      "/home/nadeem/GitHub/TART/sat_position/.venv/bin/tart2ms"
+    ],
+    "run_directory": "data/observations/20260625/NORAD_40534",
+    "retrieval_log": "data/observations/20260625/NORAD_40534/retrieval.log"
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "stage1_result_file": "results/common_gnss_20260625.json",
+  "stage1_result_sha256": "a7733d5b3345464f2c049894874f560b075ada8dbc31ca7fbacce577fc149bf9",
+  "rank": 8,
+  "window_index": 1,
+  "run": {
+    "start_utc": "2026-06-25T00:00:00.000Z",
+    "end_utc": "2026-06-26T00:00:00.000Z",
+    "min_elevation_deg": 20.0,
+    "step_seconds": 10.0,
+    "boundary_tolerance_seconds": 0.1,
+    "min_duration_seconds": 0.0,
+    "visibility_definition": "all stations simultaneously have elevation >= min_elevation_deg"
+  },
+  "stations": [
+    {
+      "id": "mauritius",
+      "name": "TART Mauritius (Bel Air)",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z",
+      "tart_id": "mu-udm",
+      "api_url": "https://api.elec.ac.nz/tart/mu-udm",
+      "archive_name": "mu-udm",
+      "itrs_position_km": [
+        3193.402135914021,
+        5063.037098932375,
+        -2194.5992219475584
+      ]
+    },
+    {
+      "id": "madagascar",
+      "name": "TART Madagascar (Antananarivo)",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z",
+      "tart_id": "mg-tana",
+      "api_url": "https://api.elec.ac.nz/tart/mg-tana",
+      "archive_name": "mg-tana",
+      "itrs_position_km": [
+        4074.720106129012,
+        4455.381675076538,
+        -2052.995764368557
+      ]
+    },
+    {
+      "id": "south_africa",
+      "name": "TART South Africa (Rhodes University, Makhanda)",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "source": "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z",
+      "tart_id": "za-rhodes",
+      "api_url": "https://api.elec.ac.nz/tart/za-rhodes",
+      "archive_name": "za-rhodes",
+      "itrs_position_km": [
+        4774.723423104711,
+        2381.3892743191614,
+        -3483.9676056532
+      ]
+    }
+  ],
+  "window": {
+    "rank": 8,
+    "satellite": "GPS BIIF-9  (PRN 26)",
+    "norad_id": 40534,
+    "constellation": "GPS",
+    "start_utc": "2026-06-25T06:40:34.218Z",
+    "mid_utc": "2026-06-25T09:19:02.460Z",
+    "end_utc": "2026-06-25T11:57:30.703Z",
+    "duration_seconds": 19016.484375,
+    "start_clipped_by_search_interval": false,
+    "end_clipped_by_search_interval": false,
+    "stations": {
+      "mauritius": {
+        "start": {
+          "azimuth_deg": 291.36746742985946,
+          "elevation_deg": 20.00030662851509,
+          "range_km": 23900.22775620873,
+          "range_rate_km_s": -0.36950856865222004
+        },
+        "mid": {
+          "azimuth_deg": 210.7700139936527,
+          "elevation_deg": 43.947273642104435,
+          "range_km": 22006.542651795127,
+          "range_rate_km_s": -0.12094009811331638
+        },
+        "end": {
+          "azimuth_deg": 102.95345082462843,
+          "elevation_deg": 49.65734197926666,
+          "range_km": 21273.750662775827,
+          "range_rate_km_s": 0.0805252082365817
+        }
+      },
+      "madagascar": {
+        "start": {
+          "azimuth_deg": 296.87416572307984,
+          "elevation_deg": 30.40993126606208,
+          "range_km": 22960.67988992992,
+          "range_rate_km_s": -0.36634606214346593
+        },
+        "mid": {
+          "azimuth_deg": 200.78286846807828,
+          "elevation_deg": 47.55406486235914,
+          "range_km": 21773.16672084213,
+          "range_rate_km_s": 0.008137918856927596
+        },
+        "end": {
+          "azimuth_deg": 105.00174642864604,
+          "elevation_deg": 38.02971603210965,
+          "range_km": 22047.63948271741,
+          "range_rate_km_s": 0.12408490663284265
+        }
+      },
+      "south_africa": {
+        "start": {
+          "azimuth_deg": 329.6047593956367,
+          "elevation_deg": 35.229106271624225,
+          "range_km": 22565.551122020668,
+          "range_rate_km_s": -0.5377405941540315
+        },
+        "mid": {
+          "azimuth_deg": 170.9556404951645,
+          "elevation_deg": 69.12956923751126,
+          "range_km": 20774.648801110496,
+          "range_rate_km_s": 0.1446778493323206
+        },
+        "end": {
+          "azimuth_deg": 98.65848432392892,
+          "elevation_deg": 20.000253366456548,
+          "range_km": 23591.894528031957,
+          "range_rate_km_s": 0.4033068776345428
+        }
+      }
+    },
+    "satellite_position": {
+      "coordinate_frame": "ITRS",
+      "units": {
+        "position": "km",
+        "velocity": "km/s"
+      },
+      "start": {
+        "position_km": [
+          26486.33997687403,
+          2788.1810353162496,
+          2651.5294830759417
+        ],
+        "velocity_km_s": [
+          0.2950869733149237,
+          0.4082849120302054,
+          -3.049030054160235
+        ]
+      },
+      "mid": {
+        "position_km": [
+          15178.136788288855,
+          8870.203425606021,
+          -20254.4868007363
+        ],
+        "velocity_km_s": [
+          -2.145652940937705,
+          1.3272679298676981,
+          -0.9967104101942719
+        ]
+      },
+      "end": {
+        "position_km": [
+          -613.7175374803709,
+          24184.983187310187,
+          -10705.150605235325
+        ],
+        "velocity_km_s": [
+          -0.8157170295197852,
+          1.1294505152592487,
+          2.7013233309815363
+        ]
+      }
+    },
+    "line_of_sight_mid": {
+      "coordinate_frame": "ITRS",
+      "mauritius": {
+        "vector_km": [
+          11984.734652374835,
+          3807.166326673647,
+          -18059.88757878874
+        ],
+        "unit_vector": [
+          0.5445987060305991,
+          0.17300156534870692,
+          -0.8206599221216387
+        ],
+        "range_km": 22006.542651795164
+      },
+      "madagascar": {
+        "vector_km": [
+          11103.416682159843,
+          4414.821750529483,
+          -18201.491036367745
+        ],
+        "unit_vector": [
+          0.5099587407067983,
+          0.2027643386528352,
+          -0.8359597512724012
+        ],
+        "range_km": 21773.16672084217
+      },
+      "south_africa": {
+        "vector_km": [
+          10403.413365184144,
+          6488.814151286861,
+          -16770.5191950831
+        ],
+        "unit_vector": [
+          0.5007744518226472,
+          0.3123429047301147,
+          -0.8072588545605935
+        ],
+        "range_km": 20774.648801110536
+      }
+    },
+    "tle": {
+      "epoch": "2026-10-06T17:48:11.977045Z",
+      "line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+      "line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063",
+      "source": "CelesTrak GP data: https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=beidou&FORMAT=tle, https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=tle",
+      "age_start_days": -103.46363146167825,
+      "age_mid_days": -103.3535823620139,
+      "age_end_days": -103.24353326282407
+    }
+  }
+}

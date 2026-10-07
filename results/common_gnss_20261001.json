@@ -21,7 +21,8 @@
       "altitude_m": 20.0,
       "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z",
       "tart_id": "mu-udm",
-      "tart_api": "https://api.elec.ac.nz/tart/mu-udm",
+      "api_url": "https://api.elec.ac.nz/tart/mu-udm",
+      "archive_name": "mu-udm",
       "itrs_position_km": [
         3193.402135914021,
         5063.037098932375,
@@ -36,7 +37,8 @@
       "altitude_m": 1280.0,
       "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z",
       "tart_id": "mg-tana",
-      "tart_api": "https://api.elec.ac.nz/tart/mg-tana",
+      "api_url": "https://api.elec.ac.nz/tart/mg-tana",
+      "archive_name": "mg-tana",
       "itrs_position_km": [
         4074.720106129012,
         4455.381675076538,
@@ -51,7 +53,8 @@
       "altitude_m": 642.26,
       "source": "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z",
       "tart_id": "za-rhodes",
-      "tart_api": "https://api.elec.ac.nz/tart/za-rhodes",
+      "api_url": "https://api.elec.ac.nz/tart/za-rhodes",
+      "archive_name": "za-rhodes",
       "itrs_position_km": [
         4774.723423104711,
         2381.3892743191614,

@@ -1,0 +1,37 @@
+2026-10-07 14:00:46,501 - tart2ms - INFO - TART2MS parameters:
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	json                : None
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	hdf                 : ['/tmp/pytest-of-nadeem/pytest-225/test_real_tart2ms_conversion0/vis.hdf']
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	archive_search      : None
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	ms                  : /tmp/pytest-of-nadeem/pytest-225/test_real_tart2ms_conversion0/alpha.ms
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	api                 : https://api.elec.ac.nz/tart/mu-udm/
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	catalog             : https://tart.elec.ac.nz/catalog
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	vis                 : None
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	pol2                : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	clobber             : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	rephase             : None
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	debug               : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	single_field        : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	override_telescope_name: TART
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	uncalibrated        : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	addmodel            : False
+2026-10-07 14:00:46,501 - tart2ms - INFO - 	writemodelcatalog   : False
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	no_fetch_sources    : True
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	no_celestial_sources: True
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	sources_recache     : False
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	timerange_start_utc : None
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	timerange_end_utc   : None
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	chunks              : 100000
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	override_ant_pos    : None
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	model_catalog_name_prefix: model_sources_
+2026-10-07 14:00:46,502 - tart2ms - INFO - Getting Data from file: ['/tmp/pytest-of-nadeem/pytest-225/test_real_tart2ms_conversion0/vis.hdf']
+2026-10-07 14:00:46,502 - tart2ms - INFO - Writing measurement set '/tmp/pytest-of-nadeem/pytest-225/test_real_tart2ms_conversion0/alpha.ms'...
+2026-10-07 14:00:46,502 - tart2ms - INFO - Will process HDF5 file: 
+2026-10-07 14:00:46,502 - tart2ms - INFO - 	 '/tmp/pytest-of-nadeem/pytest-225/test_real_tart2ms_conversion0/vis.hdf'
+2026-10-07 14:00:46,503 - tart2ms - INFO - Observatory parameters:
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	L0_frequency             : Information Unavailable
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	bandwidth                : 2500000.0
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	baseband_frequency       : Information Unavailable
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	operating_frequency      : 1575420000.0
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	name                     : alpha
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	num_antenna              : 24
+2026-10-07 14:00:46,503 - tart2ms - INFO - 	sampling_frequency       : Information Unavailable

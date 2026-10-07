@@ -1,0 +1,88 @@
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Selected rank 8: GPS BIIF-9  (PRN 26) (NORAD 40534, GPS), window 1/1, 2026-06-25T06:40:34.218Z -- 2026-06-25T11:57:30.703Z (316.9 min)
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Signal relevance: GPS_L1 (GPS L1 C/A at 1575.42 MHz)
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Station mauritius: TART id mu-udm, archive 'mu-udm'
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Station madagascar: TART id mg-tana, archive 'mg-tana'
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Station south_africa: TART id za-rhodes, archive 'za-rhodes'
+2026-10-07T12:01:36Z INFO    tart_gnss.stage2: Archive query interval 2026-06-25T09:14:02.460Z -- 2026-06-25T09:24:02.460Z (padding 120 s, limited to 600 s)
+2026-10-07T12:01:38Z INFO    tart_gnss.stage2.archive: mauritius (mu-udm): 12 archive files between 2026-06-25T09:14:02.460Z and 2026-06-25T09:24:02.460Z (+120 s margin)
+2026-10-07T12:01:38Z INFO    tart_gnss.stage2: mauritius      FOUND (12 files)
+2026-10-07T12:01:39Z INFO    tart_gnss.stage2.archive: madagascar (mg-tana): 12 archive files between 2026-06-25T09:14:02.460Z and 2026-06-25T09:24:02.460Z (+120 s margin)
+2026-10-07T12:01:39Z INFO    tart_gnss.stage2: madagascar     FOUND (12 files)
+2026-10-07T12:01:40Z INFO    tart_gnss.stage2.archive: south_africa (za-rhodes): 12 archive files between 2026-06-25T09:14:02.460Z and 2026-06-25T09:24:02.460Z (+120 s margin)
+2026-10-07T12:01:40Z INFO    tart_gnss.stage2: south_africa   FOUND (12 files)
+2026-10-07T12:01:41Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_14_21.984865.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_14_21.984865.hdf (sha256 bae0d1358a5cc5afedcffd4fae8d9e386114ee29093a43824ee960ef00df43a4)
+2026-10-07T12:01:41Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_15_23.483730.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_15_23.483730.hdf (sha256 46f46525f490e8aba34fb85bf28459a210b564602536d1cd616135b48afaae24)
+2026-10-07T12:01:42Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_16_24.990724.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_16_24.990724.hdf (sha256 0b12152d367376560c490be1f7b9fc066ccae0a36553c13dd7b428c9e26c2efd)
+2026-10-07T12:01:43Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_17_26.496107.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_17_26.496107.hdf (sha256 82f119dadf7c8a6789c6dd137ab3d1cf97c4ac7ffcdabc8cb4cd872ef55d3352)
+2026-10-07T12:01:43Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_18_27.989614.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_18_27.989614.hdf (sha256 a768dfd9fb13009e283805b7751121bcbffce7590309c0784c458f295855efd5)
+2026-10-07T12:01:44Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_19_29.493395.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_19_29.493395.hdf (sha256 1f34adac563711e8b1cc55bbb0ac36bd29585823701c4c39a7e91f7d96eee88f)
+2026-10-07T12:01:45Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_20_30.995692.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_20_30.995692.hdf (sha256 4febe5f287f174286a6fabace12178964a81c2d89eb1e3d8c8a89f54f599741b)
+2026-10-07T12:01:45Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_21_32.488219.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_21_32.488219.hdf (sha256 08e17dba7e3df41fa0a91e9ceb61d6f48e2d31c9ab3f20a2b3824a75ee20bb0f)
+2026-10-07T12:01:46Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_22_33.992215.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_22_33.992215.hdf (sha256 1c4c83544ddfbc1acbc077bc113b6cf1d07048736ef59153b5fbc9dda4e627f9)
+2026-10-07T12:01:47Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_23_35.498099.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_23_35.498099.hdf (sha256 22e049c408c57f41638c856191f8105e339c781e67c049b06698b24c79297c96)
+2026-10-07T12:01:47Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_24_36.993127.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_24_36.993127.hdf (sha256 44a574c8338de8e578f43db3e67933dd25b274067855ec854203750cad4d24d0)
+2026-10-07T12:01:48Z INFO    tart_gnss.stage2.download: Downloaded mu-udm/vis/2026/6/25/vis_2026-06-25_09_25_38.487282.hdf -> data/observations/20260625/NORAD_40534/mauritius/raw/vis_2026-06-25_09_25_38.487282.hdf (sha256 b16c20cb7e23e8d85d934f6daaa1a1b257a719d089d5abe12878ace5eb4184f4)
+2026-10-07T12:01:48Z INFO    tart_gnss.stage2: mauritius: 660 samples 2026-06-25T09:13:21.511Z -- 2026-06-25T09:24:36.993Z, cadence 1.025 s, 0 gaps, freq [1575420000.0] Hz, [24] antennas
+2026-10-07T12:01:48Z WARNING tart_gnss.stage2: mauritius: 2 different gain/phase solution sets within the retrieved data
+2026-10-07T12:01:48Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_14_39.625599.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_14_39.625599.hdf (sha256 3c00726f0ff06ee614bde07b2d9cc28e9ce2572d8d012aa2ddb47257b181dee2)
+2026-10-07T12:01:49Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_15_41.121126.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_15_41.121126.hdf (sha256 a82a9fa5d64229b302e54e9c2f6df790fba678065ef301fec453ed116d28eaaf)
+2026-10-07T12:01:50Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_16_42.615656.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_16_42.615656.hdf (sha256 2353f859379ef936cd4e680b7c452438c686401a7f1618c35815c14c85e7c462)
+2026-10-07T12:01:50Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_17_44.122813.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_17_44.122813.hdf (sha256 dcb173b064473ea2474f1e0ccf327c8e5c3e2abc268272ef2940cb4ad98e5fbf)
+2026-10-07T12:01:51Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_18_45.623511.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_18_45.623511.hdf (sha256 ab38a8fde1111f15a04b5b58a1dc6f2b19652843fe048332c12aa9ed405de464)
+2026-10-07T12:01:52Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_19_47.124451.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_19_47.124451.hdf (sha256 a6af888ee5451e924e020927f9b2bb33591feaaac9d92554c9d43533af1519aa)
+2026-10-07T12:01:52Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_20_48.622586.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_20_48.622586.hdf (sha256 0421aa5eba498e7cde12a3cfc3b615d72f74252f304c6536da0358eafdc90ab7)
+2026-10-07T12:01:53Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_21_50.123128.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_21_50.123128.hdf (sha256 55844f3b30a777d23cef690f41c51c73e6809fac02682d2bd24853397333210b)
+2026-10-07T12:01:53Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_22_51.629885.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_22_51.629885.hdf (sha256 e3af767e479d9ba553b18534d884ebeafcfc1629daf2223bb7c42072a9deadbd)
+2026-10-07T12:01:54Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_23_53.127635.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_23_53.127635.hdf (sha256 1a3217cc3734f888250e00e28a899cde158ff3807f5bb47af8303b7a51291914)
+2026-10-07T12:01:55Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_24_54.620394.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_24_54.620394.hdf (sha256 a27acd19d66da12d86438ec2d132e993a565f014b8b2559710ab5f2f0ab8bbec)
+2026-10-07T12:01:55Z INFO    tart_gnss.stage2.download: Downloaded mg-tana/vis/2026/6/25/vis_2026-06-25_09_25_56.122452.hdf -> data/observations/20260625/NORAD_40534/madagascar/raw/vis_2026-06-25_09_25_56.122452.hdf (sha256 cbba3e3b106ba5de83cc7dc6c1f8d8ca0b6c8a66c4294240f381eede8222077c)
+2026-10-07T12:01:55Z INFO    tart_gnss.stage2: madagascar: 660 samples 2026-06-25T09:13:39.145Z -- 2026-06-25T09:24:54.620Z, cadence 1.025 s, 0 gaps, freq [1575420000.0] Hz, [24] antennas
+2026-10-07T12:01:55Z WARNING tart_gnss.stage2: madagascar: 2 different gain/phase solution sets within the retrieved data
+2026-10-07T12:01:56Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_14_09.122737.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_14_09.122737.hdf (sha256 bba87b9dd221de03c5658de89f6e380ec8fa64749129bd1de465359ebc11ab7e)
+2026-10-07T12:01:57Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_15_10.622213.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_15_10.622213.hdf (sha256 2457e653f0a9f0f44a8dcd67ba9304476cf2020ff2b7ed649b3a892ef35e4abe)
+2026-10-07T12:01:57Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_16_12.120739.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_16_12.120739.hdf (sha256 e748450ffa2ede30f1e578ebbe54a5b893584ee7ab0c0f03f912ab7c448e5a83)
+2026-10-07T12:01:58Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_17_13.617651.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_17_13.617651.hdf (sha256 03e03f57376335e59b83679d4e02865660c3c506407c72ec504238a4908aa7fb)
+2026-10-07T12:01:58Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_18_15.121058.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_18_15.121058.hdf (sha256 ca1873b11dbe849fe9f8a7ae3c54e093445a85aa313e740be7d823c38c8c6cee)
+2026-10-07T12:01:59Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_19_16.623295.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_19_16.623295.hdf (sha256 75a68a559db90cab3dea4a1613ad07721edf91c387855c2645d84103b12b907d)
+2026-10-07T12:02:00Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_20_18.122578.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_20_18.122578.hdf (sha256 76e1407d9e6fcde7c3da0756de6ee4b2ef7867a6f3f5f96fec3f71e7e3ede367)
+2026-10-07T12:02:00Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_21_19.625294.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_21_19.625294.hdf (sha256 7a558c570d3ef094393b2cee8e436759cd33b3491fe2bcbea31c753a6c8620e1)
+2026-10-07T12:02:01Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_22_21.120621.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_22_21.120621.hdf (sha256 30fe14d5adef59cd5daea469df9c9b2347602434eb26a4e6e6826268b92f61c4)
+2026-10-07T12:02:02Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_23_22.620888.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_23_22.620888.hdf (sha256 34af5536852ecb12eae9b00353b8bae090117525c0790da3fec9a0bcd788d20a)
+2026-10-07T12:02:02Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_24_24.128908.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_24_24.128908.hdf (sha256 4d0a9dd07bb1361b5e6083ca771ef0da43bdd7f2081db5395fe517549fcf8087)
+2026-10-07T12:02:03Z INFO    tart_gnss.stage2.download: Downloaded za-rhodes/vis/2026/6/25/vis_2026-06-25_09_25_25.620656.hdf -> data/observations/20260625/NORAD_40534/south_africa/raw/vis_2026-06-25_09_25_25.620656.hdf (sha256 657b14f69fbf2b054c6f51f48a153d295096c5613067b940ef35b97aa054ac05)
+2026-10-07T12:02:03Z INFO    tart_gnss.stage2: south_africa: 660 samples 2026-06-25T09:13:08.652Z -- 2026-06-25T09:24:24.128Z, cadence 1.025 s, 0 gaps, freq [1575420000.0] Hz, [24] antennas
+2026-10-07T12:02:03Z WARNING tart_gnss.stage2: south_africa: antennas [3, 4, 5, 7, 10, 14, 16, 18, 19] have zero/non-finite gains; tart2ms flags their baselines
+2026-10-07T12:02:03Z INFO    tart_gnss.stage2: Actual three-station overlap 2026-06-25T09:13:39.145926Z -- 2026-06-25T09:24:24.128908Z (645.0 s); coverage of predicted window 3.4%
+2026-10-07T12:02:03Z INFO    tart_gnss.stage2.measurement_set: tart2ms for mauritius: 11 files -> data/observations/20260625/NORAD_40534/mauritius/ms/mauritius.ms
+2026-10-07T12:02:12Z INFO    tart_gnss.stage2.measurement_set: Validated data/observations/20260625/NORAD_40534/mauritius/ms/mauritius.ms: 182160 rows, 24 antennas, first 2026-06-25T09:13:21.511428Z, last 2026-06-25T09:24:36.993128Z
+2026-10-07T12:02:12Z INFO    tart_gnss.stage2.measurement_set: tart2ms for madagascar: 11 files -> data/observations/20260625/NORAD_40534/madagascar/ms/madagascar.ms
+2026-10-07T12:02:21Z INFO    tart_gnss.stage2.measurement_set: Validated data/observations/20260625/NORAD_40534/madagascar/ms/madagascar.ms: 182160 rows, 24 antennas, first 2026-06-25T09:13:39.145926Z, last 2026-06-25T09:24:54.620395Z
+2026-10-07T12:02:21Z INFO    tart_gnss.stage2.measurement_set: tart2ms for south_africa: 11 files -> data/observations/20260625/NORAD_40534/south_africa/ms/south_africa.ms
+2026-10-07T12:02:31Z INFO    tart_gnss.stage2.measurement_set: Validated data/observations/20260625/NORAD_40534/south_africa/ms/south_africa.ms: 182160 rows, 24 antennas, first 2026-06-25T09:13:08.652903Z, last 2026-06-25T09:24:24.128908Z
+2026-10-07T12:02:31Z INFO    tart_gnss.stage2.manifest: Wrote manifest data/observations/20260625/NORAD_40534/manifest.json
+TART GNSS — STAGE 2
+
+Satellite:
+  GPS BIIF-9  (PRN 26)
+  NORAD: 40534   Constellation: GPS   Signal: GPS_L1
+
+Predicted common window:
+  2026-06-25T06:40:34Z -- 2026-06-25T11:57:30Z  (316.9 min)
+
+Station                           Archive    Files  Data interval (UTC)  MS      
+---------------------------------------------------------------------------------
+TART Mauritius (Bel Air)          OK            12  09:13:21-09:24:36    OK      
+TART Madagascar (Antananarivo)    OK            12  09:13:39-09:24:54    OK      
+TART South Africa (Rhodes Univers OK            12  09:13:08-09:24:24    OK      
+
+Actual three-station overlap:
+  start: 2026-06-25T09:13:39.145926Z
+  end:   2026-06-25T09:24:24.128908Z
+  duration: 10.75 min
+  coverage of predicted window: 3.4%
+  coverage of retrieved interval: 100.0%
+
+Three-station valid: YES
+
+Manifest:
+  data/observations/20260625/NORAD_40534/manifest.json

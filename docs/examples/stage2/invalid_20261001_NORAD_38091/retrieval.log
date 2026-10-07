@@ -1,0 +1,16 @@
+===== run 20261007T120237Z =====
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Selected rank 1: BEIDOU-2 G5 (C05) (NORAD 38091, BeiDou), window 1/1, 2026-10-01T00:00:00.000Z -- 2026-10-02T00:00:00.000Z (1440.0 min)
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Signal relevance: OUT_OF_BAND (BeiDou-2 B1I at 1561.098 MHz is outside the TART band)
+2026-10-07T12:02:37Z WARNING tart_gnss.stage2: BEIDOU-2 G5 (C05) is not known to transmit in the TART band; it may not be detectable in Stage 3
+2026-10-07T12:02:37Z WARNING tart_gnss.stage2: The Stage-1 window is clipped by the Stage-1 search interval; the real window may be longer
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Station mauritius: TART id mu-udm, archive 'mu-udm'
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Station madagascar: TART id mg-tana, archive 'mg-tana'
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Station south_africa: TART id za-rhodes, archive 'za-rhodes'
+2026-10-07T12:02:37Z INFO    tart_gnss.stage2: Archive query interval 2026-09-30T23:58:00.000Z -- 2026-10-02T00:02:00.000Z (padding 120 s)
+2026-10-07T12:02:39Z INFO    tart_gnss.stage2.archive: mauritius (mu-udm): 0 archive files between 2026-09-30T23:58:00.000Z and 2026-10-02T00:02:00.000Z (+120 s margin)
+2026-10-07T12:02:39Z INFO    tart_gnss.stage2: mauritius      NOT_FOUND (0 files)
+2026-10-07T12:02:41Z INFO    tart_gnss.stage2.archive: madagascar (mg-tana): 694 archive files between 2026-09-30T23:58:00.000Z and 2026-10-02T00:02:00.000Z (+120 s margin)
+2026-10-07T12:02:41Z INFO    tart_gnss.stage2: madagascar     FOUND (694 files)
+2026-10-07T12:02:43Z INFO    tart_gnss.stage2.archive: south_africa (za-rhodes): 1411 archive files between 2026-09-30T23:58:00.000Z and 2026-10-02T00:02:00.000Z (+120 s margin)
+2026-10-07T12:02:43Z INFO    tart_gnss.stage2: south_africa   FOUND (1411 files)
+2026-10-07T12:02:43Z INFO    tart_gnss.stage2.manifest: Wrote manifest data/observations/20261001/NORAD_38091/manifest.json

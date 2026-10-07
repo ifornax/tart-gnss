@@ -51,8 +51,12 @@ class Station:
         Free-text provenance of the coordinates.
     tart_id
         TART telescope identifier (e.g. ``"mu-udm"``), if known.
-    tart_api
-        TART REST API base URL, if known (used by later pipeline stages).
+    api_url
+        TART REST API base URL, if known. (The configuration key
+        ``tart_api`` is accepted as a legacy alias.)
+    archive_name
+        Prefix of the telescope in the TART visibility archive (used by
+        Stage 2). ``None`` means the archive location is unknown.
 
     Raises
     ------
@@ -67,7 +71,8 @@ class Station:
     altitude_m: float
     source: str
     tart_id: Optional[str] = None
-    tart_api: Optional[str] = None
+    api_url: Optional[str] = None
+    archive_name: Optional[str] = None
 
     def __post_init__(self) -> None:
         validate_coordinates(
@@ -154,7 +159,7 @@ def parse_station_config(data: Mapping[str, object]) -> Dict[str, Station]:
         Mapping with a top-level ``stations`` key whose value maps station
         identifiers to dictionaries with ``name``, ``latitude_deg``,
         ``longitude_deg``, ``altitude_m`` and ``source`` (plus optional
-        ``tart_id`` and ``tart_api``).
+        ``tart_id``, ``api_url`` and ``archive_name``).
 
     Returns
     -------
@@ -179,7 +184,8 @@ def parse_station_config(data: Mapping[str, object]) -> Dict[str, Station]:
             altitude_m=_as_float(station_id, "altitude_m", entry.get("altitude_m")),
             source=str(entry.get("source") or ""),
             tart_id=entry.get("tart_id"),
-            tart_api=entry.get("tart_api"),
+            api_url=entry.get("api_url") or entry.get("tart_api"),
+            archive_name=entry.get("archive_name"),
         )
     return stations
 

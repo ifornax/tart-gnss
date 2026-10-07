@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tart-gnss"
-version = "0.1.0"
-description = "Stage 1 of the TART GNSS localisation pipeline: common GNSS visibility windows for multiple TART stations"
+version = "0.2.0"
+description = "TART GNSS satellite-localisation pipeline: Stage 1 common GNSS visibility windows and Stage 2 TART observation retrieval"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "Nadeem Oozeer", email = "nadeem.oozeer@ru.ac.za" }]
@@ -23,12 +23,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=7"]
+# Stage 2: archive access and native HDF5 inspection
+stage2 = ["h5py>=3.1", "minio>=7"]
+# Stage 2: Measurement-Set conversion (tart2ms) and validation (python-casacore)
+ms = ["tart2ms>=0.9.4", "python-casacore>=3.5"]
+test = ["pytest>=7", "h5py>=3.1"]
 plot = ["matplotlib>=3.5"]
-dev = ["pytest>=7", "matplotlib>=3.5", "build"]
+all = ["h5py>=3.1", "minio>=7", "tart2ms>=0.9.4", "python-casacore>=3.5", "matplotlib>=3.5"]
+dev = ["pytest>=7", "h5py>=3.1", "minio>=7", "matplotlib>=3.5", "build"]
 
 [project.scripts]
 common-gnss = "tart_gnss.cli:main"
+retrieve-tart = "tart_gnss.stage2.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ifornax/tart-gnss"

@@ -2,7 +2,11 @@
 """Generate the figures of the Stage-1 technical report from a run's outputs.
 
 Usage:
-    python scripts/make_report_figures.py results/common_gnss_20261001.json docs/report/figures
+    python scripts/make_report_figures.py results/common_gnss_20261001.json docs/report/figures \
+        [data/observations/20260625/NORAD_40534/manifest.json]
+
+The optional Stage-2 manifest (with its native files kept, --keep-native)
+adds the Stage-2 timing figure.
 
 Requires the optional plotting dependency (``pip install .[plot]``).
 """
@@ -52,7 +56,7 @@ def record_from_window(w: dict) -> TLERecord:
 
 def elevation_panels(doc: dict, out: Path) -> None:
     """Elevation vs time at each station for the top window of each constellation."""
-    stations = [Station(**{k: s[k] for k in Station.__dataclass_fields__}) for s in doc["stations"]]
+    stations = [Station(**{k: s.get(k) for k in Station.__dataclass_fields__}) for s in doc["stations"]]
     start, end = parse(doc["run"]["start_utc"]), parse(doc["run"]["end_utc"])
     thr = doc["run"]["min_elevation_deg"]
     picks = []
@@ -118,7 +122,7 @@ def timeline(doc: dict, out: Path, n: int = 40) -> None:
 
 def skyplot(doc: dict, out: Path) -> None:
     """Polar az/el track of the top-ranked non-geostationary window at each station."""
-    stations = [Station(**{k: s[k] for k in Station.__dataclass_fields__}) for s in doc["stations"]]
+    stations = [Station(**{k: s.get(k) for k in Station.__dataclass_fields__}) for s in doc["stations"]]
     w = next(w for w in doc["windows"] if w["constellation"] in ("GPS", "Galileo", "GLONASS"))
     a, b = parse(w["start_utc"]), parse(w["end_utc"])
     run_start = parse(doc["run"]["start_utc"])
@@ -147,6 +151,50 @@ def skyplot(doc: dict, out: Path) -> None:
     plt.close(fig)
 
 
+def stage2_timing(manifest_path: Path, out: Path) -> None:
+    """Sample timelines of the three stations and nearest-sample offsets (Stage 2)."""
+    import h5py
+
+    from tart_gnss.stage2.synchronise import nearest_separation
+
+    m = json.loads(manifest_path.read_text())
+    ids = list(m["stations"])
+    ts = {}
+    for sid in ids:
+        stamps = []
+        for f in m["stations"][sid]["raw_files"]:
+            if f.get("validation") == "valid" and Path(f["local_path"]).exists():
+                with h5py.File(f["local_path"], "r") as h:
+                    stamps += [datetime.fromisoformat(t.decode()) for t in h["timestamp"][()]]
+        ts[sid] = sorted(stamps)
+    sync = m["synchronisation"]
+    c0, c1 = parse(sync["actual_common_start_utc"]), parse(sync["actual_common_end_utc"])
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.0, 2.6), gridspec_kw={"width_ratios": [1.6, 1]})
+    ax1.axvspan(c0, c1, color=SERIES[0], alpha=0.08, linewidth=0, label="three-station overlap")
+    for i, sid in enumerate(ids):
+        x = [t.replace(tzinfo=None) for t in ts[sid]]
+        ax1.plot(x, np.full(len(x), len(ids) - i), "|", color=SERIES[i], markersize=8, label=sid)
+    ax1.set_yticks(range(1, len(ids) + 1))
+    ax1.set_yticklabels(ids[::-1])
+    ax1.set_ylim(0.4, len(ids) + 0.6)
+    ax1.grid(axis="y", visible=False)
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+    ax1.set_xlabel(f"UTC on {c0:%Y-%m-%d}")
+    ax1.set_title("(a) native samples (~1 s cadence)", loc="left", fontsize=9)
+    from itertools import combinations
+    for k, (a, b) in enumerate(combinations(ids, 2)):
+        sel_a = [t for t in ts[a] if c0 <= t.replace(tzinfo=None) <= c1]
+        dt = nearest_separation(sel_a, ts[b])
+        ax2.hist(dt, bins=np.linspace(-0.05, 0.55, 61), color=SERIES[k], alpha=0.85, label=f"{b} - {a}")
+    ax2.set_xlabel("nearest-sample offset (s)")
+    ax2.set_ylabel("samples")
+    ax2.set_title("(b) cross-station timing", loc="left", fontsize=9)
+    ax2.legend(fontsize=6.5)
+    fig.tight_layout()
+    fig.savefig(out / "stage2_timing.pdf")
+    plt.close(fig)
+
+
 def main() -> int:
     doc = json.loads(Path(sys.argv[1]).read_text())
     out = Path(sys.argv[2])
@@ -154,6 +202,8 @@ def main() -> int:
     elevation_panels(doc, out)
     timeline(doc, out)
     skyplot(doc, out)
+    if len(sys.argv) > 3:
+        stage2_timing(Path(sys.argv[3]), out)
     return 0
 
 

@@ -15,18 +15,25 @@
 # documented by the source. Replace them with surveyed values when available.
 #
 # To add a station, add an entry below; no code change is required.
-# `tart_api` records the TART REST API base URL for Stage-2 data retrieval. It
-# follows the URL pattern https://api.elec.ac.nz/tart/<tart_id> used by tart2ms.
-# At retrieval time (2026-10-07T10:05Z) /api/v1/info answered HTTP 200 only for
-# za-rhodes and ghana; the others were offline (502/timeout), so their API URLs
-# are unverified and should be checked before Stage 2.
+# `api_url` is the TART REST API base URL. It follows the pattern
+# https://api.elec.ac.nz/tart/<tart_id> used by tart2ms. At 2026-10-07T10:05Z
+# /api/v1/info answered HTTP 200 only for za-rhodes and ghana; the others were
+# offline (502/timeout), so those API URLs are unverified. Stage 2 does not
+# need the live API: it reads the archive.
+#
+# `archive_name` is the telescope's prefix in the TART visibility archive
+# (public S3 bucket "tart", s3.us-west-2.amazonaws.com, layout
+# <archive_name>/vis/<year>/<month>/<day>/vis_<timestamp>.hdf, as used by
+# tart_tools.archive_handler). Every archive_name below was verified to exist
+# by listing the bucket on 2026-10-07T12:00Z.
 
 stations:
 
   mauritius:
     name: "TART Mauritius (Bel Air)"
     tart_id: "mu-udm"
-    tart_api: "https://api.elec.ac.nz/tart/mu-udm"
+    api_url: "https://api.elec.ac.nz/tart/mu-udm"
+    archive_name: "mu-udm"
     latitude_deg: -20.2587508
     longitude_deg: 57.7591989
     altitude_m: 20.0
@@ -35,7 +42,8 @@ stations:
   madagascar:
     name: "TART Madagascar (Antananarivo)"
     tart_id: "mg-tana"
-    tart_api: "https://api.elec.ac.nz/tart/mg-tana"
+    api_url: "https://api.elec.ac.nz/tart/mg-tana"
+    archive_name: "mg-tana"
     latitude_deg: -18.8971446
     longitude_deg: 47.5551677
     altitude_m: 1280.0
@@ -44,7 +52,8 @@ stations:
   south_africa:
     name: "TART South Africa (Rhodes University, Makhanda)"
     tart_id: "za-rhodes"
-    tart_api: "https://api.elec.ac.nz/tart/za-rhodes"
+    api_url: "https://api.elec.ac.nz/tart/za-rhodes"
+    archive_name: "za-rhodes"
     latitude_deg: -33.319413
     longitude_deg: 26.507688
     altitude_m: 642.26
@@ -53,7 +62,8 @@ stations:
   south_africa_hammanskraal:
     name: "TART South Africa (Kwalata, Hammanskraal)"
     tart_id: "za-hammanskraal"
-    tart_api: "https://api.elec.ac.nz/tart/za-hammanskraal"
+    api_url: "https://api.elec.ac.nz/tart/za-hammanskraal"
+    archive_name: "za-hammanskraal"
     latitude_deg: -25.38948
     longitude_deg: 28.32231
     altitude_m: 1163.0
@@ -62,7 +72,8 @@ stations:
   namibia:
     name: "TART Namibia (UNAM)"
     tart_id: "na-unam"
-    tart_api: "https://api.elec.ac.nz/tart/na-unam"
+    api_url: "https://api.elec.ac.nz/tart/na-unam"
+    archive_name: "na-unam"
     latitude_deg: -22.612053
     longitude_deg: 17.856784
     altitude_m: 1655.0
@@ -71,7 +82,8 @@ stations:
   zambia:
     name: "TART Zambia (Copperbelt University)"
     tart_id: "zm-cbu"
-    tart_api: "https://api.elec.ac.nz/tart/zm-cbu"
+    api_url: "https://api.elec.ac.nz/tart/zm-cbu"
+    archive_name: "zm-cbu"
     latitude_deg: -12.80527778
     longitude_deg: 28.23722222
     altitude_m: 1270.0
@@ -80,7 +92,8 @@ stations:
   ghana:
     name: "TART Ghana (GRAO)"
     tart_id: "ghana"
-    tart_api: "https://api.elec.ac.nz/tart/ghana"
+    api_url: "https://api.elec.ac.nz/tart/ghana"
+    archive_name: "ghana"
     latitude_deg: 5.749725
     longitude_deg: -0.305557
     altitude_m: 72.0

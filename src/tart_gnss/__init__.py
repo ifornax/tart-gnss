@@ -9,6 +9,6 @@ visibilities, image each station independently, measure the satellite
 direction and infer the satellite position with Bayesian methods.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = ["__version__"]

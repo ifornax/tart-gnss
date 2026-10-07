@@ -1,6 +1,6 @@
 {
   "software": {
-    "tart_gnss": "0.1.0",
+    "tart_gnss": "0.2.0",
     "python": "3.12.3",
     "python_implementation": "CPython",
     "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
@@ -9,7 +9,7 @@
     "numpy": "2.5.3",
     "pyyaml": "6.0.3"
   },
-  "run_timestamp_utc": "2026-10-07T10:11:56.013Z",
+  "run_timestamp_utc": "2026-10-07T12:01:31.070Z",
   "command_line": [
     "common-gnss",
     "--stations",
@@ -20,10 +20,8 @@
     "2026-10-01T00:00:00Z",
     "--end",
     "2026-10-02T00:00:00Z",
-    "--min-elevation",
-    "20",
-    "--step",
-    "10"
+    "--tle-file",
+    "data/tle/gnss_2026-10-07T101156Z.tle"
   ],
   "start_utc": "2026-10-01T00:00:00.000Z",
   "end_utc": "2026-10-02T00:00:00.000Z",
@@ -41,7 +39,8 @@
       "altitude_m": 20.0,
       "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-07T10:03Z",
       "tart_id": "mu-udm",
-      "tart_api": "https://api.elec.ac.nz/tart/mu-udm"
+      "api_url": "https://api.elec.ac.nz/tart/mu-udm",
+      "archive_name": "mu-udm"
     },
     {
       "id": "madagascar",
@@ -51,7 +50,8 @@
       "altitude_m": 1280.0,
       "source": "TART registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-07T10:03Z",
       "tart_id": "mg-tana",
-      "tart_api": "https://api.elec.ac.nz/tart/mg-tana"
+      "api_url": "https://api.elec.ac.nz/tart/mg-tana",
+      "archive_name": "mg-tana"
     },
     {
       "id": "south_africa",
@@ -61,11 +61,12 @@
       "altitude_m": 642.26,
       "source": "TART API https://api.elec.ac.nz/tart/za-rhodes/api/v1/info and TART registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-07T10:03Z",
       "tart_id": "za-rhodes",
-      "tart_api": "https://api.elec.ac.nz/tart/za-rhodes"
+      "api_url": "https://api.elec.ac.nz/tart/za-rhodes",
+      "archive_name": "za-rhodes"
     }
   ],
   "station_file": "/home/nadeem/GitHub/TART/sat_position/src/tart_gnss/config/stations.yaml",
-  "station_file_sha256": "db6457ccb1b43e6863148330471332fad458872b09cee59cada778f862aec8d6",
+  "station_file_sha256": "2c7a016c99148ca07764f79e797a1f2d716f1fec627703687acd7e2054389bf0",
   "min_elevation_deg": 20.0,
   "elevation_definition": "geometric (unrefracted) topocentric elevation above the WGS84 local horizon",
   "sampling_interval_s": 10.0,

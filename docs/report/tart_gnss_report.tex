@@ -7,6 +7,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{longtable}
 \usepackage[detect-all]{siunitx}
 \usepackage{xcolor}
@@ -25,16 +26,16 @@
 \newcommand{\vect}[1]{\mathbf{#1}}
 
 \title{\textbf{Satellite Localisation with the TART Network}\\[4pt]
-\large Stage 1: Common GNSS Visibility Windows for Three TART Stations\\
-\normalsize Technical report --- \code{tart\_gnss} v0.1.0}
+\large Stages 1--2: Common GNSS Visibility and TART Observation Retrieval\\
+\normalsize Technical report --- \code{tart\_gnss} v0.2.0}
 \author{Nadeem Oozeer\\ Rhodes University}
-\date{7 October 2026}
+\date{7 October 2026 (Stage 2 added)}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We describe the first stage of a pipeline that will localise GNSS satellites
+We describe the first two stages of a pipeline that will localise GNSS satellites
 in three dimensions using independent all-sky images from geographically
 separated Transient Array Radio Telescopes (TART). Stage~1 predicts, from
 two-line element sets (TLEs) propagated with SGP4, the time intervals during
@@ -45,11 +46,21 @@ satellite and window the software records topocentric azimuth, elevation and
 range at each station, the satellite position and velocity in the Earth-fixed
 ITRS frame, line-of-sight vectors, and the full TLE provenance, so that later
 stages can retrieve TART data and compare image-based direction measurements
-with orbital predictions. The software is a pip-installable Python package
-with a command-line interface, a test suite of 62 automated tests and
-machine-readable outputs. For the Mauritius--Madagascar--South~Africa triplet
+with orbital predictions. For the Mauritius--Madagascar--South~Africa triplet
 on 2026-10-01 it finds 154 common-visibility windows involving 135 of 145 GNSS
-satellites.
+satellites. Stage~2 takes one such window and queries the public TART
+visibility archive. It retrieves the native HDF5 files with SHA-256
+provenance, validates their timestamps, frequency, station identity and
+calibration metadata, and measures the real three-station overlap, coverage
+and cross-station timing. It then converts each station independently to a
+Measurement Set with \code{tart2ms}. A three-station result is declared
+valid only when all three stations hold real, validated data over a common
+interval. On real data from 2026-06-25 (GPS BIIF-9), Stage~2 produced three
+validated Measurement Sets with a 10.75-minute overlap. It also found that
+the station dumps are offset by 0.2--0.5~s and that 9 of the 24 Rhodes
+antennas had zero gains. The software is a pip-installable Python package
+with two command-line tools, 127 automated tests and machine-readable
+outputs.
 \end{abstract}
 
 \tableofcontents
@@ -77,10 +88,14 @@ The full project has six steps:
 \item infer the satellite position $(x,y,z)$ with Bayesian inference;
 \item compare the inferred position with the TLE-predicted orbital position.
 \end{enumerate}
-This report covers \emph{only} step~1. Data retrieval, \code{tart2ms}
-conversion, imaging, source extraction and inference are deliberately not
-implemented, but the Stage-1 outputs are designed to drive them
-(Section~\ref{sec:future}).
+Part~I of this report describes step~1 (\code{common-gnss}) and Part~II
+step~2 (\code{retrieve-tart}). Imaging, source extraction and inference are
+deliberately not implemented yet, but the outputs of both stages are
+designed to drive them (Section~\ref{sec:future}).
+
+%======================================================================
+\part{Stage 1: common GNSS visibility windows}
+%======================================================================
 
 %======================================================================
 \section{Problem definition}
@@ -367,11 +382,11 @@ failed propagations; output paths.
 \end{description}
 
 %======================================================================
-\section{Verification}
+\section{Stage-1 verification}
 \label{sec:verification}
 %======================================================================
 
-The test suite (\code{pytest}, 62 tests, $<\SI{1}{\second}$) covers:
+The Stage-1 tests (\code{pytest}, 62 tests, $<\SI{1}{\second}$) cover:
 \begin{itemize}
 \item \textbf{Stations:} latitude \ang{100}, longitude \ang{300}, implausible
 heights, \code{null} or non-numeric coordinates and missing provenance are
@@ -407,7 +422,7 @@ window), and the ITRS radii are \SI{42146}{\kilo\metre} for GEO and
 \SI{29594}{\kilo\metre} for Galileo, as expected.
 
 %======================================================================
-\section{Results: Mauritius--Madagascar--South Africa, 2026-10-01}
+\section{Stage-1 results: Mauritius--Madagascar--South Africa, 2026-10-01}
 %======================================================================
 
 The acceptance run covered 2026-10-01T00:00Z--2026-10-02T00:00Z with
@@ -516,18 +531,390 @@ usable. Until signal-level filtering is added, Stage~2 should be driven by
 \code{--constellations GPS Galileo} or by BeiDou-3 windows.
 
 %======================================================================
-\section{Interface to later stages}
-\label{sec:future}
+%======================================================================
+\part{Stage 2: TART observation retrieval and Measurement-Set preparation}
 %======================================================================
 
-\paragraph{Stage 2 (data retrieval).} The CSV rank identifies a window; the
-JSON gives its exact UTC limits and, for each station, the TART identifier
-and API URL (\code{https://api.elec.ac.nz/tart/<id>}, the pattern used by
-\code{tart2ms}). A future \code{retrieve\_tart.py --visibility-results
-common\_gnss.csv --rank 1} can query the three archives and reuse the
-\code{tart2ms} archive and HDF5-to-Measurement-Set tooling rather than
-reimplementing it. At retrieval time only the \code{za-rhodes} and
-\code{ghana} APIs answered; the others must be checked before Stage~2.
+\section{Stage-2 objective}
+\label{sec:stage2}
+
+Stage~2 takes one Stage-1 window and establishes whether the three TART
+stations actually recorded usable visibility data during it. It then
+retrieves those data, validates them, measures the real three-station
+overlap, and converts each station independently into a CASA Measurement
+Set (MS) for Stage-3 imaging. Three conditions are kept strictly separate
+throughout:
+\begin{description}
+\item[geometric visibility] the satellite is above $E_{\min}$ at every
+station (Stage~1, from TLEs);
+\item[data availability] every station recorded real visibilities covering
+a common, non-zero interval (Stage~2, from the native files);
+\item[radio detection] the satellite appears in each image (Stage~3).
+\end{description}
+None of these is inferred from another. In particular, a result is labelled
+\emph{three-station valid} only when all three stations hold real, validated
+visibility data with a common interval of non-zero length, and, when
+conversion was requested, each has a validated MS. Imaging, source
+detection, triangulation and inference are not part of Stage~2.
+
+\section{The TART visibility archive}
+
+\subsection{Location and layout}
+
+The TART project archives native visibility files in a public, read-only S3
+bucket. The maintained client \code{tart\_tools.archive\_handler} \cite{tarttools} (used by
+\code{tart2ms --archive-search}) defines its location as bucket \code{tart}
+at \code{s3.us-west-2.amazonaws.com}, with objects
+\begin{center}
+\code{<archive\_name>/vis/<year>/<month>/<day>/vis\_<YYYY-MM-DD\_HH\_MM\_SS.ffffff>.hdf},
+\end{center}
+where month and day are not zero-padded. \code{tart\_gnss} imports this
+location from \code{tart\_tools} when it is installed and lists the bucket
+with the same \code{minio} client. The archive name of every configured
+station was verified by listing the bucket on 2026-10-07. It equals the
+TART identifier (\code{mu-udm}, \code{mg-tana}, \code{za-rhodes}, \dots)
+and is stored as \code{archive\_name} in the station configuration, next to
+\code{api\_url}. No archive name or URL was guessed.
+
+\subsection{Why the archive helper is not called directly}
+
+\code{tart\_tools.handle\_archive\_request} selects objects by their S3
+\code{last\_modified} time. That is the \emph{upload} time, which lags the
+observation by minutes; for example, Rhodes data from 00:00:36 were uploaded
+at 00:03:24. The helper also renames files to \code{obs\_00000.hdf}, which
+discards the archive identifiers needed for provenance. Stage~2 therefore
+reuses the archive location and client library but selects files by the
+observation time in the filename, and keeps the original names.
+
+\subsection{Native file structure}
+
+Inspection of archive files from \code{za-rhodes}, \code{mg-tana} and
+\code{mu-udm} shows a consistent HDF5 layout, which the Stage-2 reader
+relies on and validates:
+\begin{itemize}
+\item \code{config}: a JSON string with \code{name}, \code{frequency}
+(\SI{1575.42}{\mega\hertz}), \code{bandwidth} (\SI{2.5}{\mega\hertz}),
+\code{lat}/\code{lon}/\code{alt} and \code{num\_antenna} (24);
+\item \code{timestamp}: about 60 ISO-8601 UTC timestamps per file, with a
+median spacing of \SI{1.025}{\second};
+\item \code{vis}: complex visibilities of shape $60\times276$, i.e.\
+$24\cdot23/2$ baselines; \code{baselines} and \code{antenna\_positions};
+\item \code{gains} and \code{phases}: the per-antenna calibration in use
+when the data were recorded; \code{phase\_elaz}: the phase centre.
+\end{itemize}
+The filename time equals the time of the file's \emph{last} sample, and
+consecutive files abut: the next file starts about \SI{1}{\second} later.
+A file named $T$ therefore holds data from about $T-\SI{61}{\second}$ to
+$T$. Discovery keeps files with $t_{q,\rm start}\le T\le t_{q,\rm end}+m$,
+where the margin is $m=\SI{120}{\second}$. Sample times are never taken from
+filenames: each retained file is read, and files whose real samples fall
+outside the query interval are recorded but not used.
+
+\section{Method}
+
+\subsection{Selection and query interval}
+
+The Stage-1 JSON is loaded, and exactly one window is chosen by
+\code{--rank}, or by \code{--norad-id} with \code{--window-index} when the
+satellite has several windows. An ambiguous or inconsistent selection is an
+error. The window's geometry, TLE and provenance are copied verbatim into
+\code{stage1\_window.json} and the manifest, together with the SHA-256 of
+the Stage-1 file; Stage-1 geometry is never recomputed. The station
+coordinates in the configuration must equal those used in Stage~1, or the
+run stops. The archive query interval is
+\begin{equation}
+t_{q,\rm start}=t_{\rm pred,start}-P,\qquad t_{q,\rm end}=t_{\rm pred,end}+P,
+\end{equation}
+with $P=\SI{120}{\second}$ by default. Long windows can be sampled first
+with \code{--max-duration}, which keeps only a central portion of the stated
+length, centred on the window midpoint, where the elevations are highest.
+
+Each window also receives a \code{signal\_relevance} label. The rules use
+only constellation-level facts: \code{GPS\_L1}, \code{GALILEO\_E1},
+\code{BEIDOU\_B1C} for BeiDou-3 MEO/IGSO satellites, \code{OUT\_OF\_BAND}
+for BeiDou-2 (B1I, \SI{1561.098}{\mega\hertz}), and \code{UNKNOWN}
+otherwise (BeiDou-3 GEO, experimental BeiDou-3S, GLONASS). A satellite that
+is not in band triggers a warning but is still processed.
+
+\subsection{Retrieval and integrity}
+
+Every file is downloaded under its original name to a temporary
+\code{.part} file. Its size and, when the S3 ETag is a plain MD5, its MD5
+are checked against the archive listing before it is moved into place. A
+sidecar \code{<file>.prov.json} records the remote identifier, URL, size,
+ETag, retrieval time and SHA-256. An existing local file is reused only if
+its sidecar names the same archive object and its SHA-256 still matches.
+Any other existing file stops the run, so nothing is silently overwritten.
+
+\subsection{Native validation}
+
+Each file is opened and checked. Fatal problems exclude the file: the file
+is unreadable; timestamps are missing, timezone-naive or not strictly
+increasing; the shape of \code{vis} disagrees with the timestamps or
+baselines; the visibilities are all zero or non-finite; or the recorded
+position is more than \ang{0.01} from the configured station, i.e.\ the data
+come from another site. Minor anomalies are recorded as warnings:
+non-finite values, an inconsistent antenna count, or missing metadata.
+The observing frequency and bandwidth are taken from the file itself. The
+data count as in band when \SI{1575.42}{\mega\hertz} lies inside the
+recorded band, $|f-\SI{1575.42}{\mega\hertz}|\le B/2$. This tolerance comes
+from the instrument metadata and was not chosen independently. Antennas
+with zero gain are listed, and a fingerprint of the gain and phase
+solutions shows when calibration changes during a window.
+
+\subsection{Temporal coverage and synchronisation}
+
+For each station, all samples are merged into one timeline. The tool reports
+the first and last timestamps, the number of samples and the median cadence
+$\delta$. A step longer than $3\delta$ is reported as a gap
+(\code{--gap-factor}) and splits the timeline into continuous segments
+$S_i$. The actual common interval is
+\begin{equation}
+t_{\rm common,start}=\max_i t_{i,\rm first},\qquad
+t_{\rm common,end}=\min_i t_{i,\rm last},
+\end{equation}
+and it is valid only if $t_{\rm common,end}>t_{\rm common,start}$. Coverage
+of the predicted window $W$ is
+\begin{equation}
+f_i=\frac{T(S_i\cap W)}{T(W)},\qquad
+f_{\rm 3\text{-}station}=\frac{T(S_1\cap S_2\cap S_3\cap W)}{T(W)},
+\end{equation}
+so gaps never count as covered. The same fractions are also reported for
+the retrieved part of $W$ when \code{--max-duration} is used. The software
+does not assume that the stations' samples are simultaneous. For each
+station pair it gives the median and maximum separation between each sample
+and the other station's nearest sample, within the common interval.
+
+\subsection{Measurement-Set conversion}
+
+Each station is converted on its own with \code{tart2ms} \cite{tart2ms} (the maintained
+TART converter), called with an argument list rather than a shell string:
+\begin{center}
+\code{tart2ms --hdf <files> --ms <station>.ms --skip-online-source-catalog
+--skip-celestial-source-catalog}
+\end{center}
+The catalogue options are skipped because Stage~2 needs no model data and
+should not depend on network access during conversion. Stations are never
+concatenated into one interferometer, because they are independent arrays
+that will give independent lines of sight. The output must not already
+exist. A non-zero exit status, or an MS that is missing, is an error, and
+the \code{tart2ms} output is saved to \code{tart2ms.log}. Each MS is then
+opened with python-casacore and must have rows, \code{TIME}, \code{UVW} and
+\code{DATA} columns, and \code{ANTENNA} and \code{SPECTRAL\_WINDOW} tables,
+with the antenna count of the native data. The manifest records the number
+of rows, times, antennas and channels, the frequency, the first and last
+times, the flagged fraction and the longest baseline.
+
+\paragraph{Calibration.} No calibration algorithm is implemented. By
+default \code{tart2ms} applies the \code{gains}/\code{phases} stored in each
+native file and flags baselines to antennas whose gain is zero or
+non-finite. \code{--uncalibrated} stores the raw visibilities instead. The
+manifest records \code{calibration\_status} and \code{calibration\_source}.
+It never says the data are calibrated beyond ``solutions applied by
+\code{tart2ms} (unverified)''.
+
+\subsection{Manifest and outputs}
+
+A run writes \code{<output>/<YYYYMMDD>/NORAD\_<id>/} containing
+\code{stage1\_window.json}, \code{manifest.json}, \code{retrieval.log} and,
+for each station, \code{raw/} (native files and \code{.prov.json} sidecars)
+and \code{ms/<station>.ms} with \code{tart2ms.log}. The manifest is the
+only input Stage~3 needs. It has the sections \code{satellite}, including
+\code{signal\_relevance}, the TLE epoch, source and lines; \code{prediction},
+covering the predicted and query intervals, padding, the Stage-1 file with
+its SHA-256, the ITRS position and lines of sight; \code{stations}, one
+entry per station with coordinates, archive status and query bounds, raw
+files with hashes, native metadata and coverage, calibration status, the MS
+metadata and the Stage-1 predicted az/el; \code{synchronisation};
+\code{software}; and \code{provenance}. It is checked against the required
+fields before it is written. A previous manifest is renamed
+(\code{manifest\_<run tag>.json}), never overwritten. The exit status is 0
+for a valid three-station dataset, 3 for a completed run that is not
+three-station valid, 2 for invalid input and 1 for failures.
+\code{--dry-run} resolves the stations, queries the archives and reports
+what would be downloaded without writing anything.
+
+\subsection{Software}
+
+\begin{table}[h]
+\centering
+\caption{Stage-2 modules (\code{tart\_gnss.stage2}).}
+\label{tab:modules2}
+\small
+\begin{tabular}{l>{\raggedright\arraybackslash}p{10.6cm}}
+\toprule
+Module & Responsibility\\
+\midrule
+\code{selection.py} & load the Stage-1 JSON; select one window; query interval; signal relevance\\
+\code{archive.py} & archive abstraction (\code{find\_observations}); S3 backend reusing \code{tart\_tools}' archive location\\
+\code{download.py} & retrieval; size, MD5/ETag and SHA-256 checks; provenance sidecars; verified reuse\\
+\code{native.py} & HDF5 inspection and validation; per-station timeline, cadence and gaps\\
+\code{synchronise.py} & common interval; coverage fractions; cross-station timing\\
+\code{measurement\_set.py} & \code{tart2ms} wrapper; MS inspection and validation\\
+\code{manifest.py} & manifest assembly, schema check and safe writing\\
+\code{cli.py} & \code{retrieve-tart}: orchestration, logging, terminal summary\\
+\code{errors.py} & \code{Stage1SelectionError}, \code{ArchiveUnavailableError}, \code{ObservationNotFoundError}, \code{DownloadError}, \code{ObservationValidationError}, \code{NoCommonTimeError}, \code{MeasurementSetConversionError}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Stage-2 dependencies are optional extras: \code{pip install
+".[stage2]"} installs \code{h5py} and \code{minio}, and \code{".[ms]"}
+installs \code{tart2ms} and python-casacore.
+
+\section{Stage-2 verification}
+
+There are 65 Stage-2 tests. They use a mocked archive and synthetic HDF5
+files that follow the real layout (random visibilities, not real data), so
+they need no live service:
+\begin{itemize}
+\item selection by valid and invalid rank, a single-window NORAD ID, an
+ambiguous NORAD ID, \code{--window-index}, inconsistent rank/NORAD, and
+CSV$\to$JSON resolution; signal-relevance rules;
+\item padding arithmetic, and the \code{--max-duration} interval centred on
+the window midpoint;
+\item filename-time parsing; day prefixes across midnight; the file margin;
+explicit errors for a missing archive name or an unreachable archive;
+\item deterministic SHA-256; provenance sidecars; verified reuse without a
+second download; detection of tampered files, unknown files and corrupted
+transfers (ETag mismatch);
+\item native validation: a valid file, an out-of-band frequency, a wrong
+station position, non-monotonic timestamps, missing or all-zero
+visibilities, a non-HDF5 file; gap detection across files;
+\item the specified temporal intersection (A 10:00--10:20, B 10:03--10:18,
+C 10:01--10:25 $\Rightarrow$ 10:03--10:18); no intersection, including
+intervals that only touch; coverage fractions; nearest-sample offsets;
+\item the \code{tart2ms} wrapper with a mocked runner: success, a
+\code{--uncalibrated} run, a non-zero exit, success without an output, an
+existing output, an invalid MS and an antenna-count mismatch. A further test
+runs the \emph{real} \code{tart2ms} on a synthetic file and is skipped when
+\code{tart2ms} is not installed;
+\item full CLI runs: a valid three-station run; a missing station, giving
+\code{three\_station\_valid=false} with nothing downloaded; partial mode,
+which stays invalid; no common time; a query without download; a dry run,
+which writes nothing; a conversion failure at one station; a re-run with
+verified reuse and the old manifest kept; usage errors; and manifest
+validation, including the station count.
+\end{itemize}
+With the 62 Stage-1 tests, the suite has 127 tests and runs in about
+\SI{6}{\second}.
+
+\section{Stage-2 results}
+
+\subsection{Acceptance run on 2026-10-01 (rank 1)}
+
+The command in the specification,
+\code{retrieve-tart --visibility-results results/common\_gnss\_20261001.json
+--rank 1 --padding 120 --download --convert-ms}, selects BeiDou-2~G5. This
+satellite is labelled \code{OUT\_OF\_BAND} (B1I) and its window is clipped
+by the Stage-1 interval. The archive holds 694 Madagascar files and 1411
+Rhodes files for the query interval but \emph{none} from Mauritius: the
+\code{mu-udm} archive ends on 2026-06-26, in agreement with the registry's
+\code{lastVisibilityRecordedAt}. The run therefore reports
+\code{three\_station\_valid=false}, gives the reasons, downloads nothing
+(\code{--allow-partial} was not set) and exits with status~3. This is the
+intended explicit failure; the manifest is in
+\code{docs/examples/stage2/invalid\_20261001\_NORAD\_38091/}.
+
+\subsection{Real three-station dataset on 2026-06-25}
+
+A listing of the archive shows full 24-hour coverage at all three stations
+on 2026-06-25. Stage~1 was run for that day with \code{--constellations GPS
+Galileo}, giving 70 windows. Only current TLEs were available, so the
+elements were propagated about 103 days backwards; the software warned
+accordingly. The predicted window times may therefore be in error by up to
+a minute or so, which the \SI{120}{\second} padding absorbs. Precise
+Stage-6 comparisons will need contemporaneous TLEs. Stage~2 was then run on
+rank~8, GPS BIIF-9 (PRN~26, \code{GPS\_L1}), with predicted window
+06:40:34--11:57:30, limited to a \SI{600}{\second} subsection with
+\code{--max-duration 600} as the specification recommends for a first
+experiment:
+\begin{center}
+\code{retrieve-tart --visibility-results results/common\_gnss\_20260625.json
+--rank 8 --max-duration 600 --download --convert-ms --keep-native}
+\end{center}
+The results are in Table~\ref{tab:stage2} and Fig.~\ref{fig:stage2}. In
+summary:
+\begin{itemize}
+\item All three stations returned 12 archive files. Of each 12, 11 had
+samples inside the query interval and were used; the 12th was recorded but
+not used.
+\item Every native file was valid, with 24 antennas, 276 baselines and
+\SI{1575.42}{\mega\hertz} in a \SI{2.5}{\mega\hertz} band. The median
+cadence was \SI{1.025}{\second} with no gaps.
+\item The actual three-station overlap was 09:13:39.146--09:24:24.129
+(\SI{645.0}{\second}), which covers 100\% of the retrieved interval and
+3.4\% of the full predicted window.
+\item The stations do \emph{not} sample simultaneously. The nearest-sample
+offsets are steady at about \SI{0.21}{\second} (Madagascar--Mauritius),
+\SI{0.25}{\second} (South Africa--Madagascar) and \SI{0.46}{\second}
+(South Africa--Mauritius), with a maximum of \SI{0.475}{\second}. Stage-3
+epoch matching must handle this; a GNSS satellite at
+$\sim$\SI{3}{\kilo\metre\per\second} moves about \SI{1.4}{\kilo\metre} in
+\SI{0.46}{\second}.
+\item Each station produced an independent, validated MS with 182\,160 rows
+($660\times276$), 24 antennas and one \SI{1575.42}{\mega\hertz} channel.
+\item Data-quality findings: on that day 9 of the 24 Rhodes antennas (3, 4,
+5, 7, 10, 14, 16, 18, 19) had zero gains, so \code{tart2ms} flagged 62\% of
+the Rhodes visibilities. The Mauritius and Madagascar gain/phase solutions
+each changed once during the 10~minutes. Both findings are recorded in the
+manifest and are directly relevant to Stage-3 imaging quality.
+\end{itemize}
+The run took about \SI{55}{\second}, including downloads of 36 files
+(\SI{5}{\mega\byte}) and three conversions. Its manifest, Stage-1 window,
+log and terminal output are in
+\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}.
+
+\begin{table}[h]
+\centering
+\caption{Stage-2 real-data run: GPS BIIF-9, 2026-06-25, 10-min subsection.}
+\label{tab:stage2}
+\small
+\begin{tabular}{lccc}
+\toprule
+ & \code{mauritius} & \code{madagascar} & \code{south\_africa}\\
+\midrule
+Archive files found / used & 12 / 11 & 12 / 11 & 12 / 11\\
+First sample (UTC) & 09:13:21.511 & 09:13:39.146 & 09:13:08.653\\
+Last sample (UTC)  & 09:24:36.993 & 09:24:54.620 & 09:24:24.129\\
+Samples / median cadence & 660 / \SI{1.0247}{\second} & 660 / \SI{1.0247}{\second} & 660 / \SI{1.0246}{\second}\\
+Gaps & 0 & 0 & 0\\
+Frequency / bandwidth & \multicolumn{3}{c}{\SI{1575.42}{\mega\hertz} / \SI{2.5}{\mega\hertz} (all files)}\\
+Zero-gain antennas & none & none & 9\\
+Gain/phase solution sets & 2 & 2 & 1\\
+MS rows / antennas & 182\,160 / 24 & 182\,160 / 24 & 182\,160 / 24\\
+MS flagged fraction & 0.00 & 0.00 & 0.62\\
+Predicted mid-window elevation & \ang{43.9} & \ang{47.6} & \ang{69.1}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/stage2_timing.pdf}
+\caption{Stage-2 real data, GPS BIIF-9 on 2026-06-25. (a)~Native samples
+at each station (ticks merge at this scale) and the actual three-station
+overlap (shaded). (b)~Offsets between each sample and the other station's
+nearest sample, for each station pair: the dumps are offset by
+0.2--0.5~s.}
+\label{fig:stage2}
+\end{figure}
+
+%======================================================================
+\part{Interfaces, limitations and reproducibility}
+%======================================================================
+
+\section{Interface to later stages}
+\label{sec:future}
+
+\paragraph{Stage 3 (imaging).} Stage~3 will need only the Stage-2 manifest,
+\code{image-tart --manifest data/observations/20260625/NORAD\_40534/manifest.json}.
+For each station the manifest gives the MS path, the actual sample times,
+the calibration status and flagged fraction, and the Stage-1 predicted
+azimuth and elevation. The synchronisation section gives the common
+interval and the cross-station timing statistics needed to choose matching
+epochs. A dataset with \code{three\_station\_valid=false} must not be used
+for three-station localisation.
 
 \paragraph{Stage 5 (inference).} For a candidate satellite position
 $\vect r_s$ in ITRS, the predicted direction at station $i$ is
@@ -563,7 +950,18 @@ and antenna patterns are not modelled.
 \item Station coordinates are as published by TART, with undocumented
 accuracy and height datum.
 \item Excursions shorter than the coarse step are not detected.
-\item The satellite list is not filtered by transmitted signal.
+\item Stage~1 does not filter satellites by transmitted signal. Stage~2
+labels each window with \code{signal\_relevance}, but does not check
+whether individual satellites are healthy.
+\item Stage~2 relies on the archive's filename convention (verified on real
+files) only to \emph{find} candidate files. All times used come from the
+file contents.
+\item Gain and phase solutions are applied as recorded and are not
+verified. Station dumps are not simultaneous ($\lesssim$\SI{0.5}{\second}
+offsets), and no epoch-matching rule has been fixed yet.
+\item Live TART APIs were not used. Archive availability depends on each
+station uploading its data; for example, Mauritius has no data after
+2026-06-26.
 \end{itemize}
 
 %======================================================================
@@ -574,9 +972,14 @@ A run is fully reproducible from its metadata file: the archived TLE file
 (verified by SHA-256), the station file (also hashed), the software versions
 and the full command line. Re-running with
 \code{--tle-file data/tle/gnss\_2026-10-07T101156Z.tle} reproduces the
-results in this report. Historical catalogues are never overwritten.
+Stage-1 results in this report. Historical catalogues are never
+overwritten. A Stage-2 manifest records the SHA-256 of the Stage-1 file and
+of the station file, the archive identifiers, URLs and SHA-256 of every
+native file, the exact \code{tart2ms} command and the software versions
+(including \code{tart2ms}, \code{tart-tools}, python-casacore, \code{h5py}
+and \code{minio}), so the dataset can be re-retrieved and checked.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem{tart} T.~Molteno et al., \emph{TART: The Transient Array Radio
 Telescope}, \url{https://tart.elec.ac.nz}; source code
 \url{https://github.com/tart-telescope}.
@@ -589,6 +992,11 @@ Code Library ascl:1907.024 (2019), \url{https://rhodesmill.org/skyfield/}.
 satellite propagation model}, \url{https://pypi.org/project/sgp4/}.
 \bibitem{vallado2006} D.~A.~Vallado, P.~Crawford, R.~Hujsak and T.~S.~Kelso,
 ``Revisiting Spacetrack Report \#3,'' AIAA 2006-6753 (2006).
+\bibitem{tart2ms} T.~Molteno, B.~Hugo et al., \emph{tart2ms: convert TART
+observations to Measurement Sets}, \url{https://github.com/tart-telescope/tart2ms}
+(v0.9.4).
+\bibitem{tarttools} T.~Molteno et al., \emph{tart\_tools} (archive client
+\code{tart\_tools.archive\_handler}), \url{https://pypi.org/project/tart-tools/} (v1.4.6).
 \bibitem{gnssbook} P.~J.~G.~Teunissen and O.~Montenbruck (eds.),
 \emph{Springer Handbook of Global Navigation Satellite Systems}, Springer (2017).
 \end{thebibliography}
