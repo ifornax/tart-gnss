@@ -13,3 +13,5 @@ docs/report/*.fls
 docs/report/*.fdb_latexmk
 docs/report/*.synctex.gz
 data/observations/
+# tart2ms writes its own log into the working directory
+tart2ms.*.log

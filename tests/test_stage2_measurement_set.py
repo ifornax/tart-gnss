@@ -35,7 +35,8 @@ def test_successful_conversion(tmp_path):
                             expected_antennas=24, log_path=tmp_path / "log.txt", runner=runner,
                             inspector=lambda path, python=None: dict(GOOD_SUMMARY, path=str(path)))
     args = runner.calls[0]
-    assert args[:4] == ["tart2ms", "--hdf", "a.hdf", "b.hdf"] and "--uncalibrated" not in args
+    assert args[:2] == ["tart2ms", "--hdf"] and "--uncalibrated" not in args
+    assert [Path(a).name for a in args[2:4]] == ["a.hdf", "b.hdf"] and all(Path(a).is_absolute() for a in args[2:4])
     assert "--skip-online-source-catalog" in args
     assert meta["valid"] and meta["number_of_rows"] == 16560 and meta["first_time_utc"].endswith("Z")
     assert meta["calibration_applied_by_tart2ms"] is True
@@ -94,8 +95,12 @@ def _tart2ms_available():
 def test_real_tart2ms_conversion(tmp_path):
     """End-to-end conversion of a synthetic native file with the real tart2ms."""
     src = make_tart_hdf5(tmp_path / "vis.hdf", "alpha", utc(2026, 6, 25, 10, 1), n=5)
-    meta = ms.convert_to_ms([str(src)], tmp_path / "alpha.ms", ALPHA, expected_antennas=24,
-                            log_path=tmp_path / "tart2ms.log")
+    out_dir = tmp_path / "ms"
+    out_dir.mkdir()
+    meta = ms.convert_to_ms([str(src)], out_dir / "alpha.ms", ALPHA, expected_antennas=24,
+                            log_path=out_dir / "conversion.log")
+    assert list(out_dir.glob("tart2ms.*.log")), "tart2ms' own log is written next to the MS"
+    assert not list(Path.cwd().glob("tart2ms.*.log")), "nothing is written to the working directory"
     assert meta["number_of_rows"] == 5 * 276
     assert meta["number_of_antennas"] == 24
     assert meta["frequency_hz"] == [1575.42e6]

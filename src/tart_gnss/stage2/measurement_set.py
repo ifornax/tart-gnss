@@ -175,7 +175,8 @@ def convert_to_ms(
     expected_antennas
         Antenna count the MS must contain, from the native files.
     log_path
-        If given, tart2ms stdout and stderr are written here.
+        If given, tart2ms stdout and stderr are written here. tart2ms also
+        writes its own ``tart2ms.<time>.log`` next to the MS.
     runner, inspector
         Injectable for testing.
 
@@ -189,20 +190,23 @@ def convert_to_ms(
     MeasurementSetConversionError
         If the output exists, tart2ms fails, or the MS fails validation.
     """
-    output_ms = Path(output_ms)
+    output_ms = Path(output_ms).resolve()
     if not input_files:
         raise MeasurementSetConversionError(f"No input files for station '{station.id}'")
     if output_ms.exists():
         raise MeasurementSetConversionError(f"{output_ms} already exists; refusing to overwrite it")
     output_ms.parent.mkdir(parents=True, exist_ok=True)
     cmd_prefix = list(tart2ms_command) if tart2ms_command else find_tart2ms()
-    args = [*cmd_prefix, "--hdf", *[str(f) for f in input_files], "--ms", str(output_ms), *TART2MS_FIXED_ARGS]
+    args = [*cmd_prefix, "--hdf", *[str(Path(f).resolve()) for f in input_files], "--ms", str(output_ms),
+            *TART2MS_FIXED_ARGS]
     if not apply_calibration:
         args.append("--uncalibrated")
     logger.info("tart2ms for %s: %d files -> %s", station.id, len(input_files), output_ms)
     started = datetime.now(timezone.utc)
     try:
-        proc = runner(args, capture_output=True, text=True, check=False)
+        # tart2ms writes its own tart2ms.<time>.log into the working directory:
+        # run it next to the MS so that log stays with the station's data.
+        proc = runner(args, capture_output=True, text=True, check=False, cwd=str(output_ms.parent))
     except OSError as exc:
         raise MeasurementSetConversionError(f"Cannot run tart2ms: {exc}") from exc
     if log_path is not None:

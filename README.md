@@ -162,7 +162,7 @@ data/observations/20260625/NORAD_40534/     # _w<k> is appended if the satellite
 ├── stage1_window.json        # the selected Stage-1 window, unchanged
 ├── manifest.json             # Stage-2 → Stage-3 interface
 ├── retrieval.log
-├── mauritius/raw/vis_*.hdf (+ .prov.json)   mauritius/ms/mauritius.ms (+ tart2ms.log)
+├── mauritius/raw/vis_*.hdf (+ .prov.json)   mauritius/ms/mauritius.ms (+ tart2ms logs)
 ├── madagascar/raw/…                          madagascar/ms/madagascar.ms
 └── south_africa/raw/…                        south_africa/ms/south_africa.ms
 ```
