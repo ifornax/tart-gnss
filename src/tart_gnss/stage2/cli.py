@@ -1,4 +1,4 @@
-"""``retrieve-tart``: Stage-2 command-line interface and orchestration.
+"""``tart-retrieve``: Stage-2 command-line interface and orchestration.
 
 Exit status:
 
@@ -85,9 +85,9 @@ class StationRun:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Create the ``retrieve-tart`` argument parser."""
+    """Create the ``tart-retrieve`` argument parser."""
     p = argparse.ArgumentParser(
-        prog="retrieve-tart",
+        prog="tart-retrieve",
         description="Stage 2: retrieve, validate and synchronise the TART observations of a "
                     "Stage-1 common GNSS visibility window, and convert each station to a Measurement Set.",
     )
@@ -568,7 +568,7 @@ def run(args: argparse.Namespace, argv: Sequence[str],
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    """Console-script entry point for ``retrieve-tart``."""
+    """Console-script entry point for ``tart-retrieve``."""
     argv = list(sys.argv[1:] if argv is None else argv)
     args = build_parser().parse_args(argv)
     if args.rank is None and args.norad_id is None:
@@ -588,7 +588,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     collector.setFormatter(fmt)
     root.addHandler(collector)
     try:
-        return run(args, ["retrieve-tart", *argv], log_handler=collector)
+        return run(args, ["tart-retrieve", *argv], log_handler=collector)
     except Stage1SelectionError as exc:
         logger.error("%s", exc)
         print(f"error: {exc}", file=sys.stderr)

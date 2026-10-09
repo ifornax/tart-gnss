@@ -96,7 +96,7 @@ The full project has six steps:
 Part~I of this report describes the TART station registry, which supplies
 station metadata to every step (\code{tart-stations-update},
 \code{tart-stations-list}). Part~II describes step~1 (\code{common-gnss})
-and Part~III step~2 (\code{retrieve-tart}). Imaging, source extraction and inference are
+and Part~III step~2 (\code{tart-retrieve}). Imaging, source extraction and inference are
 deliberately not implemented yet, but the outputs of both stages are
 designed to drive them (Section~\ref{sec:future}).
 
@@ -1049,7 +1049,7 @@ Module & Responsibility\\
 \code{synchronise.py} & common interval; coverage fractions; cross-station timing\\
 \code{measurement\_set.py} & \code{tart2ms} wrapper; MS inspection and validation\\
 \code{manifest.py} & manifest assembly, schema check and safe writing\\
-\code{cli.py} & \code{retrieve-tart}: orchestration, logging, terminal summary\\
+\code{cli.py} & \code{tart-retrieve}: orchestration, logging, terminal summary\\
 \code{errors.py} & \code{Stage1SelectionError}, \code{ArchiveUnavailableError}, \code{ObservationNotFoundError}, \code{DownloadError}, \code{ObservationValidationError}, \code{NoCommonTimeError}, \code{MeasurementSetConversionError}\\
 \bottomrule
 \end{tabular}
@@ -1104,7 +1104,7 @@ skipped when \code{tart2ms} is not installed) and runs in about
 \subsection{Acceptance run on 2026-10-01 (rank 1)}
 
 The command in the specification,
-\code{retrieve-tart --visibility-results results/common\_gnss\_20261001.json
+\code{tart-retrieve --visibility-results results/common\_gnss\_20261001.json
 --rank 1 --padding 120 --download --convert-ms}, selects BeiDou-2~G5. This
 satellite is labelled \code{OUT\_OF\_BAND} (B1I) and its window is clipped
 by the Stage-1 interval. The archive holds 694 Madagascar files and 1411
@@ -1130,7 +1130,7 @@ rank~8, GPS BIIF-9 (PRN~26, \code{GPS\_L1}), with predicted window
 \code{--max-duration 600} as the specification recommends for a first
 experiment:
 \begin{center}
-\code{retrieve-tart --visibility-results results/common\_gnss\_20260625.json
+\code{tart-retrieve --visibility-results results/common\_gnss\_20260625.json
 --rank 8 --max-duration 600 --download --convert-ms --keep-native}
 \end{center}
 The results are in Table~\ref{tab:stage2} and Fig.~\ref{fig:stage2}. In
@@ -1163,7 +1163,10 @@ manifest and are directly relevant to Stage-3 imaging quality.
 The run took about \SI{55}{\second}, including downloads of 36 files
 (\SI{5}{\mega\byte}) and three conversions. Its manifest, Stage-1 window,
 log and terminal output are in
-\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}.
+\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}. Both example
+manifests predate the renaming of the Stage-2 command, so their recorded
+command line begins with its former name, \code{retrieve-tart}. They are
+kept unchanged as provenance records.
 
 \begin{table}[h]
 \centering

@@ -8,7 +8,7 @@ those windows.**
 | Stage | Command | What it does |
 |---|---|---|
 | 1 | `common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
-| 2 | `retrieve-tart` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
+| 2 | `tart-retrieve` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 
 > **Status:** Stages 1 and 2 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
 
@@ -20,7 +20,7 @@ those windows.**
 - [Installation](#installation)
 - [Stations](#stations)
 - [Stage 1: common visibility (`common-gnss`)](#stage-1-common-visibility-common-gnss)
-- [Stage 2: observation retrieval (`retrieve-tart`)](#stage-2-observation-retrieval-retrieve-tart)
+- [Stage 2: observation retrieval (`tart-retrieve`)](#stage-2-observation-retrieval-tart-retrieve)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -42,7 +42,7 @@ same satellite at the same time give three lines of sight, so the satellite's
 | Stage | Task | Status |
 |---|---|---|
 | **1** | **Find satellites simultaneously visible from three TART stations** | **✅ `common-gnss`** |
-| **2** | **Retrieve, validate and synchronise the TART data; one Measurement Set per station** | **✅ `retrieve-tart`** |
+| **2** | **Retrieve, validate and synchronise the TART data; one Measurement Set per station** | **✅ `tart-retrieve`** |
 | 3 | Image the satellite independently at each station (`image-tart --manifest …`) | planned |
 | 4 | Measure the satellite direction from each image | planned |
 | 5 | Bayesian inference of the satellite position (x, y, z) | planned |
@@ -199,18 +199,18 @@ such as `mauritius`, and Stage 2 still reads them.
 `min_i E_i(t) ≥ E_min`. Split the visible samples into maximal runs, refine
 each rise and set by bisection on the exact predicate, then rank by duration.
 
-## Stage 2: observation retrieval (`retrieve-tart`)
+## Stage 2: observation retrieval (`tart-retrieve`)
 
 Check what the archive holds before downloading anything:
 
 ```bash
-retrieve-tart --visibility-results results/common_gnss_20260625.json --rank 8 --dry-run
+tart-retrieve --visibility-results results/common_gnss_20260625.json --rank 8 --dry-run
 ```
 
 Retrieve a short subsection first, then a longer interval:
 
 ```bash
-retrieve-tart \
+tart-retrieve \
     --visibility-results results/common_gnss_20260625.json \
     --rank 8 --padding 120 --max-duration 600 \
     --output-dir data/observations \
@@ -310,6 +310,10 @@ az/el. A previous manifest is renamed, never overwritten.
 | Stage 1, 2026-06-25, GPS+Galileo ([`results/`](results)) | 70 windows. All three stations have 24-h archive coverage that day. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
+The example manifests were produced before the Stage-2 command was renamed,
+so their recorded `command_line` starts with the old name `retrieve-tart`.
+They are kept unchanged as provenance records.
+
 ## Caveats
 
 - **Geometric visibility ≠ detectability.** GPS L1, Galileo E1 and BeiDou-3
@@ -359,7 +363,7 @@ tart-gnss/
 │       ├── measurement_set.py  # tart2ms wrapper + MS validation
 │       ├── manifest.py         # manifest schema and writing
 │       ├── errors.py           # explicit Stage-2 exceptions
-│       └── cli.py              # retrieve-tart
+│       └── cli.py              # tart-retrieve
 └── tests/                           # 167 tests (Stage 1: 64, Stage 2: 67, registry: 36)
 ```
 

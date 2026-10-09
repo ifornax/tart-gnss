@@ -13,7 +13,7 @@ The current repository already has:
 - `src/tart_gnss/stations.py`
 - `src/tart_gnss/config/stations.yaml`
 - Stage-1 CLI: `common-gnss`
-- Stage-2 CLI: `retrieve-tart`
+- Stage-2 CLI: `tart-retrieve`
 - packaged station metadata containing `tart_id`, `api_url`, `archive_name`, coordinates, and provenance.
 
 The new implementation MUST integrate with these existing abstractions rather than creating a parallel station system.

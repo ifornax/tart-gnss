@@ -74,7 +74,7 @@ interval.
 Prefer the detailed Stage-1 JSON output:
 
 ``` bash
-retrieve-tart \
+tart-retrieve \
   --visibility-results results/common_gnss_20261001.json \
   --rank 1
 ```
@@ -124,7 +124,7 @@ Default: 120 seconds.
 Recommended interface:
 
 ``` bash
-retrieve-tart \
+tart-retrieve \
   --visibility-results results/common_gnss_20261001.json \
   --rank 1 \
   --padding 120 \
@@ -609,7 +609,7 @@ src/tart_gnss/
 Install an entry point such as:
 
 ``` text
-retrieve-tart
+tart-retrieve
 ```
 
 ### Responsibilities
@@ -798,7 +798,7 @@ For the first end-to-end experiment:
 Stage 2 is complete when:
 
 ``` bash
-retrieve-tart   --visibility-results results/common_gnss_20261001.json   --rank 1   --padding 120   --output-dir data/observations   --download   --convert-ms
+tart-retrieve   --visibility-results results/common_gnss_20261001.json   --rank 1   --padding 120   --output-dir data/observations   --download   --convert-ms
 ```
 
 can:
