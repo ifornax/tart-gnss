@@ -89,7 +89,7 @@ common-gnss \
 
 | Option | Meaning | Default |
 |---|---|---|
-| `--stations` | exactly three station IDs from the station file | required |
+| `--stations` | exactly three stations: canonical TART ids (`mu-udm`) or aliases (`mauritius`); see `list-tart-stations` | required |
 | `--start`, `--end` | ISO-8601 times. `Z`/offsets are honoured; **naive times are interpreted as UTC** | required |
 | `--min-elevation` | elevation threshold, degrees | 20 |
 | `--step` | coarse sampling step, seconds | 10 |
@@ -98,7 +98,10 @@ common-gnss \
 | `--tle-dir` | where downloaded catalogues are archived | `data/tle` |
 | `--constellations` | restrict to e.g. `GPS Galileo` (`GPS`, `Galileo`, `BeiDou`, `GLONASS`) | all |
 | `--output` | CSV path | `results/common_gnss_<YYYYMMDD>.csv` |
-| `--station-file` | YAML/JSON station configuration | bundled file |
+| `--station-file` | YAML/JSON station catalogue | packaged frozen registry snapshot |
+| `--aliases` | station alias file | bundled `station_aliases.yaml` |
+| `--refresh-stations` | fetch the live TART registry first and use the refreshed catalogue (archived under `--station-snapshot-dir`) | off |
+| `--station-snapshot-dir` | where `--refresh-stations` writes snapshots | `data/stations` |
 | `--min-duration` | drop windows shorter than this, seconds | 0 |
 | `--tle-age-warning-days` | warn when \|t_obs − t_TLE epoch\| exceeds this (a flag level, not an accuracy bound) | 3 |
 | `--verbose` | debug logging | off |
@@ -109,7 +112,12 @@ common-gnss \
 |---|---|
 | `results/common_gnss_<tag>.csv` | One row per satellite × window: rank, times, duration, clipping flags, and az/el at start/mid/end plus mid-window range for each station. Also the mid-window satellite position in **ITRS** (km) and the TLE epoch, age and source. |
 | `results/common_gnss_<tag>.json` | Everything above plus full TLE lines, range rates, ITRS position and velocity at start/mid/end, line-of-sight unit vectors, station ITRS vectors and every searched satellite. **This is the Stage-2 input.** |
-| `results/run_metadata_<tag>.json` | Software versions, command line, stations, thresholds, TLE file with SHA-256 and retrieval time, and a TLE-age summary. |
+| `results/run_metadata_<tag>.json` | Software versions, command line, the selected stations (full coordinates), the station catalogue path and SHA-256, the registry source / retrieval time / snapshot SHA-256 (`station_registry_*`), thresholds, TLE file with SHA-256 and retrieval time, and a TLE-age summary. |
+
+Results and metadata carry `"schema_version": 2`. Version 2 identifies
+stations by canonical TART id (`mu-udm`) when the default catalogue is used;
+the older unversioned files (e.g. those in `results/`) use catalogue names
+such as `mauritius`, and Stage 2 still reads them.
 
 **Method:** propagate each satellite on a coarse grid. Common visibility is
 `min_i E_i(t) ≥ E_min`. Split the visible samples into maximal runs, refine
@@ -148,7 +156,7 @@ retrieve-tart \
 | `--tart2ms` | path to the tart2ms executable | auto-detect |
 | `--gap-factor` | a step longer than this × the median cadence counts as a gap | 3 |
 | `--dry-run` | select, resolve and query only; write nothing | off |
-| `--station-file`, `--verbose` | as in Stage 1 | — |
+| `--station-file`, `--aliases`, `--verbose` | as in Stage 1 (the catalogue supplies only archive/API metadata) | — |
 
 **Exit status:** `0` means a validated three-station dataset; `3` means the
 run completed but is **not** three-station valid (the reasons are printed
@@ -206,28 +214,79 @@ az/el. A previous manifest is renamed, never overwritten.
 
 ## Stations
 
-Coordinates are never hard-coded. They live in
-[`src/tart_gnss/config/stations.yaml`](src/tart_gnss/config/stations.yaml)
-(symlinked as `config/stations.yaml`). They come from the TART registry
-`https://map.elec.ac.nz/api/v1/telescopes` (retrieved 2026-10-07), and each
-entry records its source. `archive_name` is the station's prefix in the TART
-archive bucket; every one listed was checked by listing the bucket.
+Coordinates are never hard-coded. Station metadata comes from the official
+TART network registry, `https://map.elec.ac.nz/api/v1/telescopes` (its JSON
+API; the map HTML is never scraped), through three files in
+[`src/tart_gnss/config/`](src/tart_gnss/config):
 
-| ID | TART id / archive | Site | Lat (°) | Lon (°) | Alt (m) |
+| File | Maintained | Contents |
+|---|---|---|
+| `stations_registry.yaml` | **generated** by `update-tart-stations` | Default catalogue. One entry per valid registry telescope, keyed by canonical TART id, plus a `metadata` block (registry URL, retrieval time, SHA-256 of the raw snapshot, skipped entries, changes from the previous catalogue). |
+| `station_aliases.yaml` | by hand | Convenience aliases: `mauritius → mu-udm`, `madagascar → mg-tana`, `south_africa → za-rhodes`, … |
+| `stations.yaml` | by hand (legacy) | The original alias-keyed catalogue. Still accepted via `--station-file`. |
+
+The raw registry payload behind the packaged catalogue is archived in
+[`data/stations/`](data/stations) as `registry_<UTC>.json` with a
+`.meta.json` sidecar (URL, retrieval time, SHA-256, station count) and a
+`.diff.json` change record. Snapshots are never overwritten.
+
+Identifiers resolve in this order: exact station id, normalised id
+(case-insensitive, `-` = `_`), alias, then `tart_id`. So `za-rhodes`,
+`za_rhodes` and `south_africa` select the same station.
+
+```bash
+list-tart-stations                      # table of the packaged catalogue, with aliases
+list-tart-stations --archive-only --format json
+update-tart-stations                    # fetch → data/stations/ snapshot + stations_registry.yaml
+update-tart-stations --verify-archives  # also check <tart_id>/vis/ in the archive bucket
+update-tart-stations --diff --dry-run   # show what changed, write nothing
+update-tart-stations --verify-archives --output src/tart_gnss/config/stations_registry.yaml  # refresh the packaged default
+```
+
+Rules the registry layer enforces:
+
+- Entries with missing, non-finite or out-of-range coordinates are skipped and
+  listed. They are never set to zero (`bw-biust` publishes no altitude and is
+  skipped). A duplicated TART id is ambiguous, so every copy is skipped.
+  `--strict` makes any such entry fatal.
+- `api_url` is the convention `https://api.elec.ac.nz/tart/<tart_id>` unless
+  the registry publishes one. It does not mean the API is online.
+- **Registry presence ≠ archived data.** `archive_name` is set only when
+  `--verify-archives` found the prefix in the archive bucket, and
+  `archive_verified_utc` records when. Verifications carry over from the
+  previous catalogue, and a failed check never erases one.
+- Each refresh is diffed against the previous catalogue: new/removed stations,
+  name and metadata changes, and coordinate changes with their deltas and
+  displacement in metres (WGS84 → Cartesian with Skyfield). A displacement
+  above `--displacement-warning-m` (100 m by default) is logged as a warning.
+  This is a flag level only. Nothing is rejected on that basis.
+- If the registry cannot be fetched, `update-tart-stations` exits 1 and
+  changes nothing.
+
+**Reproducibility.** The live registry is for discovery only. `common-gnss`
+reads the frozen packaged catalogue by default and needs no network access.
+`--refresh-stations` is opt-in, and it writes a run-specific catalogue under
+`data/stations/`. Every run's metadata copies the selected stations' exact
+coordinates and records the catalogue's registry snapshot hash. Stage 2 never
+refreshes stations. It takes identity and coordinates from the Stage-1
+results, and uses the catalogue only for archive and API metadata. If the
+catalogue coordinates now differ, the manifest records
+`station_metadata_changed: true` together with the `catalogue_coordinates`.
+
+Packaged catalogue (registry retrieved 2026-10-09; 17 valid of 18 entries,
+archive prefix verified for 14). Run `list-tart-stations` for the full list.
+The seven stations below have the same coordinates as the 2026-10-07 legacy
+file:
+
+| TART id | Alias | Registry name | Lat (°) | Lon (°) | Alt (m) |
 |---|---|---|---|---|---|
-| `mauritius` | `mu-udm` | Bel Air, Mauritius | −20.2587508 | 57.7591989 | 20.0 |
-| `madagascar` | `mg-tana` | Antananarivo, Madagascar | −18.8971446 | 47.5551677 | 1280.0 |
-| `south_africa` | `za-rhodes` | Rhodes University, Makhanda | −33.319413 | 26.507688 | 642.26 |
-| `south_africa_hammanskraal` | `za-hammanskraal` | Kwalata, Hammanskraal | −25.38948 | 28.32231 | 1163.0 |
-| `namibia` | `na-unam` | UNAM, Windhoek | −22.612053 | 17.856784 | 1655.0 |
-| `zambia` | `zm-cbu` | Copperbelt University | −12.80527778 | 28.23722222 | 1270.0 |
-| `ghana` | `ghana` | GRAO | 5.749725 | −0.305557 | 72.0 |
-
-To add a station, add an entry with `latitude_deg`, `longitude_deg`,
-`altitude_m`, `source` and, for Stage 2, `archive_name`. No code change is
-needed. Missing or out-of-range coordinates are rejected. Stage 2 also
-refuses to run if the configured coordinates differ from those in the
-Stage-1 results.
+| `mu-udm` | `mauritius` | Bel Air - Mauritius | −20.2587508 | 57.7591989 | 20.0 |
+| `mg-tana` | `madagascar` | Madagascar - Antananarivo | −18.8971446 | 47.5551677 | 1280.0 |
+| `za-rhodes` | `south_africa` | Rhodes University, Grahamstown | −33.319413 | 26.507688 | 642.26 |
+| `za-hammanskraal` | `south_africa_hammanskraal` | Kwalata - South Africa | −25.38948 | 28.32231 | 1163.0 |
+| `na-unam` | `namibia` | Namibia - UNAM | −22.612053 | 17.856784 | 1655.0 |
+| `zm-cbu` | `zambia` | Copperbelt University - Zambia | −12.80527778 | 28.23722222 | 1270.0 |
+| `ghana` | `ghana` | GRAO - Ghana | 5.749725 | −0.305557 | 72.0 |
 
 ## TLEs and reproducibility
 
@@ -277,7 +336,9 @@ tart-gnss/
 ├── common_gnss.py                   # convenience wrapper for the Stage-1 CLI
 ├── sat_localisation.md              # Stage-1 specification
 ├── tart_gnss_stage2_implementation.md   # Stage-2 specification
-├── config/stations.yaml             # -> src/tart_gnss/config/stations.yaml
+├── tart_gnss_station_registry_implementation.md  # station-registry specification
+├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
+├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
 ├── data/observations/               # Stage-2 output (git-ignored)
 ├── results/                         # Stage-1 example runs (2026-10-01, 2026-06-25)
@@ -287,6 +348,8 @@ tart-gnss/
 ├── src/tart_gnss/
 │   ├── cli.py  stations.py  tle.py  propagation.py  visibility.py
 │   ├── windows.py  search.py  output.py  provenance.py      # Stage 1
+│   ├── registry.py  registry_cli.py   # TART registry: fetch, snapshot, normalise, diff
+│   ├── config/  stations_registry.yaml (generated)  station_aliases.yaml  stations.yaml (legacy)
 │   └── stage2/
 │       ├── selection.py        # load/select Stage-1 window, query interval, signal relevance
 │       ├── archive.py          # TART archive abstraction (find_observations)
@@ -297,14 +360,14 @@ tart-gnss/
 │       ├── manifest.py         # manifest schema and writing
 │       ├── errors.py           # explicit Stage-2 exceptions
 │       └── cli.py              # retrieve-tart
-└── tests/                           # 127 tests (Stage 1: 62, Stage 2: 65)
+└── tests/                           # 167 tests (Stage 1: 64, Stage 2: 67, registry: 36)
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms]"
-pytest                       # 127 tests, ~6 s, no network needed
+pytest                       # 167 tests, ~6 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow

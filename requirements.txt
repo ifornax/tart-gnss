@@ -2,3 +2,4 @@ numpy>=1.21
 skyfield>=1.45
 sgp4>=2.20
 PyYAML>=5.4
+requests>=2.28

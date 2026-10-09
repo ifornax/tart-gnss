@@ -1,0 +1,16 @@
+# Hand-maintained convenience aliases for TART stations.
+#
+# Each alias maps a friendly name to a canonical TART telescope identifier
+# (the registry `nodeName`, e.g. "mu-udm"). Aliases are labels for the command
+# line only: the canonical TART id remains the station's identity in every
+# catalogue and output file. Unlike stations_registry.yaml, this file is NOT
+# generated and is safe to edit.
+
+aliases:
+  mauritius: mu-udm
+  madagascar: mg-tana
+  south_africa: za-rhodes
+  south_africa_hammanskraal: za-hammanskraal
+  namibia: na-unam
+  zambia: zm-cbu
+  ghana: ghana

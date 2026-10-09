@@ -9,6 +9,7 @@ from importlib import metadata
 from typing import Dict, Optional, Sequence
 
 from tart_gnss import __version__
+from tart_gnss.output import RESULTS_SCHEMA_VERSION
 from tart_gnss.propagation import COORDINATE_FRAME, COORDINATE_FRAME_DESCRIPTION
 from tart_gnss.stations import Station
 from tart_gnss.tle import TLECatalogue, format_utc, sha256_file  # noqa: F401  (re-export)
@@ -58,12 +59,22 @@ def build_run_metadata(
     tle_age_summary: Dict[str, object],
     command_line: Sequence[str],
     output_files: Dict[str, str],
+    station_registry: Optional[Dict[str, object]] = None,
+    alias_file: Optional[str] = None,
 ) -> Dict[str, object]:
     """Assemble the run metadata dictionary written to ``run_metadata_*.json``.
 
     All times are UTC ISO-8601 strings with a ``Z`` suffix.
+
+    ``station_registry`` is the ``metadata`` block of a generated registry
+    catalogue (``None``/empty for a legacy hand-curated catalogue, in which
+    case the ``station_registry_*`` fields are ``None``). The selected
+    stations are always copied in full, so the run never depends on the
+    catalogue file staying unchanged.
     """
+    reg = station_registry or {}
     return {
+        "schema_version": RESULTS_SCHEMA_VERSION,
         "software": software_versions(),
         "run_timestamp_utc": format_utc(run_timestamp),
         "command_line": list(command_line),
@@ -73,6 +84,12 @@ def build_run_metadata(
         "stations": [s.to_dict() for s in stations],
         "station_file": station_file,
         "station_file_sha256": sha256_file(station_file),
+        "station_catalogue_path": station_file,
+        "station_registry_source": reg.get("source"),
+        "station_registry_retrieved_utc": reg.get("retrieved_utc"),
+        "station_registry_sha256": reg.get("sha256"),
+        "station_registry_snapshot_file": reg.get("snapshot_file"),
+        "station_alias_file": alias_file,
         "min_elevation_deg": min_elevation_deg,
         "elevation_definition": "geometric (unrefracted) topocentric elevation above the WGS84 local horizon",
         "sampling_interval_s": step_s,

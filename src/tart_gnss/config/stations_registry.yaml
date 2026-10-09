@@ -1,0 +1,298 @@
+# GENERATED FILE - do not edit by hand. Regenerate with `update-tart-stations`.
+#
+# Normalised TART station catalogue built from a frozen snapshot of the TART
+# network registry (see `metadata`). Stations are keyed by canonical TART id.
+# Coordinates are copied verbatim from the registry and validated; entries
+# with missing/invalid coordinates are listed under metadata.skipped_entries.
+# Hand-maintained convenience names live in station_aliases.yaml.
+
+metadata:
+  format_version: 1
+  generated_by: update-tart-stations
+  source: https://map.elec.ac.nz/api/v1/telescopes
+  retrieved_utc: '2026-10-09T16:06:41Z'
+  sha256: df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  snapshot_file: registry_20261009T160641Z.json
+  registry_entry_count: 18
+  station_count: 17
+  api_url_note: api_url is convention-derived (https://api.elec.ac.nz/tart/<tart_id>)
+    unless the registry publishes one; it is not a statement that the API is online
+  api_url_from_registry: []
+  archive_note: archive_name is set only for a verified archive prefix; registry presence
+    does not imply archived data
+  skipped_entries:
+  - index: 10
+    tart_id: bw-biust
+    reason: 'missing valid coordinates: Station ''bw-biust'': ''altitude_m'' is missing
+      (null). Coordinates must come from an authoritative source and are never guessed.'
+  previous_catalogue: src/tart_gnss/config/stations.yaml
+  changes_from_previous:
+    added:
+    - bd-iub
+    - it-ant
+    - nz-dunedin
+    - nz-elec
+    - nz-nelson
+    - nz-nelson-32
+    - nz-rock2f
+    - nz-test
+    - se-kth
+    - tart3-test
+    removed: []
+    coordinate_changes: []
+    name_changes:
+    - tart_id: ghana
+      old: TART Ghana (GRAO)
+      new: GRAO - Ghana
+    - tart_id: mg-tana
+      old: TART Madagascar (Antananarivo)
+      new: Madagascar - Antananarivo
+    - tart_id: mu-udm
+      old: TART Mauritius (Bel Air)
+      new: Bel Air - Mauritius
+    - tart_id: na-unam
+      old: TART Namibia (UNAM)
+      new: Namibia - UNAM
+    - tart_id: za-hammanskraal
+      old: TART South Africa (Kwalata, Hammanskraal)
+      new: Kwalata - South Africa
+    - tart_id: za-rhodes
+      old: TART South Africa (Rhodes University, Makhanda)
+      new: Rhodes University, Grahamstown
+    - tart_id: zm-cbu
+      old: TART Zambia (Copperbelt University)
+      new: Copperbelt University - Zambia
+    metadata_changes:
+    - tart_id: ghana
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: mg-tana
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: mu-udm
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: na-unam
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: za-hammanskraal
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: za-rhodes
+      field: archive_verified
+      old: null
+      new: true
+    - tart_id: zm-cbu
+      field: archive_verified
+      old: null
+      new: true
+stations:
+  bd-iub:
+    name: IUB - Bangladesh
+    tart_id: bd-iub
+    latitude_deg: 23.815474
+    longitude_deg: 90.427748
+    altitude_m: 50.0
+    api_url: https://api.elec.ac.nz/tart/bd-iub
+    archive_name: bd-iub
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node bd-iub),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  ghana:
+    name: GRAO - Ghana
+    tart_id: ghana
+    latitude_deg: 5.749725
+    longitude_deg: -0.305557
+    altitude_m: 72.0
+    api_url: https://api.elec.ac.nz/tart/ghana
+    archive_name: ghana
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node ghana),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  it-ant:
+    name: Italia - Antola
+    tart_id: it-ant
+    latitude_deg: 44.591152
+    longitude_deg: 9.203245
+    altitude_m: 1400.0
+    api_url: https://api.elec.ac.nz/tart/it-ant
+    archive_name: it-ant
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node it-ant),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  mg-tana:
+    name: Madagascar - Antananarivo
+    tart_id: mg-tana
+    latitude_deg: -18.8971446
+    longitude_deg: 47.5551677
+    altitude_m: 1280.0
+    api_url: https://api.elec.ac.nz/tart/mg-tana
+    archive_name: mg-tana
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  mu-udm:
+    name: Bel Air - Mauritius
+    tart_id: mu-udm
+    latitude_deg: -20.2587508
+    longitude_deg: 57.7591989
+    altitude_m: 20.0
+    api_url: https://api.elec.ac.nz/tart/mu-udm
+    archive_name: mu-udm
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  na-unam:
+    name: Namibia - UNAM
+    tart_id: na-unam
+    latitude_deg: -22.612053
+    longitude_deg: 17.856784
+    altitude_m: 1655.0
+    api_url: https://api.elec.ac.nz/tart/na-unam
+    archive_name: na-unam
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node na-unam),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-dunedin:
+    name: Dunedin - Testbench
+    tart_id: nz-dunedin
+    latitude_deg: -45.85680836425853
+    longitude_deg: 170.52915596783484
+    altitude_m: 110.0
+    api_url: https://api.elec.ac.nz/tart/nz-dunedin
+    archive_name: nz-dunedin
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-dunedin),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-elec:
+    name: New Zealand - Dunedin
+    tart_id: nz-elec
+    latitude_deg: -45.85177
+    longitude_deg: 170.5456
+    altitude_m: 270.0
+    api_url: https://api.elec.ac.nz/tart/nz-elec
+    archive_name: nz-elec
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-elec),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-nelson:
+    name: Nelson - New Zealand
+    tart_id: nz-nelson
+    latitude_deg: -41.277584
+    longitude_deg: 173.271655
+    altitude_m: 26.0
+    api_url: https://api.elec.ac.nz/tart/nz-nelson
+    archive_name: nz-nelson
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-nelson),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-nelson-32:
+    name: Nelson
+    tart_id: nz-nelson-32
+    latitude_deg: -41.277584
+    longitude_deg: 173.271655
+    altitude_m: 26.0
+    api_url: https://api.elec.ac.nz/tart/nz-nelson-32
+    archive_name: nz-nelson-32
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-nelson-32),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-rock2f:
+    name: New Zealand - Rock Test Dunedin
+    tart_id: nz-rock2f
+    latitude_deg: -45.85177
+    longitude_deg: 170.5456
+    altitude_m: 270.0
+    api_url: https://api.elec.ac.nz/tart/nz-rock2f
+    archive_name: null
+    archive_verified: false
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-rock2f),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  nz-test:
+    name: 'NZ Test TART: Dunedin'
+    tart_id: nz-test
+    latitude_deg: -45.85177
+    longitude_deg: 170.5456
+    altitude_m: 270.0
+    api_url: https://api.elec.ac.nz/tart/nz-test
+    archive_name: null
+    archive_verified: false
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node nz-test),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  se-kth:
+    name: Sweden - KTH
+    tart_id: se-kth
+    latitude_deg: 59.349
+    longitude_deg: 18.07
+    altitude_m: 28.0
+    api_url: https://api.elec.ac.nz/tart/se-kth
+    archive_name: se-kth
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node se-kth),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  tart3-test:
+    name: TUK/KSA - Kenya
+    tart_id: tart3-test
+    latitude_deg: -1.2921912
+    longitude_deg: 36.8255432
+    altitude_m: 751.0
+    api_url: https://api.elec.ac.nz/tart/tart3-test
+    archive_name: null
+    archive_verified: false
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node tart3-test),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  za-hammanskraal:
+    name: Kwalata - South Africa
+    tart_id: za-hammanskraal
+    latitude_deg: -25.38948
+    longitude_deg: 28.32231
+    altitude_m: 1163.0
+    api_url: https://api.elec.ac.nz/tart/za-hammanskraal
+    archive_name: za-hammanskraal
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node za-hammanskraal),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  za-rhodes:
+    name: Rhodes University, Grahamstown
+    tart_id: za-rhodes
+    latitude_deg: -33.319413
+    longitude_deg: 26.507688
+    altitude_m: 642.26
+    api_url: https://api.elec.ac.nz/tart/za-rhodes
+    archive_name: za-rhodes
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9
+  zm-cbu:
+    name: Copperbelt University - Zambia
+    tart_id: zm-cbu
+    latitude_deg: -12.80527778
+    longitude_deg: 28.23722222
+    altitude_m: 1270.0
+    api_url: https://api.elec.ac.nz/tart/zm-cbu
+    archive_name: zm-cbu
+    archive_verified: true
+    archive_verified_utc: '2026-10-09T16:06:41Z'
+    source: TART network registry https://map.elec.ac.nz/api/v1/telescopes (node zm-cbu),
+      retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9

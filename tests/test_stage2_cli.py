@@ -158,3 +158,30 @@ def test_manifest_validation_catches_problems():
     assert any("expected 3 stations" in p for p in problems)
     assert any("differs between top level" in p for p in problems)
     assert any("satellite.norad_id" in p for p in problems)
+
+
+
+def test_changed_catalogue_coordinates_use_stage1_values(env):
+    tmp, results, stations = env
+    stations.write_text(STATIONS_YAML.replace("latitude_deg: -20.0", "latitude_deg: -20.5"))
+    code, m = run(env, full_archive(tmp), "--download", "--convert-ms", "--keep-native")
+    assert code == cli.EXIT_VALID
+    alpha = m["stations"]["alpha"]
+    assert alpha["station_metadata_changed"] is True
+    assert alpha["latitude_deg"] == -20.0  # frozen Stage-1 value is used
+    assert alpha["catalogue_coordinates"]["latitude_deg"] == -20.5  # current value is kept too
+    assert m["stations"]["beta"]["station_metadata_changed"] is False
+    assert validate_manifest(m) == []
+
+
+def test_legacy_stage1_ids_resolve_through_aliases(env):
+    tmp, results, stations = env
+    stations.write_text(STATIONS_YAML.replace("  alpha:", "  aa-alpha:"))  # catalogue keyed by TART id
+    loaded, path = cli.sel.load_stage1_results(results)
+    window = cli.sel.select_window(loaded, path, rank=1)
+    with pytest.raises(cli.Stage1SelectionError):
+        cli.resolve_run_stations(window, stations)
+    run_stations, checks = cli.resolve_run_stations(window, stations, {"alpha": "aa-alpha"})
+    assert [s.id for s in run_stations] == ["alpha", "beta", "gamma"]  # Stage-1 identity kept
+    assert run_stations[0].archive_name == "aa-alpha" and run_stations[0].tart_id == "aa-alpha"
+    assert not any(c["station_metadata_changed"] for c in checks.values())

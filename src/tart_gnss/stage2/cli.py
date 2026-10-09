@@ -16,10 +16,10 @@ import json
 import logging
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from tart_gnss import __version__
 from tart_gnss.stage2 import archive as archive_mod
@@ -37,7 +37,14 @@ from tart_gnss.stage2.errors import (
     Stage2Error,
 )
 from tart_gnss.stage2.synchronise import synchronise
-from tart_gnss.stations import Station, StationConfigError, default_station_file, load_stations, resolve_stations
+from tart_gnss.stations import (
+    Station,
+    StationConfigError,
+    default_station_file,
+    load_aliases,
+    load_stations,
+    resolve_stations,
+)
 from tart_gnss.tle import format_utc, sha256_file
 
 logger = logging.getLogger("tart_gnss.stage2")
@@ -95,7 +102,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="retrieve at most this many seconds, centred on the window midpoint "
                         "(for a first, short retrieval)")
     p.add_argument("--output-dir", default="data/observations", help="root output directory")
-    p.add_argument("--station-file", help="station configuration (default: bundled file)")
+    p.add_argument("--station-file",
+                   help="station catalogue for archive/API metadata (default: packaged frozen registry "
+                        "snapshot); coordinates always come from the Stage-1 results")
+    p.add_argument("--aliases", help="station alias file (default: bundled station_aliases.yaml)")
     p.add_argument("--download", action="store_true", help="download the native files")
     p.add_argument("--convert-ms", action="store_true", help="convert each station to a Measurement Set (needs --download)")
     p.add_argument("--keep-native", action="store_true",
@@ -115,34 +125,84 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def resolve_run_stations(window: sel.Stage1Window, station_file: Path) -> List[Station]:
-    """Match the Stage-1 stations against the station configuration.
+def resolve_run_stations(
+    window: sel.Stage1Window, station_file: Path, aliases: Optional[Dict[str, str]] = None
+) -> Tuple[List[Station], Dict[str, Dict[str, object]]]:
+    """Match the Stage-1 stations against the current station catalogue.
 
-    The configuration supplies the archive names. Coordinates must agree
-    exactly with those used in Stage 1, so Stage-1 geometry is never silently
-    recomputed with different coordinates.
+    The catalogue supplies operational metadata only (archive name, API URL).
+    Identity and coordinates are always taken from the Stage-1 results, so
+    Stage-1 geometry is never silently recomputed with different coordinates
+    and the station catalogue is never refreshed here. Stage-1 stations are
+    looked up by ``tart_id`` first, then by Stage-1 id (aliases accepted, so
+    results that use legacy names such as ``mauritius`` still resolve).
+
+    If the catalogue's coordinates differ from the frozen Stage-1 values, a
+    warning is logged and :func:`station_metadata_check` reports both.
+
+    Returns
+    -------
+    stations, checks
+        Stations to use (Stage-1 identity and coordinates, catalogue
+        operational metadata) and Stage-1 id -> :func:`station_metadata_check`.
 
     Raises
     ------
     Stage1SelectionError
-        If the number of stations is not 3, a station is unknown, or coordinates differ.
+        If the number of stations is not 3 or a station is unknown.
     """
     if len(window.stations) != manifest_mod.N_STATIONS:
         raise Stage1SelectionError(
             f"Stage 2 needs exactly {manifest_mod.N_STATIONS} stations; the Stage-1 results have {len(window.stations)}"
         )
     try:
-        stations = resolve_stations([s.id for s in window.stations], load_stations(station_file))
+        catalogue = load_stations(station_file)
+        found = []
+        for s1 in window.stations:
+            try:
+                found += resolve_stations([s1.tart_id or s1.id], catalogue, aliases)
+            except StationConfigError:
+                if not s1.tart_id:
+                    raise
+                found += resolve_stations([s1.id], catalogue, aliases)
     except StationConfigError as exc:
         raise Stage1SelectionError(str(exc)) from exc
-    for cfg, s1 in zip(stations, window.stations):
-        for attr in ("latitude_deg", "longitude_deg", "altitude_m"):
-            if abs(getattr(cfg, attr) - getattr(s1, attr)) > COORDINATE_MATCH_DEG:
-                raise Stage1SelectionError(
-                    f"Station '{cfg.id}' {attr} is {getattr(cfg, attr)} in {station_file} but "
-                    f"{getattr(s1, attr)} in the Stage-1 results; re-run Stage 1 or use the matching station file"
-                )
-    return stations
+    stations = []
+    checks: Dict[str, Dict[str, object]] = {}
+    for cfg, s1 in zip(found, window.stations):
+        checks[s1.id] = station_metadata_check(cfg, s1)
+        if checks[s1.id]["station_metadata_changed"]:
+            logger.warning(
+                "Station '%s': coordinates in %s (%s, %s, %s) differ from the frozen Stage-1 values "
+                "(%s, %s, %s); the Stage-1 values are used", s1.id, station_file, cfg.latitude_deg,
+                cfg.longitude_deg, cfg.altitude_m, s1.latitude_deg, s1.longitude_deg, s1.altitude_m,
+            )
+        stations.append(replace(
+            cfg, id=s1.id, name=s1.name, latitude_deg=s1.latitude_deg, longitude_deg=s1.longitude_deg,
+            altitude_m=s1.altitude_m, tart_id=s1.tart_id or cfg.tart_id,
+            source=str(s1.raw.get("source") or cfg.source),
+        ))
+    return stations, checks
+
+
+def station_metadata_check(catalogue_station: Station, stage1: sel.StationInfo) -> Dict[str, object]:
+    """Compare a catalogue station with the frozen Stage-1 station.
+
+    Returns
+    -------
+    dict
+        ``station_metadata_changed`` (true if any coordinate differs by more
+        than :data:`COORDINATE_MATCH_DEG`) and, when changed, the catalogue's
+        ``catalogue_coordinates`` and ``catalogue_source`` alongside the
+        Stage-1 values kept in the manifest.
+    """
+    attrs = ("latitude_deg", "longitude_deg", "altitude_m")
+    changed = any(abs(getattr(catalogue_station, a) - getattr(stage1, a)) > COORDINATE_MATCH_DEG for a in attrs)
+    out: Dict[str, object] = {"station_metadata_changed": changed}
+    if changed:
+        out["catalogue_coordinates"] = {a: getattr(catalogue_station, a) for a in attrs}
+        out["catalogue_source"] = catalogue_station.source
+    return out
 
 
 def run_directory(output_dir: Path, window: sel.Stage1Window) -> Path:
@@ -176,7 +236,8 @@ def _write_stage1_window(run_dir: Path, window: sel.Stage1Window) -> Path:
     return path
 
 
-def _station_entry(sr: StationRun, q0: datetime, q1: datetime, window: sel.Stage1Window) -> Dict[str, object]:
+def _station_entry(sr: StationRun, q0: datetime, q1: datetime, window: sel.Stage1Window,
+                   metadata_check: Dict[str, object]) -> Dict[str, object]:
     st = sr.station
     pred = window.window.get("stations", {}).get(st.id)
     return {
@@ -187,6 +248,7 @@ def _station_entry(sr: StationRun, q0: datetime, q1: datetime, window: sel.Stage
         "longitude_deg": st.longitude_deg,
         "altitude_m": st.altitude_m,
         "coordinate_source": st.source,
+        **metadata_check,
         "archive_name": st.archive_name,
         "api_url": st.api_url,
         "archive_query_status": sr.query_status,
@@ -294,7 +356,11 @@ def run(args: argparse.Namespace, argv: Sequence[str],
         logger.warning("The Stage-1 window is clipped by the Stage-1 search interval; the real window may be longer")
 
     station_file = Path(args.station_file) if args.station_file else default_station_file()
-    stations = resolve_run_stations(window, station_file)
+    try:
+        aliases = load_aliases(args.aliases)
+    except StationConfigError as exc:
+        raise Stage1SelectionError(str(exc)) from exc
+    stations, metadata_checks = resolve_run_stations(window, station_file, aliases)
     for st in stations:
         logger.info("Station %s: TART id %s, archive '%s'", st.id, st.tart_id, st.archive_name)
     q0, q1 = sel.query_interval(window.start_utc, window.end_utc, args.padding, args.max_duration)
@@ -474,7 +540,8 @@ def run(args: argparse.Namespace, argv: Sequence[str],
         "satellite_position_itrs": window.window.get("satellite_position"),
         "line_of_sight_mid": window.window.get("line_of_sight_mid"),
     }
-    station_entries = {sr.station.id: _station_entry(sr, q0, q1, window) for sr in runs}
+    station_entries = {sr.station.id: _station_entry(sr, q0, q1, window, metadata_checks[sr.station.id])
+                       for sr in runs}
     provenance = {
         "run_tag": run_tag, "run_timestamp_utc": format_utc(run_ts, 3),
         "command_line": list(argv), "station_file": str(station_file),

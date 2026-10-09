@@ -16,7 +16,16 @@ from pathlib import Path
 from typing import List, Optional, Sequence
 
 from tart_gnss import __version__, output, propagation, provenance, search, tle
-from tart_gnss.stations import StationConfigError, default_station_file, load_stations, resolve_stations
+from tart_gnss.registry import RegistryError
+from tart_gnss.stations import (
+    StationConfigError,
+    default_alias_file,
+    default_station_file,
+    load_aliases,
+    load_catalogue_metadata,
+    load_stations,
+    resolve_stations,
+)
 
 logger = logging.getLogger("tart_gnss")
 
@@ -68,7 +77,8 @@ def build_parser() -> argparse.ArgumentParser:
         epilog="Times are UTC. Timezone-naive ISO-8601 inputs are interpreted as UTC.",
     )
     p.add_argument("--stations", nargs="+", required=True, metavar="ID",
-                   help="exactly three station identifiers from the station file")
+                   help="exactly three stations: canonical TART ids (e.g. mu-udm) or aliases "
+                        "(e.g. mauritius); see list-tart-stations")
     p.add_argument("--start", required=True, help="UTC ISO-8601 start, e.g. 2026-10-01T00:00:00Z")
     p.add_argument("--end", required=True, help="UTC ISO-8601 end")
     p.add_argument("--min-elevation", type=float, default=20.0, help="minimum elevation, deg (default 20)")
@@ -81,7 +91,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--constellations", nargs="+", metavar="NAME",
                    help=f"restrict to constellations: {' '.join(tle.CONSTELLATIONS)}")
     p.add_argument("--output", help="output CSV (default results/common_gnss_<YYYYMMDD>.csv)")
-    p.add_argument("--station-file", help="YAML/JSON station configuration (default: bundled file)")
+    p.add_argument("--station-file",
+                   help="YAML/JSON station catalogue (default: packaged frozen TART registry snapshot)")
+    p.add_argument("--aliases", help="station alias file (default: bundled station_aliases.yaml)")
+    p.add_argument("--refresh-stations", action="store_true",
+                   help="fetch the live TART registry first and use the refreshed catalogue "
+                        "(written under --station-snapshot-dir); off by default for reproducibility")
+    p.add_argument("--station-snapshot-dir", default="data/stations",
+                   help="where --refresh-stations archives registry snapshots (default data/stations)")
     p.add_argument("--min-duration", type=float, default=0.0, help="minimum window duration, s")
     p.add_argument("--tle-age-warning-days", type=float, default=DEFAULT_TLE_AGE_WARNING_DAYS,
                    help="warn when |t_obs - t_TLE epoch| exceeds this, days (default 3; "
@@ -106,6 +123,36 @@ def output_paths(csv_arg: Optional[str], start: datetime) -> dict:
     }
 
 
+def refresh_stations(snapshot_dir: Path) -> Path:
+    """Fetch the live registry and write a run-specific frozen catalogue.
+
+    The catalogue is ``<snapshot_dir>/stations_registry_<UTC>.yaml`` and the
+    raw snapshot is archived next to it, so the run stays reproducible.
+
+    Raises
+    ------
+    CLIError
+        If the registry cannot be fetched or parsed (no files are changed;
+        the packaged frozen catalogue is named in the message).
+    """
+    from tart_gnss.registry_cli import refresh_station_catalogue
+    from tart_gnss.registry import utc_stamp
+    from tart_gnss.provenance import utc_now
+
+    output = snapshot_dir / f"stations_registry_{utc_stamp(utc_now())}.yaml"
+    try:
+        result = refresh_station_catalogue(output=output, snapshot_dir=snapshot_dir,
+                                           previous=default_station_file())
+    except RegistryError as exc:
+        raise CLIError(
+            f"--refresh-stations failed: {exc}. Nothing was changed; the frozen catalogue "
+            f"{default_station_file()} is still available (omit --refresh-stations to use it)"
+        ) from exc
+    if result.diff is not None and not result.diff.is_empty:
+        logger.info("Registry changes relative to the packaged catalogue:\n%s", result.diff.format())
+    return output
+
+
 def run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     """Execute a search for parsed arguments; returns the process exit code."""
     run_timestamp = provenance.utc_now()
@@ -124,12 +171,23 @@ def run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     if len(args.stations) != STAGE1_N_STATIONS:
         raise CLIError(f"Stage 1 requires exactly {STAGE1_N_STATIONS} stations; got {len(args.stations)}")
 
-    station_file = Path(args.station_file) if args.station_file else default_station_file()
+    if args.refresh_stations and args.station_file:
+        raise CLIError("--refresh-stations and --station-file are mutually exclusive")
+    if args.refresh_stations:
+        station_file = refresh_stations(Path(args.station_snapshot_dir))
+    else:
+        station_file = Path(args.station_file) if args.station_file else default_station_file()
+    alias_file = Path(args.aliases) if args.aliases else None
     try:
-        stations = resolve_stations(args.stations, load_stations(station_file))
+        aliases = load_aliases(alias_file)
+        stations = resolve_stations(args.stations, load_stations(station_file), aliases)
+        registry_meta = load_catalogue_metadata(station_file) or {}
     except StationConfigError as exc:
         raise CLIError(str(exc)) from exc
     logger.info("Station file: %s", station_file)
+    if registry_meta:
+        logger.info("Station registry: %s retrieved %s (sha256 %s)", registry_meta.get("source"),
+                    registry_meta.get("retrieved_utc"), registry_meta.get("sha256"))
     for s in stations:
         logger.info(
             "Station %s (%s): lat %.7f deg, lon %.7f deg, alt %.2f m [source: %s]",
@@ -177,7 +235,8 @@ def run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     )
     meta = provenance.build_run_metadata(
         run_timestamp=run_timestamp, start=start, end=end, stations=stations,
-        station_file=str(station_file), min_elevation_deg=args.min_elevation, step_s=args.step,
+        station_file=str(station_file), station_registry=registry_meta,
+        alias_file=str(alias_file or default_alias_file()), min_elevation_deg=args.min_elevation, step_s=args.step,
         tolerance_s=args.tolerance, min_duration_s=args.min_duration, constellations=constellations,
         catalogue=catalogue, n_satellites_searched=len(records), n_windows=len(ranked),
         tle_age_summary=age_summary, command_line=list(argv),

@@ -6,6 +6,7 @@ from tart_gnss.stations import (
     Station,
     StationConfigError,
     default_station_file,
+    legacy_station_file,
     load_stations,
     parse_station_config,
     resolve_stations,
@@ -84,7 +85,24 @@ def test_missing_file():
 
 def test_bundled_configuration_is_valid_and_sourced():
     catalogue = load_stations(default_station_file())
+    for sid in ("mu-udm", "mg-tana", "za-rhodes"):
+        station = catalogue[sid]
+        assert station.source and "elec.ac.nz" in station.source
+        assert station.tart_id == sid
+
+
+def test_legacy_configuration_is_valid_and_sourced():
+    catalogue = load_stations(legacy_station_file())
     for sid in ("mauritius", "madagascar", "south_africa"):
         station = catalogue[sid]
         assert station.source and "elec.ac.nz" in station.source
         assert station.tart_id
+
+
+def test_legacy_and_registry_coordinates_agree():
+    legacy = {s.tart_id: s for s in load_stations(legacy_station_file()).values()}
+    current = load_stations(default_station_file())
+    for tart_id, old in legacy.items():
+        new = current[tart_id]
+        assert (old.latitude_deg, old.longitude_deg, old.altitude_m) == (
+            new.latitude_deg, new.longitude_deg, new.altitude_m)

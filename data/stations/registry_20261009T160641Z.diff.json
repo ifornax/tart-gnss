@@ -1,0 +1,98 @@
+{
+  "previous_catalogue": "src/tart_gnss/config/stations.yaml",
+  "added": [
+    "bd-iub",
+    "it-ant",
+    "nz-dunedin",
+    "nz-elec",
+    "nz-nelson",
+    "nz-nelson-32",
+    "nz-rock2f",
+    "nz-test",
+    "se-kth",
+    "tart3-test"
+  ],
+  "removed": [],
+  "coordinate_changes": [],
+  "name_changes": [
+    {
+      "tart_id": "ghana",
+      "old": "TART Ghana (GRAO)",
+      "new": "GRAO - Ghana"
+    },
+    {
+      "tart_id": "mg-tana",
+      "old": "TART Madagascar (Antananarivo)",
+      "new": "Madagascar - Antananarivo"
+    },
+    {
+      "tart_id": "mu-udm",
+      "old": "TART Mauritius (Bel Air)",
+      "new": "Bel Air - Mauritius"
+    },
+    {
+      "tart_id": "na-unam",
+      "old": "TART Namibia (UNAM)",
+      "new": "Namibia - UNAM"
+    },
+    {
+      "tart_id": "za-hammanskraal",
+      "old": "TART South Africa (Kwalata, Hammanskraal)",
+      "new": "Kwalata - South Africa"
+    },
+    {
+      "tart_id": "za-rhodes",
+      "old": "TART South Africa (Rhodes University, Makhanda)",
+      "new": "Rhodes University, Grahamstown"
+    },
+    {
+      "tart_id": "zm-cbu",
+      "old": "TART Zambia (Copperbelt University)",
+      "new": "Copperbelt University - Zambia"
+    }
+  ],
+  "metadata_changes": [
+    {
+      "tart_id": "ghana",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "mg-tana",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "mu-udm",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "na-unam",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "za-hammanskraal",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "za-rhodes",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    },
+    {
+      "tart_id": "zm-cbu",
+      "field": "archive_verified",
+      "old": null,
+      "new": true
+    }
+  ]
+}

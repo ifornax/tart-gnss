@@ -17,6 +17,13 @@ logger = logging.getLogger(__name__)
 
 EPOCHS = ("start", "mid", "end")
 
+#: Version of the Stage-1 results/metadata JSON layout. Version 1 (files
+#: without this field) identified stations by catalogue names such as
+#: ``mauritius``; version 2 identifies them by canonical TART id (``mu-udm``)
+#: whenever the default registry catalogue is used, and records the station
+#: registry snapshot in the run metadata.
+RESULTS_SCHEMA_VERSION = 2
+
 
 def rank_windows(windows: Iterable[CommonWindow]) -> List[CommonWindow]:
     """Sort windows by decreasing duration and assign 1-based ranks.
@@ -154,6 +161,7 @@ def build_results_json(
 ) -> Dict[str, object]:
     """Assemble the detailed machine-readable results document."""
     return {
+        "schema_version": RESULTS_SCHEMA_VERSION,
         "run": {
             "start_utc": format_utc(config.start),
             "end_utc": format_utc(config.end),

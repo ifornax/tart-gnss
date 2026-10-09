@@ -1,4 +1,10 @@
-# TART station configuration for tart_gnss.
+# LEGACY hand-curated TART station catalogue for tart_gnss.
+#
+# Since the station-registry integration the DEFAULT catalogue is the generated
+# stations_registry.yaml (keyed by canonical TART id, built by
+# `update-tart-stations`), and aliases such as "mauritius" live in
+# station_aliases.yaml. This file is kept so that `--station-file` with it,
+# and Stage-1 results produced from it, continue to work unchanged.
 #
 # Coordinates are WGS84 geodetic latitude/longitude (degrees, east-positive)
 # and height (metres) exactly as published by the TART project. They were NOT
