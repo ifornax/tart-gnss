@@ -470,13 +470,13 @@ Resulting objects must remain compatible with Stage 1 and Stage 2.
 Add a new CLI entry point:
 
 ```text
-update-tart-stations
+tart-stations-update
 ```
 
 Example:
 
 ```bash
-update-tart-stations
+tart-stations-update
 ```
 
 Optional arguments:
@@ -512,7 +512,7 @@ Never fabricate a station to make counts match expectations.
 Add:
 
 ```text
-list-tart-stations
+tart-stations-list
 ```
 
 Example output:
@@ -599,7 +599,7 @@ and retain both versions.
 Implement a diff capability:
 
 ```bash
-update-tart-stations --diff
+tart-stations-update --diff
 ```
 
 or equivalent.
@@ -645,7 +645,7 @@ If live retrieval fails:
 Recommended:
 
 ```text
-update-tart-stations
+tart-stations-update
 ```
 
 fails if the live registry cannot be retrieved.
@@ -851,13 +851,13 @@ Future registry refreshes must not alter existing results.
 Refresh:
 
 ```bash
-update-tart-stations
+tart-stations-update
 ```
 
 List:
 
 ```bash
-list-tart-stations
+tart-stations-list
 ```
 
 Choose any three:
@@ -887,8 +887,8 @@ Complete when:
 5. coordinate validation reuses existing rules;
 6. canonical TART IDs are retained;
 7. aliases still work;
-8. `list-tart-stations` displays the discovered network;
-9. `update-tart-stations` creates a reproducible normalized snapshot;
+8. `tart-stations-list` displays the discovered network;
+9. `tart-stations-update` creates a reproducible normalized snapshot;
 10. Stage 1 can use any three discovered stations;
 11. Stage 2 remains compatible with the same station objects;
 12. archive availability is not conflated with registry presence;
