@@ -36,8 +36,8 @@ dev = ["pytest>=7", "h5py>=3.1", "minio>=7", "matplotlib>=3.5", "build"]
 [project.scripts]
 common-gnss = "tart_gnss.cli:main"
 retrieve-tart = "tart_gnss.stage2.cli:main"
-update-tart-stations = "tart_gnss.registry_cli:main_update"
-list-tart-stations = "tart_gnss.registry_cli:main_list"
+tart-stations-update = "tart_gnss.registry_cli:main_update"
+tart-stations-list = "tart_gnss.registry_cli:main_list"
 
 [project.urls]
 Homepage = "https://github.com/ifornax/tart-gnss"

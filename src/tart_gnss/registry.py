@@ -632,7 +632,7 @@ def build_catalogue_document(
     return {
         "metadata": {
             "format_version": CATALOGUE_FORMAT_VERSION,
-            "generated_by": "update-tart-stations",
+            "generated_by": "tart-stations-update",
             "source": source_url,
             "retrieved_utc": retrieved_utc,
             "sha256": sha256,
@@ -669,7 +669,7 @@ def build_catalogue_document(
 
 
 CATALOGUE_HEADER = """\
-# GENERATED FILE - do not edit by hand. Regenerate with `update-tart-stations`.
+# GENERATED FILE - do not edit by hand. Regenerate with `tart-stations-update`.
 #
 # Normalised TART station catalogue built from a frozen snapshot of the TART
 # network registry (see `metadata`). Stations are keyed by canonical TART id.

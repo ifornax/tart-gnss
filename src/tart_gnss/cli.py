@@ -78,7 +78,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--stations", nargs="+", required=True, metavar="ID",
                    help="exactly three stations: canonical TART ids (e.g. mu-udm) or aliases "
-                        "(e.g. mauritius); see list-tart-stations")
+                        "(e.g. mauritius); see tart-stations-list")
     p.add_argument("--start", required=True, help="UTC ISO-8601 start, e.g. 2026-10-01T00:00:00Z")
     p.add_argument("--end", required=True, help="UTC ISO-8601 end")
     p.add_argument("--min-elevation", type=float, default=20.0, help="minimum elevation, deg (default 20)")

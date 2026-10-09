@@ -84,7 +84,7 @@ API; the map HTML is never scraped), through three files in
 
 | File | Maintained | Contents |
 |---|---|---|
-| `stations_registry.yaml` | **generated** by `update-tart-stations` | Default catalogue. One entry per valid registry telescope, keyed by canonical TART id, plus a `metadata` block (registry URL, retrieval time, SHA-256 of the raw snapshot, skipped entries, changes from the previous catalogue). |
+| `stations_registry.yaml` | **generated** by `tart-stations-update` | Default catalogue. One entry per valid registry telescope, keyed by canonical TART id, plus a `metadata` block (registry URL, retrieval time, SHA-256 of the raw snapshot, skipped entries, changes from the previous catalogue). |
 | `station_aliases.yaml` | by hand | Convenience aliases: `mauritius → mu-udm`, `madagascar → mg-tana`, `south_africa → za-rhodes`, … |
 | `stations.yaml` | by hand (legacy) | The original alias-keyed catalogue. Still accepted via `--station-file`. |
 
@@ -98,12 +98,12 @@ Identifiers resolve in this order: exact station id, normalised id
 `za_rhodes` and `south_africa` select the same station.
 
 ```bash
-list-tart-stations                      # table of the packaged catalogue, with aliases
-list-tart-stations --archive-only --format json
-update-tart-stations                    # fetch → data/stations/ snapshot + stations_registry.yaml
-update-tart-stations --verify-archives  # also check <tart_id>/vis/ in the archive bucket
-update-tart-stations --diff --dry-run   # show what changed, write nothing
-update-tart-stations --verify-archives --output src/tart_gnss/config/stations_registry.yaml  # refresh the packaged default
+tart-stations-list                      # table of the packaged catalogue, with aliases
+tart-stations-list --archive-only --format json
+tart-stations-update                    # fetch → data/stations/ snapshot + stations_registry.yaml
+tart-stations-update --verify-archives  # also check <tart_id>/vis/ in the archive bucket
+tart-stations-update --diff --dry-run   # show what changed, write nothing
+tart-stations-update --verify-archives --output src/tart_gnss/config/stations_registry.yaml  # refresh the packaged default
 ```
 
 Rules the registry layer enforces:
@@ -123,7 +123,7 @@ Rules the registry layer enforces:
   displacement in metres (WGS84 → Cartesian with Skyfield). A displacement
   above `--displacement-warning-m` (100 m by default) is logged as a warning.
   This is a flag level only. Nothing is rejected on that basis.
-- If the registry cannot be fetched, `update-tart-stations` exits 1 and
+- If the registry cannot be fetched, `tart-stations-update` exits 1 and
   changes nothing.
 
 **Reproducibility.** The live registry is for discovery only. `common-gnss`
@@ -137,7 +137,7 @@ catalogue coordinates now differ, the manifest records
 `station_metadata_changed: true` together with the `catalogue_coordinates`.
 
 Packaged catalogue (registry retrieved 2026-10-09; 17 valid of 18 entries,
-archive prefix verified for 14). Run `list-tart-stations` for the full list.
+archive prefix verified for 14). Run `tart-stations-list` for the full list.
 The seven stations below have the same coordinates as the 2026-10-07 legacy
 file:
 
@@ -165,7 +165,7 @@ common-gnss \
 
 | Option | Meaning | Default |
 |---|---|---|
-| `--stations` | exactly three stations: canonical TART ids (`mu-udm`) or aliases (`mauritius`); see `list-tart-stations` | required |
+| `--stations` | exactly three stations: canonical TART ids (`mu-udm`) or aliases (`mauritius`); see `tart-stations-list` | required |
 | `--start`, `--end` | ISO-8601 times. `Z`/offsets are honoured; **naive times are interpreted as UTC** | required |
 | `--min-elevation` | elevation threshold, degrees | 20 |
 | `--step` | coarse sampling step, seconds | 10 |
