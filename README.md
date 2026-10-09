@@ -10,7 +10,7 @@ those windows.**
 | 1 | `common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
 | 2 | `retrieve-tart` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 
-> **Status:** Stages 1 and 2 complete (v0.2.0). The repository is private and under active development.
+> **Status:** Stages 1 and 2 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
 
 ---
 
@@ -265,7 +265,7 @@ data/observations/20260625/NORAD_40534/     # _w<k> is appended if the satellite
   antennas (24) and baselines (276), and frequency and bandwidth from the
   file's own `config`. The frequency counts as in band if 1575.42 MHz lies
   within the recorded band. The station position must match the
-  configuration, and zero-gain antennas and calibration changes are reported.
+  Stage-1 station coordinates, and zero-gain antennas and calibration changes are reported.
 - **Synchronisation.** The real common interval is `[max first, min last]`,
   and it must have positive length. Coverage fractions of the predicted
   (and retrieved) window count gaps as uncovered. Nearest-sample offsets are
@@ -342,7 +342,7 @@ tart-gnss/
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
 ├── data/observations/               # Stage-2 output (git-ignored)
 ├── results/                         # Stage-1 example runs (2026-10-01, 2026-06-25)
-├── docs/report/                     # LaTeX technical report (Stages 1-2), PDF, figures
+├── docs/report/                     # LaTeX technical report (registry, Stages 1-2), PDF, figures
 ├── docs/examples/stage2/            # example Stage-2 manifests (valid and invalid)
 ├── scripts/make_report_figures.py
 ├── src/tart_gnss/
@@ -378,9 +378,11 @@ it is not installed.
 
 [`docs/report/tart_gnss_report.pdf`](docs/report/tart_gnss_report.pdf)
 (source: `tart_gnss_report.tex`).
-Part I covers Stage 1, Part II covers Stage 2 (archive, method, verification
-and real-data results), and Part III covers interfaces, limitations and
-reproducibility. To rebuild it:
+Part I covers the TART station registry (design, snapshots, validation,
+identifier resolution, change detection, the current network and its tests),
+Part II covers Stage 1, Part III covers Stage 2 (archive, method,
+verification and real-data results), and Part IV covers interfaces,
+limitations and reproducibility. To rebuild it:
 
 ```bash
 python scripts/make_report_figures.py results/common_gnss_20261001.json docs/report/figures \
