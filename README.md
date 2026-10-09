@@ -18,9 +18,9 @@ those windows.**
 
 - [Project context](#project-context)
 - [Installation](#installation)
+- [Stations](#stations)
 - [Stage 1: common visibility (`common-gnss`)](#stage-1-common-visibility-common-gnss)
 - [Stage 2: observation retrieval (`retrieve-tart`)](#stage-2-observation-retrieval-retrieve-tart)
-- [Stations](#stations)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -74,6 +74,82 @@ Because the repository is private, a direct install needs SSH access:
 ```bash
 pip install "tart-gnss[stage2,ms] @ git+ssh://git@github.com/ifornax/tart-gnss.git"
 ```
+
+## Stations
+
+Coordinates are never hard-coded. Station metadata comes from the official
+TART network registry, `https://map.elec.ac.nz/api/v1/telescopes` (its JSON
+API; the map HTML is never scraped), through three files in
+[`src/tart_gnss/config/`](src/tart_gnss/config):
+
+| File | Maintained | Contents |
+|---|---|---|
+| `stations_registry.yaml` | **generated** by `update-tart-stations` | Default catalogue. One entry per valid registry telescope, keyed by canonical TART id, plus a `metadata` block (registry URL, retrieval time, SHA-256 of the raw snapshot, skipped entries, changes from the previous catalogue). |
+| `station_aliases.yaml` | by hand | Convenience aliases: `mauritius → mu-udm`, `madagascar → mg-tana`, `south_africa → za-rhodes`, … |
+| `stations.yaml` | by hand (legacy) | The original alias-keyed catalogue. Still accepted via `--station-file`. |
+
+The raw registry payload behind the packaged catalogue is archived in
+[`data/stations/`](data/stations) as `registry_<UTC>.json` with a
+`.meta.json` sidecar (URL, retrieval time, SHA-256, station count) and a
+`.diff.json` change record. Snapshots are never overwritten.
+
+Identifiers resolve in this order: exact station id, normalised id
+(case-insensitive, `-` = `_`), alias, then `tart_id`. So `za-rhodes`,
+`za_rhodes` and `south_africa` select the same station.
+
+```bash
+list-tart-stations                      # table of the packaged catalogue, with aliases
+list-tart-stations --archive-only --format json
+update-tart-stations                    # fetch → data/stations/ snapshot + stations_registry.yaml
+update-tart-stations --verify-archives  # also check <tart_id>/vis/ in the archive bucket
+update-tart-stations --diff --dry-run   # show what changed, write nothing
+update-tart-stations --verify-archives --output src/tart_gnss/config/stations_registry.yaml  # refresh the packaged default
+```
+
+Rules the registry layer enforces:
+
+- Entries with missing, non-finite or out-of-range coordinates are skipped and
+  listed. They are never set to zero (`bw-biust` publishes no altitude and is
+  skipped). A duplicated TART id is ambiguous, so every copy is skipped.
+  `--strict` makes any such entry fatal.
+- `api_url` is the convention `https://api.elec.ac.nz/tart/<tart_id>` unless
+  the registry publishes one. It does not mean the API is online.
+- **Registry presence ≠ archived data.** `archive_name` is set only when
+  `--verify-archives` found the prefix in the archive bucket, and
+  `archive_verified_utc` records when. Verifications carry over from the
+  previous catalogue, and a failed check never erases one.
+- Each refresh is diffed against the previous catalogue: new/removed stations,
+  name and metadata changes, and coordinate changes with their deltas and
+  displacement in metres (WGS84 → Cartesian with Skyfield). A displacement
+  above `--displacement-warning-m` (100 m by default) is logged as a warning.
+  This is a flag level only. Nothing is rejected on that basis.
+- If the registry cannot be fetched, `update-tart-stations` exits 1 and
+  changes nothing.
+
+**Reproducibility.** The live registry is for discovery only. `common-gnss`
+reads the frozen packaged catalogue by default and needs no network access.
+`--refresh-stations` is opt-in, and it writes a run-specific catalogue under
+`data/stations/`. Every run's metadata copies the selected stations' exact
+coordinates and records the catalogue's registry snapshot hash. Stage 2 never
+refreshes stations. It takes identity and coordinates from the Stage-1
+results, and uses the catalogue only for archive and API metadata. If the
+catalogue coordinates now differ, the manifest records
+`station_metadata_changed: true` together with the `catalogue_coordinates`.
+
+Packaged catalogue (registry retrieved 2026-10-09; 17 valid of 18 entries,
+archive prefix verified for 14). Run `list-tart-stations` for the full list.
+The seven stations below have the same coordinates as the 2026-10-07 legacy
+file:
+
+| TART id | Alias | Registry name | Lat (°) | Lon (°) | Alt (m) |
+|---|---|---|---|---|---|
+| `mu-udm` | `mauritius` | Bel Air - Mauritius | −20.2587508 | 57.7591989 | 20.0 |
+| `mg-tana` | `madagascar` | Madagascar - Antananarivo | −18.8971446 | 47.5551677 | 1280.0 |
+| `za-rhodes` | `south_africa` | Rhodes University, Grahamstown | −33.319413 | 26.507688 | 642.26 |
+| `za-hammanskraal` | `south_africa_hammanskraal` | Kwalata - South Africa | −25.38948 | 28.32231 | 1163.0 |
+| `na-unam` | `namibia` | Namibia - UNAM | −22.612053 | 17.856784 | 1655.0 |
+| `zm-cbu` | `zambia` | Copperbelt University - Zambia | −12.80527778 | 28.23722222 | 1270.0 |
+| `ghana` | `ghana` | GRAO - Ghana | 5.749725 | −0.305557 | 72.0 |
 
 ## Stage 1: common visibility (`common-gnss`)
 
@@ -211,82 +287,6 @@ data/observations/20260625/NORAD_40534/     # _w<k> is appended if the satellite
 Each `stations` entry holds the archive status, the raw files with hashes,
 the native metadata, coverage, calibration, MS metadata and the predicted
 az/el. A previous manifest is renamed, never overwritten.
-
-## Stations
-
-Coordinates are never hard-coded. Station metadata comes from the official
-TART network registry, `https://map.elec.ac.nz/api/v1/telescopes` (its JSON
-API; the map HTML is never scraped), through three files in
-[`src/tart_gnss/config/`](src/tart_gnss/config):
-
-| File | Maintained | Contents |
-|---|---|---|
-| `stations_registry.yaml` | **generated** by `update-tart-stations` | Default catalogue. One entry per valid registry telescope, keyed by canonical TART id, plus a `metadata` block (registry URL, retrieval time, SHA-256 of the raw snapshot, skipped entries, changes from the previous catalogue). |
-| `station_aliases.yaml` | by hand | Convenience aliases: `mauritius → mu-udm`, `madagascar → mg-tana`, `south_africa → za-rhodes`, … |
-| `stations.yaml` | by hand (legacy) | The original alias-keyed catalogue. Still accepted via `--station-file`. |
-
-The raw registry payload behind the packaged catalogue is archived in
-[`data/stations/`](data/stations) as `registry_<UTC>.json` with a
-`.meta.json` sidecar (URL, retrieval time, SHA-256, station count) and a
-`.diff.json` change record. Snapshots are never overwritten.
-
-Identifiers resolve in this order: exact station id, normalised id
-(case-insensitive, `-` = `_`), alias, then `tart_id`. So `za-rhodes`,
-`za_rhodes` and `south_africa` select the same station.
-
-```bash
-list-tart-stations                      # table of the packaged catalogue, with aliases
-list-tart-stations --archive-only --format json
-update-tart-stations                    # fetch → data/stations/ snapshot + stations_registry.yaml
-update-tart-stations --verify-archives  # also check <tart_id>/vis/ in the archive bucket
-update-tart-stations --diff --dry-run   # show what changed, write nothing
-update-tart-stations --verify-archives --output src/tart_gnss/config/stations_registry.yaml  # refresh the packaged default
-```
-
-Rules the registry layer enforces:
-
-- Entries with missing, non-finite or out-of-range coordinates are skipped and
-  listed. They are never set to zero (`bw-biust` publishes no altitude and is
-  skipped). A duplicated TART id is ambiguous, so every copy is skipped.
-  `--strict` makes any such entry fatal.
-- `api_url` is the convention `https://api.elec.ac.nz/tart/<tart_id>` unless
-  the registry publishes one. It does not mean the API is online.
-- **Registry presence ≠ archived data.** `archive_name` is set only when
-  `--verify-archives` found the prefix in the archive bucket, and
-  `archive_verified_utc` records when. Verifications carry over from the
-  previous catalogue, and a failed check never erases one.
-- Each refresh is diffed against the previous catalogue: new/removed stations,
-  name and metadata changes, and coordinate changes with their deltas and
-  displacement in metres (WGS84 → Cartesian with Skyfield). A displacement
-  above `--displacement-warning-m` (100 m by default) is logged as a warning.
-  This is a flag level only. Nothing is rejected on that basis.
-- If the registry cannot be fetched, `update-tart-stations` exits 1 and
-  changes nothing.
-
-**Reproducibility.** The live registry is for discovery only. `common-gnss`
-reads the frozen packaged catalogue by default and needs no network access.
-`--refresh-stations` is opt-in, and it writes a run-specific catalogue under
-`data/stations/`. Every run's metadata copies the selected stations' exact
-coordinates and records the catalogue's registry snapshot hash. Stage 2 never
-refreshes stations. It takes identity and coordinates from the Stage-1
-results, and uses the catalogue only for archive and API metadata. If the
-catalogue coordinates now differ, the manifest records
-`station_metadata_changed: true` together with the `catalogue_coordinates`.
-
-Packaged catalogue (registry retrieved 2026-10-09; 17 valid of 18 entries,
-archive prefix verified for 14). Run `list-tart-stations` for the full list.
-The seven stations below have the same coordinates as the 2026-10-07 legacy
-file:
-
-| TART id | Alias | Registry name | Lat (°) | Lon (°) | Alt (m) |
-|---|---|---|---|---|---|
-| `mu-udm` | `mauritius` | Bel Air - Mauritius | −20.2587508 | 57.7591989 | 20.0 |
-| `mg-tana` | `madagascar` | Madagascar - Antananarivo | −18.8971446 | 47.5551677 | 1280.0 |
-| `za-rhodes` | `south_africa` | Rhodes University, Grahamstown | −33.319413 | 26.507688 | 642.26 |
-| `za-hammanskraal` | `south_africa_hammanskraal` | Kwalata - South Africa | −25.38948 | 28.32231 | 1163.0 |
-| `na-unam` | `namibia` | Namibia - UNAM | −22.612053 | 17.856784 | 1655.0 |
-| `zm-cbu` | `zambia` | Copperbelt University - Zambia | −12.80527778 | 28.23722222 | 1270.0 |
-| `ghana` | `ghana` | GRAO - Ghana | 5.749725 | −0.305557 | 72.0 |
 
 ## TLEs and reproducibility
 
