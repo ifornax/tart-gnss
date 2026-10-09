@@ -7,7 +7,7 @@ those windows.**
 
 | Stage | Command | What it does |
 |---|---|---|
-| 1 | `common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
+| 1 | `tart-common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
 | 2 | `tart-retrieve` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 
 > **Status:** Stages 1 and 2 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
@@ -19,7 +19,7 @@ those windows.**
 - [Project context](#project-context)
 - [Installation](#installation)
 - [Stations](#stations)
-- [Stage 1: common visibility (`common-gnss`)](#stage-1-common-visibility-common-gnss)
+- [Stage 1: common visibility (`tart-common-gnss`)](#stage-1-common-visibility-tart-common-gnss)
 - [Stage 2: observation retrieval (`tart-retrieve`)](#stage-2-observation-retrieval-tart-retrieve)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
@@ -41,7 +41,7 @@ same satellite at the same time give three lines of sight, so the satellite's
 
 | Stage | Task | Status |
 |---|---|---|
-| **1** | **Find satellites simultaneously visible from three TART stations** | **✅ `common-gnss`** |
+| **1** | **Find satellites simultaneously visible from three TART stations** | **✅ `tart-common-gnss`** |
 | **2** | **Retrieve, validate and synchronise the TART data; one Measurement Set per station** | **✅ `tart-retrieve`** |
 | 3 | Image the satellite independently at each station (`image-tart --manifest …`) | planned |
 | 4 | Measure the satellite direction from each image | planned |
@@ -126,7 +126,7 @@ Rules the registry layer enforces:
 - If the registry cannot be fetched, `tart-stations-update` exits 1 and
   changes nothing.
 
-**Reproducibility.** The live registry is for discovery only. `common-gnss`
+**Reproducibility.** The live registry is for discovery only. `tart-common-gnss`
 reads the frozen packaged catalogue by default and needs no network access.
 `--refresh-stations` is opt-in, and it writes a run-specific catalogue under
 `data/stations/`. Every run's metadata copies the selected stations' exact
@@ -151,10 +151,10 @@ file:
 | `zm-cbu` | `zambia` | Copperbelt University - Zambia | −12.80527778 | 28.23722222 | 1270.0 |
 | `ghana` | `ghana` | GRAO - Ghana | 5.749725 | −0.305557 | 72.0 |
 
-## Stage 1: common visibility (`common-gnss`)
+## Stage 1: common visibility (`tart-common-gnss`)
 
 ```bash
-common-gnss \
+tart-common-gnss \
     --stations mauritius madagascar south_africa \
     --start 2026-10-01T00:00:00Z \
     --end   2026-10-02T00:00:00Z \
@@ -310,9 +310,10 @@ az/el. A previous manifest is renamed, never overwritten.
 | Stage 1, 2026-06-25, GPS+Galileo ([`results/`](results)) | 70 windows. All three stations have 24-h archive coverage that day. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
-The example manifests were produced before the Stage-2 command was renamed,
-so their recorded `command_line` starts with the old name `retrieve-tart`.
-They are kept unchanged as provenance records.
+These examples were produced before the commands were renamed, so their
+recorded command lines use the old names `common-gnss` (in
+`results/run_metadata_*.json`) and `retrieve-tart` (in the example
+manifests). They are kept unchanged as provenance records.
 
 ## Caveats
 

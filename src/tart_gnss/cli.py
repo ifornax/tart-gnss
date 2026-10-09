@@ -1,4 +1,4 @@
-"""Command-line interface: ``common-gnss`` / ``python common_gnss.py``.
+"""Command-line interface: ``tart-common-gnss`` / ``python common_gnss.py``.
 
 Time convention: ``--start``/``--end`` are ISO-8601. A ``Z`` or explicit UTC
 offset is honoured (and converted to UTC). A timezone-naive value is, by this
@@ -69,7 +69,7 @@ def parse_utc(text: str, label: str = "time") -> datetime:
 def build_parser() -> argparse.ArgumentParser:
     """Create the argument parser."""
     p = argparse.ArgumentParser(
-        prog="common-gnss",
+        prog="tart-common-gnss",
         description=(
             "Find GNSS satellites simultaneously above a minimum elevation at three "
             "TART stations, with refined common-visibility windows ranked by duration."
@@ -262,7 +262,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         datefmt="%Y-%m-%dT%H:%M:%S",
     )
     try:
-        return run(args, ["common-gnss", *argv])
+        return run(args, ["tart-common-gnss", *argv])
     except CLIError as exc:
         logger.error("%s", exc)
         print(f"error: {exc}", file=sys.stderr)

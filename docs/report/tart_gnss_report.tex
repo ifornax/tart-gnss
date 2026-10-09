@@ -95,7 +95,7 @@ The full project has six steps:
 \end{enumerate}
 Part~I of this report describes the TART station registry, which supplies
 station metadata to every step (\code{tart-stations-update},
-\code{tart-stations-list}). Part~II describes step~1 (\code{common-gnss})
+\code{tart-stations-list}). Part~II describes step~1 (\code{tart-common-gnss})
 and Part~III step~2 (\code{tart-retrieve}). Imaging, source extraction and inference are
 deliberately not implemented yet, but the outputs of both stages are
 designed to drive them (Section~\ref{sec:future}).
@@ -260,7 +260,7 @@ remains available.
 \section{Reproducibility rules}
 
 \begin{itemize}
-\item \code{common-gnss} reads the packaged frozen catalogue by default and
+\item \code{tart-common-gnss} reads the packaged frozen catalogue by default and
 needs no network access. A live refresh happens only with
 \code{--refresh-stations}, which writes a run-specific catalogue and
 snapshot under \code{data/stations/}.
@@ -626,7 +626,7 @@ Module & Responsibility\\
 
 \begin{lstlisting}
 pip install .                      # or: pip install -e ".[dev]"
-common-gnss --stations mauritius madagascar south_africa \
+tart-common-gnss --stations mauritius madagascar south_africa \
     --start 2026-10-01T00:00:00Z --end 2026-10-02T00:00:00Z \
     --min-elevation 20 --step 10
 \end{lstlisting}
@@ -1163,10 +1163,10 @@ manifest and are directly relevant to Stage-3 imaging quality.
 The run took about \SI{55}{\second}, including downloads of 36 files
 (\SI{5}{\mega\byte}) and three conversions. Its manifest, Stage-1 window,
 log and terminal output are in
-\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}. Both example
-manifests predate the renaming of the Stage-2 command, so their recorded
-command line begins with its former name, \code{retrieve-tart}. They are
-kept unchanged as provenance records.
+\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}. The example
+Stage-1 and Stage-2 runs predate the renaming of the commands, so their
+recorded command lines begin with the former names \code{common-gnss} and
+\code{retrieve-tart}. They are kept unchanged as provenance records.
 
 \begin{table}[h]
 \centering

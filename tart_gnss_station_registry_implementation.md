@@ -12,7 +12,7 @@ The current repository already has:
 
 - `src/tart_gnss/stations.py`
 - `src/tart_gnss/config/stations.yaml`
-- Stage-1 CLI: `common-gnss`
+- Stage-1 CLI: `tart-common-gnss`
 - Stage-2 CLI: `tart-retrieve`
 - packaged station metadata containing `tart_id`, `api_url`, `archive_name`, coordinates, and provenance.
 
@@ -405,13 +405,13 @@ Canonical identity remains the TART ID.
 Both should work:
 
 ```bash
-common-gnss --stations mu-udm mg-tana za-rhodes ...
+tart-common-gnss --stations mu-udm mg-tana za-rhodes ...
 ```
 
 and:
 
 ```bash
-common-gnss --stations mauritius madagascar south_africa ...
+tart-common-gnss --stations mauritius madagascar south_africa ...
 ```
 
 ---
@@ -538,7 +538,7 @@ Only add `--online-only` if online state can be verified reliably.
 
 ---
 
-## 18. Integrate With `common-gnss`
+## 18. Integrate With `tart-common-gnss`
 
 Stage 1 should support frozen and refreshed catalogues.
 
@@ -653,7 +653,7 @@ fails if the live registry cannot be retrieved.
 But:
 
 ```text
-common-gnss
+tart-common-gnss
 ```
 
 continues using its existing frozen station catalogue unless `--refresh-stations` was explicitly requested.
@@ -816,7 +816,7 @@ Unexpected top-level structure must raise `RegistrySchemaError`.
 Existing commands must continue to work:
 
 ```bash
-common-gnss   --stations mauritius madagascar south_africa   ...
+tart-common-gnss   --stations mauritius madagascar south_africa   ...
 ```
 
 Do not break Stage 1 or Stage 2 interfaces.
@@ -863,13 +863,13 @@ tart-stations-list
 Choose any three:
 
 ```bash
-common-gnss   --stations mu-udm mg-tana za-rhodes   --start 2026-10-10T00:00:00Z   --end 2026-10-11T00:00:00Z
+tart-common-gnss   --stations mu-udm mg-tana za-rhodes   --start 2026-10-10T00:00:00Z   --end 2026-10-11T00:00:00Z
 ```
 
 Aliases remain valid:
 
 ```bash
-common-gnss   --stations mauritius madagascar south_africa   --start ...   --end ...
+tart-common-gnss   --stations mauritius madagascar south_africa   --start ...   --end ...
 ```
 
 The Stage-1 result must freeze the selected station metadata.
