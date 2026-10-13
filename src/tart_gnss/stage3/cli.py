@@ -379,6 +379,7 @@ def _run_date(manifest: Dict[str, object], inputs: Sequence[loader_mod.StationIn
 
 def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: List[Path]) -> int:
     """Execute a Stage-3 run; returns the exit status."""
+    git_state = _git_state()  # before any output is written (outputs may live inside the repository)
     if args.time_bin <= 0 or args.min_baselines < 1 or args.bootstrap < 0:
         raise InvalidManifestError("--time-bin must be > 0, --min-baselines >= 1, --bootstrap >= 0")
     try:
@@ -479,7 +480,7 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                    "reference only; never a prior or a measurement",
             "tle_epoch": tle_epoch,
         },
-        "software": {**_software(), **_git_state()},
+        "software": {**_software(), **git_state},
         "provenance": {
             "command_line": list(command_line),
             "run_timestamp_utc": format_utc(datetime.now(timezone.utc)),
