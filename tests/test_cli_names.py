@@ -1,6 +1,6 @@
 """Public command names follow the permanent ``tart-*`` convention (a stable public API)."""
 
-import importlib
+import importlib.util
 import re
 from pathlib import Path
 

@@ -4,15 +4,17 @@
 Stage 1 finds satellites that three TART stations can see at the same time.
 Stage 2 retrieves, validates and synchronises the real TART observations for
 those windows. Stage 3 measures the satellite's direction at each station
-from the complex visibilities.**
+from the complex visibilities. Stage 4 intersects those measured lines of
+sight to give the satellite's 3-D position with its covariance.**
 
 | Stage | Command | What it does |
 |---|---|---|
 | 1 | `tart-common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
 | 2 | `tart-retrieve` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
+| 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
 
-> **Status:** Stages 1, 2 and 3 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
+> **Status:** Stages 1–4 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
 
 ---
 
@@ -24,6 +26,7 @@ from the complex visibilities.**
 - [Stage 1: common visibility (`tart-common-gnss`)](#stage-1-common-visibility-tart-common-gnss)
 - [Stage 2: observation retrieval (`tart-retrieve`)](#stage-2-observation-retrieval-tart-retrieve)
 - [Stage 3: direction estimation (`tart-localise`)](#stage-3-direction-estimation-tart-localise)
+- [Stage 4: 3-D localisation (`tart-triangulate`)](#stage-4-3-d-localisation-tart-triangulate)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -47,7 +50,7 @@ same satellite at the same time give three lines of sight, so the satellite's
 | **1** | **Find satellites simultaneously visible from three TART stations** | **✅ `tart-common-gnss`** |
 | **2** | **Retrieve, validate and synchronise the TART data; one Measurement Set per station** | **✅ `tart-retrieve`** |
 | **3** | **Measure the satellite direction at each station from the visibilities (with image-domain cross-check)** | **✅ `tart-localise` — implemented** |
-| 4 | Multi-station 3-D localisation from the measured lines of sight | planned |
+| **4** | **Multi-station 3-D localisation from the measured lines of sight** | **✅ `tart-triangulate` — implemented** |
 | 5 | Bayesian inference of the satellite position (x, y, z) | planned |
 | 6 | Compare with the TLE-predicted position | planned |
 
@@ -58,7 +61,14 @@ None is inferred from another.
 Specifications: [`sat_localisation.md`](sat_localisation.md) (Stage 1),
 [`tart_gnss_stage2_implementation.md`](tart_gnss_stage2_implementation.md) (Stage 2) and
 [`tart_gnss_stage3_implementation.md`](tart_gnss_stage3_implementation.md) (Stage 3; method and
-conventions in [`docs/stage3_direction_estimation.md`](docs/stage3_direction_estimation.md)).
+conventions in [`docs/stage3_direction_estimation.md`](docs/stage3_direction_estimation.md)) and
+[`tart_gnss_stage4_implementation.md`](tart_gnss_stage4_implementation.md) (Stage 4; method in
+[`docs/stage4_triangulation.md`](docs/stage4_triangulation.md)).
+
+**Command names.** Every public command starts with `tart-` (`tart-stations-update`,
+`tart-stations-list`, `tart-common-gnss`, `tart-retrieve`, `tart-localise`,
+`tart-triangulate`). This is a stable public API, and future stages must follow it;
+`tests/test_cli_names.py` enforces it.
 
 ## Installation
 
@@ -340,6 +350,44 @@ is recorded per station, so the plane-wave model holds. Full derivation,
 uncertainty method, flags and limitations:
 [`docs/stage3_direction_estimation.md`](docs/stage3_direction_estimation.md).
 
+## Stage 4: 3-D localisation (`tart-triangulate`)
+
+```bash
+tart-triangulate \
+    --stage3-manifest results/stage3/20260625/NORAD_40534/stage3_manifest.json \
+    --output-dir results/stage4
+```
+
+| Option | Meaning | Default |
+|---|---|---|
+| `--stage3-manifest` | `stage3_manifest.json` from `tart-localise` | required |
+| `--time-match-tolerance` | max \|t<sub>station</sub> − t<sub>reference</sub>\| (s); nearest row, no interpolation | 0.75 |
+| `--min-stations` | stations needed for a valid estimate (2-station solutions are degraded diagnostics) | 3 |
+| `--method` | `weighted` (Stage-3 covariance × range²) or `unweighted` (closed form Σ P<sub>i</sub> x = Σ P<sub>i</sub> r<sub>i</sub>) | `weighted` |
+| `--quality-policy` | `strict`: only Stage-3 `usable` rows; `permissive`: also `BOUNDARY_SOLUTION`/`LOW_SNR`/`TLE_UNASSOCIATED` rows (flagged) | `strict` |
+| `--bootstrap N`, `--seed` | parametric bootstrap of the directions per epoch | 0, 20260625 |
+| `--stations`, `--reference-station`, `--reference-time` | restrict stations; choose the reference clock; one epoch only | all, most rows, — |
+| `--max-condition-number`, `--max-normalised-residual`, `--max-reduced-chi2`, `--time-mismatch-sigma` | flag thresholds | 1e8, 5, 5, 1 |
+
+**Exit status:** `0` at least one valid 3-D estimate; `3` none; `2` invalid input; `1` failure.
+
+**Output:** `results/stage4/<date>/NORAD_<id>/` with `positions.{parquet,csv}`
+(x, y, z, the six covariance terms, σ, station count, line residuals, χ²,
+condition number, crossing angles, timing, bootstrap percentiles, geodetic
+sub-point, flags), `station_contributions.{parquet,csv}` (per station and epoch:
+time offset, ECEF station position, Az/El and covariance, range, line
+residual, angular rate and motion during the offset, light time, Stage-3 and
+Stage-4 flags), `stage4_manifest.json`, five diagnostic plots and
+`logs/stage4.log`. Station coordinates come from the run's frozen Stage-1/2
+provenance (cross-checked against the hash-verified Stage-2 manifest when it
+is available), never from the live registry.
+
+The linear position covariance agrees with Monte Carlo scatter to within a
+few per cent for angular errors up to about 0.5°. It is long and thin along
+the line of sight: with 1 000–3 000 km baselines at about 20 000 km range, the
+along-LOS σ is 5–10× the transverse σ. Method, flags and validation:
+[`docs/stage4_triangulation.md`](docs/stage4_triangulation.md).
+
 ## TLEs and reproducibility
 
 - Without `--tle-file`, current GNSS TLEs are downloaded from CelesTrak and
@@ -361,6 +409,8 @@ uncertainty method, flags and limitations:
 | Stage 2, spec acceptance command (2026-10-01, rank 1) ([example](docs/examples/stage2/invalid_20261001_NORAD_38091)) | **Not valid** (exit 3). BeiDou-2 G5 is `OUT_OF_BAND`, and **Mauritius has no archive data on that day**: the `mu-udm` archive ends on 2026-06-26. Nothing was downloaded. |
 | Stage 1, 2026-06-25, GPS+Galileo ([`results/`](results)) | 70 windows. All three stations have 24-h archive coverage that day. |
 | Stage 3, 2026-06-25 PRN 26, real data, 10 s bins ([details](docs/stage3_direction_estimation.md#17-real-data-run-2026-06-25-gps-prn-26-norad-40534)) | ZA-Rhodes tracks PRN 26 in all 68 bins (SNR ≈ 12), within 1° of the 103-day-old TLE. MU-UDM is usable from 09:18:36 onwards (37 bins); before that a brighter source pulls the fit to the cap edge (flagged). MG-Tana is dominated by a quasi-static non-target source (flagged `TLE_UNASSOCIATED`). The bin-to-bin scatter (0.02–0.05°) is within the Jacobian σ (0.06–0.15°). The real error is a slowly varying systematic (0.1–0.2° wander, 1–2° offset from the TLE), which the bootstrap (0.4–0.7°) partly reflects. |
+| Stage 4, synthetic end-to-end ([example](docs/examples/stage4)) | A 3-D truth placed 1000 km off the PRN 26 TLE track (across the line of sight) is observed via simulated visibilities → `tart-localise` → `tart-triangulate`. The recovered position lies a median 996 km from the TLE along the injected offset (scatter 35 km). The 3-D error has median 293 km, almost all along the line of sight (transverse 32 km), and the pulls have std 0.87–0.99. |
+| Stage 4, 2026-06-25 PRN 26, real data ([details](docs/stage4_triangulation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage4_real)) | **The default run finds no 3-station epoch (exit 3).** With 1 s Stage-3 bins only 1 row is usable. With 10 s bins MG-Tana has just 2 usable rows, and MU's bins sit 2.6 s from ZA's (Stage 3 bins each station from its own first sample), beyond the 0.75 s tolerance. A diagnostic run (tolerance 6 s, 2 stations allowed) gives 36 epochs (1 with three stations): crossing angles 4–8°, condition number about 240, σ ≈ (264, 165, 456) km. The solutions lie about 3 000 km too far out along the line of sight (height about 23 400 km), with reduced χ² ≈ 11, which matches the 1–2° Stage-3 direction systematics. This is not a TLE comparison. |
 | Stage 3, synthetic end-to-end ([example](docs/examples/stage3)) | Sources injected 3.0–3.7° from the real PRN 26 TLE track are recovered to a median of 0.11–0.17° (σ ≈ 0.15°) and stay 3.0–3.7° from the TLE (measurement-driven). The visibility–image disagreement is about 0.3°. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
@@ -382,7 +432,10 @@ manifests). They are kept unchanged as provenance records.
 - Stage-1 excursions shorter than `--step` cannot be detected. Windows at the
   search-interval edge are flagged as clipped.
 - Gain and phase solutions are applied as recorded and are not verified.
-  Stage 3 estimates directions on each station's own timestamps. Cross-station time alignment is left to Stage 4.
+  Stage 3 estimates directions on each station's own timestamps, binned from
+  each station's first sample. Stage 4 matches the nearest rows within
+  `--time-match-tolerance` and never interpolates, so wide Stage-3 bins can
+  leave stations unmatched.
 - Live TART APIs were not needed. At the time of writing, only the
   `za-rhodes` and `ghana` APIs answered.
 
@@ -397,6 +450,7 @@ tart-gnss/
 ├── tart_gnss_stage2_implementation.md   # Stage-2 specification
 ├── tart_gnss_station_registry_implementation.md  # station-registry specification
 ├── tart_gnss_stage3_implementation.md   # Stage-3 specification
+├── tart_gnss_stage4_implementation.md   # Stage-4 specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
@@ -405,9 +459,13 @@ tart-gnss/
 ├── docs/report/                     # LaTeX technical report (registry, Stages 1-2), PDF, figures
 ├── docs/examples/stage2/            # example Stage-2 manifests (valid and invalid)
 ├── docs/examples/stage3/            # synthetic end-to-end Stage-3 output
+├── docs/examples/stage4/            # synthetic end-to-end Stage-4 output (with its Stage-3 input)
+├── docs/examples/stage4_real/       # real 2026-06-25 Stage-4 runs (default + diagnostic) and 10 s Stage-3 input
 ├── docs/stage3_direction_estimation.md  # Stage-3 method, conventions, outputs
+├── docs/stage4_triangulation.md     # Stage-4 method, uncertainty validation, outputs
 ├── scripts/make_report_figures.py
 ├── scripts/stage3_synthetic_demo.py
+├── scripts/stage4_synthetic_demo.py
 ├── src/tart_gnss/
 │   ├── cli.py  stations.py  tle.py  propagation.py  visibility.py
 │   ├── windows.py  search.py  output.py  provenance.py      # Stage 1
@@ -433,14 +491,23 @@ tart-gnss/
 │       ├── quality.py          # quality flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-localise
-└── tests/                           # 239 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 72 (tests/stage3/)
+│   └── stage4/
+│       ├── loader.py           # Stage-3 manifest/table, frozen coordinates, quality policy, sight lines
+│       ├── timing.py           # time matching, angular rates, motion during offsets
+│       ├── geometry.py         # Az/El and (l, m) -> ECEF lines and covariances, tangent bases
+│       ├── triangulation.py    # unweighted and iteratively weighted line intersection, covariance
+│       ├── uncertainty.py      # bootstrap, Monte Carlo covariance check
+│       ├── quality.py          # Stage-3 policy, Stage-4 flags
+│       ├── output.py  plotting.py  synthetic.py  errors.py
+│       └── cli.py              # tart-triangulate
+└── tests/                           # 337 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 72, Stage 4: 95, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 239 tests, ~25 s, no network needed
+pytest                       # 337 tests, ~40 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
@@ -449,6 +516,10 @@ it is not installed. The Stage-3 tests use synthetic visibilities and synthetic
 Measurement Sets (written with python-casacore). `tests/stage3/test_real_data.py`
 checks the visibility sign convention against the real 2026-06-25 Measurement
 Sets and is skipped unless they are present (`TART_GNSS_STAGE2_DIR`).
+The Stage-4 tests use synthetic Stage-3 tables built from a known 3-D truth
+(exact recovery, Monte Carlo covariance validation, poor geometry, timing
+offsets, a biased station, two-station and negative-range cases) and need
+only numpy and pandas.
 
 ## Technical report
 
