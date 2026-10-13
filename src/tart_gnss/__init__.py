@@ -1,14 +1,16 @@
-"""tart_gnss: Stage 1 of the TART GNSS satellite-localisation pipeline.
+"""tart_gnss: the TART GNSS satellite-localisation pipeline (Stages 1-3).
 
 Stage 1 predicts GNSS satellite positions from TLEs (SGP4 via Skyfield) and
 identifies the time windows during which a satellite is simultaneously above a
 minimum elevation at several TART radio-telescope stations.
 
-Later stages (not implemented here) will retrieve the corresponding TART
-visibilities, image each station independently, measure the satellite
-direction and infer the satellite position with Bayesian methods.
+Stage 2 (:mod:`tart_gnss.stage2`) retrieves the corresponding TART
+visibilities and prepares one Measurement Set per station. Stage 3
+(:mod:`tart_gnss.stage3`) measures the satellite direction at each station
+independently from the complex visibilities. Multi-station 3-D localisation
+(Stage 4 onwards) is not implemented here.
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = ["__version__"]
