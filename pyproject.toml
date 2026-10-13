@@ -43,6 +43,7 @@ tart-retrieve = "tart_gnss.stage2.cli:main"
 tart-stations-update = "tart_gnss.registry_cli:main_update"
 tart-stations-list = "tart_gnss.registry_cli:main_list"
 tart-localise = "tart_gnss.stage3.cli:main"
+tart-triangulate = "tart_gnss.stage4.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ifornax/tart-gnss"
