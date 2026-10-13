@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tart-gnss"
-version = "0.4.1"
-description = "TART GNSS satellite-localisation pipeline: Stage 1 common GNSS visibility windows, Stage 2 TART observation retrieval, Stage 3 per-station direction estimation"
+version = "0.5.0"
+description = "TART GNSS satellite-localisation pipeline: common visibility windows, observation retrieval, per-station direction estimation, multi-station triangulation and TLE-independent trajectory tracking"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "Nadeem Oozeer", email = "nadeem.oozeer@ru.ac.za" }]
@@ -32,6 +32,8 @@ test = ["pytest>=7", "h5py>=3.1"]
 plot = ["matplotlib>=3.5"]
 # Stage 3: direction estimation from Measurement Sets
 stage3 = ["scipy>=1.7", "pandas>=1.3", "pyarrow>=6", "matplotlib>=3.5", "python-casacore>=3.5"]
+# Stages 4-5: triangulation and trajectory tracking from saved tables
+stage5 = ["scipy>=1.7", "pandas>=1.3", "pyarrow>=6", "matplotlib>=3.5"]
 all = ["h5py>=3.1", "minio>=7", "tart2ms>=0.9.4", "python-casacore>=3.5", "matplotlib>=3.5",
        "scipy>=1.7", "pandas>=1.3", "pyarrow>=6"]
 dev = ["pytest>=7", "h5py>=3.1", "minio>=7", "matplotlib>=3.5", "scipy>=1.7", "pandas>=1.3", "pyarrow>=6",
@@ -44,6 +46,7 @@ tart-stations-update = "tart_gnss.registry_cli:main_update"
 tart-stations-list = "tart_gnss.registry_cli:main_list"
 tart-localise = "tart_gnss.stage3.cli:main"
 tart-triangulate = "tart_gnss.stage4.cli:main"
+tart-track = "tart_gnss.stage5.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ifornax/tart-gnss"
