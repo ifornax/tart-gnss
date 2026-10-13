@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tart-gnss"
-version = "0.4.0"
+version = "0.4.1"
 description = "TART GNSS satellite-localisation pipeline: Stage 1 common GNSS visibility windows, Stage 2 TART observation retrieval, Stage 3 per-station direction estimation"
 readme = "README.md"
 requires-python = ">=3.9"

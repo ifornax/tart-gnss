@@ -325,8 +325,16 @@ are resolved, in order:
 
 ## 13. Time binning
 
-Bins of `--time-bin` seconds (default 1) start at each station's first
-timestamp. Empty bins are omitted, so no timestamp is ever fabricated. The
+Bins of `--time-bin` seconds (default 1) lie on a common UTC grid
+(`--bin-origin utc`, the default since v0.4.1). Their edges fall at whole
+multiples of the bin width in UTC MJD seconds, which is a whole multiple
+after UTC midnight whenever the width divides 86 400 s. Every station
+therefore uses the same bins, whatever its own dump phase, so Stage 4 can
+match stations in time. Within a bin, the stations' output times still differ
+by their dump phases, typically less than 0.5 s.
+`--bin-origin first-sample` restores the earlier behaviour: bins start at each
+station's first timestamp, so stations' 10 s bins can sit seconds apart.
+Empty bins are omitted, so no timestamp is ever fabricated. The
 output time is the weight-averaged time of the samples actually used. TART
 cadence is about 1.025 s, so 1 s bins usually hold one dump.
 
@@ -428,6 +436,12 @@ centre. Every bin is GOOD.
 
 ## 17. Real-data run: 2026-06-25, GPS PRN 26 (NORAD 40534)
 
+These results were computed with per-station bins (`--bin-origin
+first-sample`, the only option before v0.4.1). With the default UTC-aligned
+bins the per-station results are essentially the same: ZA 69/69 usable,
+MU 37, MG 2. The bins now coincide across stations; see
+[`stage4_triangulation.md` §12](stage4_triangulation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534).
+
 Input: the valid Stage-2 dataset (three 24-antenna MSs, 645 s real overlap).
 The Measurement Sets are not in git. The run was
 `tart-localise --all-stations --image-validation --time-bin 10 --bootstrap 50`
@@ -516,5 +530,5 @@ The near-field metric is η = 2.8 × 10⁻⁶ (MU), 2.5 × 10⁻⁶ (MG) and
 - **TLE reference.** The TLE in the 2026-06-25 example has an epoch 103 days
   after the observation. Its track is a rough reference, which matters only
   for the search centre and the plots.
-- **Time bins** are per station. Nothing is interpolated or aligned across
-  stations (Stage 4).
+- **Time bins** share a common UTC grid (§13), but each station is fitted
+  independently on its own samples. Nothing is interpolated across stations.

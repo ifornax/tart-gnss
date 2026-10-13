@@ -15,6 +15,6 @@ TLE comparison (Stages 5-6) are not implemented here.
 Every public command is named ``tart-*`` (see ``tests/test_cli_names.py``).
 """
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 __all__ = ["__version__"]

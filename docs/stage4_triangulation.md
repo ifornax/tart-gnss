@@ -88,9 +88,11 @@ positions and alt/az agree with ours to 10⁻⁶°.
 
 ## 4. Time matching and timing diagnostics
 
-Station timestamps are independent: each station dumps on its own clock, and
-Stage 3 bins each station from its own first timestamp. Rows are never joined
-by row number, and nothing is interpolated.
+Station timestamps are independent: each station dumps on its own clock.
+Since v0.4.1, Stage 3 bins every station on the same UTC grid, so matched rows
+differ only by the stations' dump phases. With `--bin-origin first-sample`
+they could differ by up to a bin width. Rows are never joined by row number,
+and nothing is interpolated.
 
 * The **reference station** is the one with the most valid rows (ties are
   broken alphabetically). `--reference-station` overrides the choice.
@@ -379,44 +381,56 @@ result is bit-identical with the TLE columns and satellite block removed.
 ## 12. Real-data run (2026-06-25, GPS PRN 26, NORAD 40534)
 
 Stage 3 was re-run with the current code on the real three-station Stage-2
-data (`tart-localise --all-stations --image-validation`). Stage 4 was then run
-on its output. The example lives in
-[`docs/examples/stage4_real`](examples/stage4_real), with its 10 s Stage-3
-input. Large real datasets (Measurement Sets, HDF5) are not committed.
+data: `tart-localise --all-stations --image-validation --time-bin 10`, with
+UTC-aligned bins (the default since v0.4.1). Stage 4 was then run on its
+output. The example is in [`docs/examples/stage4_real`](examples/stage4_real),
+together with its 10 s Stage-3 input. Large real datasets (Measurement Sets,
+HDF5) are not committed.
 
-**Spec acceptance command, default options.**
+**Stage-3 input (10 s UTC bins):** 108 of 206 rows are usable. ZA-Rhodes has
+69, MU-UDM 37 (from 09:18:36) and MG-Tana 2. The strict policy rejects 86
+`BOUNDARY_SOLUTION`, 11 `TLE_UNASSOCIATED` and 1 `LOW_SNR`. With 1 s bins only
+1 of 1980 rows is usable (per-bin SNR 3–4), so use 10 s bins for TART.
 
-* **1 s Stage-3 bins** (the Stage-3 default): exit 3. Only 1 of 1980 Stage-3
-  rows is usable (per-bin SNR 3–4). Strict rejection: 1166 `LOW_SNR`, 813
-  `BOUNDARY_SOLUTION`. No epoch has three stations.
-* **10 s Stage-3 bins:** exit 3.
-  * 107 of 204 rows are usable. Strict rejection: 86 `BOUNDARY_SOLUTION`,
-    11 `TLE_UNASSOCIATED`. ZA-Rhodes has 68 usable rows, MU-UDM 37 (from
-    09:18:36), MG-Tana 2.
-  * Each station's bins start at its own first timestamp, so MU's bin centres
-    sit 2.6 s from ZA's in every bin. The 0.75 s tolerance never pairs them,
-    and no epoch has three stations.
+**Spec acceptance command, default options** (tolerance 0.75 s, three
+stations): **exit 0**, with **1 valid three-station epoch**.
 
-**Diagnostic run** (`--time-match-tolerance 6 --min-stations 2 --bootstrap 200`;
-the tolerance is widened and two-station epochs are accepted, both
-deliberately and for diagnosis only):
+* The bins are shared, so matched stations differ only by their dump phases:
+  MU +0.05 s and MG −0.25 s from ZA, at most 0.57 s apart.
+* 35 epochs have at least two stations: 34 ZA+MU (09:18:35–09:24:25) and one
+  ZA+MU+MG. The 34 two-station epochs are degraded diagnostics
+  (`INSUFFICIENT_STATIONS`).
+* MG-Tana's two usable rows are now the limit, not the timing.
+
+The three-station epoch, at 09:23:54.9:
+
+| | x (km) | y (km) | z (km) |
+|---|---|---|---|
+| position | 15 538.5 | 10 285.0 | −23 409.4 |
+| σ | 232 | 149 | 424 |
+
+* **Geometry:** crossing angles 3.9–7.6°, condition number about 300.
+* **Fit:** reduced χ² 26; flags `HIGH_CHI2` and `HIGH_LINE_RESIDUAL` (MG,
+  normalised residual 7.5); both are warnings.
+* **Solution:** geodetic height 23 555 km.
+
+**Two-station diagnostic** (`--min-stations 2 --bootstrap 200`, which accepts
+the 34 ZA+MU epochs as well):
 
 | | value |
 |---|---|
-| matched epochs with ≥ 2 stations | 36 (35 ZA+MU, 09:18:34–09:24:22; 1 ZA+MU+MG at 09:23:53.9) |
-| time offsets | MU 2.61–2.62 s; MG 0.26 s; target motion during the offset 0.01–0.05° (< σ_θ, so no `TIME_MISMATCH`) |
-| crossing angles / condition number | ZA–MU 7.4–7.7°; MG–MU 3.9° · 222–306 |
+| epochs | 35 (34 ZA+MU, 1 ZA+MU+MG) |
+| time offsets | median MU +0.05 s, MG −0.25 s; max spread 0.57 s; target motion during the offsets < σ_θ (no `TIME_MISMATCH`) |
+| crossing angles / condition number | ZA–MU 7.4–7.7°, MG–MU 3.9° · 222–304 |
 | Stage-3 σ_θ | 0.14–0.16° |
-| position σ (x, y, z) | median 264, 165, 456 km; bootstrap agrees (no `BOOTSTRAP_UNSTABLE`) |
-| line residuals | median 116 km (ZA), 125 km (MU); MG 448 km in the 3-station epoch |
-| reduced χ² | median 11.5 (26 of 36 epochs `HIGH_CHI2`) |
-| solution | geodetic height 22 690–23 880 km (geocentric radius ≈ 29 700 km) |
-| continuity | median step 130 km between 10 s epochs (σ-dominated; the satellite moves about 39 km) |
+| position σ (x, y, z) | median 266, 163, 453 km; bootstrap agrees (no `BOOTSTRAP_UNSTABLE`) |
+| line residuals | median 117 km (ZA), 127 km (MU); MG 432 km |
+| reduced χ² | median 11 (26 of 35 epochs `HIGH_CHI2`) |
+| solution | geodetic height 22 640–23 730 km |
 
-The single three-station epoch (09:23:53.9) gives x, y, z =
-15 499, 10 245, −23 315 km, with σ = 228, 146, 414 km. The flags are
-`HIGH_LINE_RESIDUAL` (MG, normalised residual 7.4) and `HIGH_CHI2`
-(reduced χ² 24).
+Before v0.4.1, Stage 3 started each station's bins at its own first
+timestamp. MU's 10 s bin centres then sat 2.6 s from ZA's, so the default run
+found no three-station epoch and exited 3.
 
 **Interpretation, without TLE comparison (Stage 6).**
 
@@ -424,19 +438,14 @@ The single three-station epoch (09:23:53.9) gives x, y, z =
   a GPS orbit (about 20 200 km height) would allow. The reduced χ² is much
   greater than 1.
 * Both are what the Stage-3 systematics predict. The directions carry slowly
-  varying offsets of 1–2°, much larger than their 0.15° random σ. With a
-  7° crossing angle, a 1° relative direction error moves the intersection by
+  varying offsets of 1–2°, much larger than their 0.15° random σ. With a 7°
+  crossing angle, a 1° relative direction error moves the intersection by
   about 21 000 km × 1°/7°, i.e. about 3 000 km along the line of sight.
 * The geometry is good (condition number about 240, rank 3, no
-  `POOR_GEOMETRY`). The limitation is the accuracy of the Stage-3 directions
-  and the bin alignment, not the triangulation.
+  `POOR_GEOMETRY`), and the timing is no longer limiting. What limits the
+  result is the accuracy of the Stage-3 directions, and MG-Tana being
+  dominated by a non-target source.
 * Stage 4 does not calibrate station biases (by design).
-
-**What would make the default run produce three-station estimates:**
-
-* common UTC-aligned Stage-3 bin edges, so MU and ZA bins coincide;
-* more usable MG rows, since MG-Tana is dominated by a non-target source;
-* calibration of the Stage-3 direction systematics (Stage 5 or later).
 
 ## 13. Limitations
 
@@ -453,10 +462,10 @@ The single three-station epoch (09:23:53.9) gives x, y, z =
 * **Long, thin uncertainty.** The geometry (baselines much smaller than the
   range) makes the uncertainty strongly elongated along the line of sight,
   whatever the estimator.
-* **Bin alignment.** Stage 3 starts each station's bins at that station's
-  first timestamp. With bins wider than the tolerance, stations can therefore
-  fail to match at all (§12). Aligning Stage-3 bins to a common UTC grid
-  would fix this; it is a Stage-3 change and is left as a follow-up.
+* **Bin alignment.** Stage-3 runs made before v0.4.1, or with
+  `--bin-origin first-sample`, start each station's bins at its own first
+  timestamp. With bins wider than the tolerance, stations can then fail to
+  match at all (§12).
 
 ## 14. CLI naming convention
 

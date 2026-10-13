@@ -105,13 +105,32 @@ def test_time_bins_never_fabricate_timestamps(layout):
     times = T0 + np.array([0.0, 1.03, 2.05, 7.2, 8.24])  # gap: no data between 2.05 and 7.2 s
     obs = syn.simulate_observation(layout, LAT, LON, ALT, times, 200.0, 45.0)
     ds = syn.to_dataset(obs)
-    bins = list(loader.time_bins(ds, 1.0))
+    bins = list(loader.time_bins(ds, 1.0, "first-sample"))
     assert len(bins) == 5
-    bins3 = list(loader.time_bins(ds, 3.0))
+    bins3 = list(loader.time_bins(ds, 3.0, "first-sample"))
     assert [np.unique(ds.time_mjd_seconds[b.rows]).size for b in bins3] == [3, 2]
     for b in bins3:
         t = ds.time_mjd_seconds[b.rows]
         assert b.start_mjd_seconds <= t.min() and t.max() < b.end_mjd_seconds
+
+
+def test_utc_bins_are_common_to_all_stations(layout):
+    # Two stations with independent clocks (first samples 0.37 s apart) share UTC-aligned 10 s bins.
+    edges = []
+    for start in (3.21, 3.58):
+        times = T0 + start + np.arange(40) * 1.0247
+        ds = syn.to_dataset(syn.simulate_observation(layout, LAT, LON, ALT, times, 200.0, 45.0))
+        bins = list(loader.time_bins(ds, 10.0))
+        for b in bins:
+            t = ds.time_mjd_seconds[b.rows]
+            assert b.start_mjd_seconds <= t.min() and t.max() < b.end_mjd_seconds
+            assert b.start_mjd_seconds % 10.0 == 0.0  # whole multiples of the bin width
+        edges.append([b.start_mjd_seconds for b in bins])
+    assert edges[0] == edges[1]
+    first = list(loader.time_bins(ds, 10.0, "first-sample"))
+    assert first[0].start_mjd_seconds == ds.time_mjd_seconds.min()
+    with pytest.raises(ValueError):
+        list(loader.time_bins(ds, 10.0, "gps"))
 
 
 def test_select_samples_excludes_bad_data(layout):

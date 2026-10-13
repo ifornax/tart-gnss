@@ -498,16 +498,32 @@ class TimeBin:
     rows: np.ndarray
 
 
-def time_bins(dataset: VisibilityDataset, bin_s: float) -> Iterator[TimeBin]:
+#: Bin-edge conventions accepted by :func:`time_bins`.
+BIN_ORIGINS = ("utc", "first-sample")
+
+
+def time_bins(dataset: VisibilityDataset, bin_s: float, origin: str = "utc") -> Iterator[TimeBin]:
     """Yield the non-empty time bins of width ``bin_s`` seconds.
 
-    Bin edges start at the first timestamp. Empty bins are skipped, so no
-    timestamp is ever produced where there is no data.
+    ``origin="utc"`` (default): edges lie on a fixed absolute grid, at whole
+    multiples of ``bin_s`` seconds of UTC MJD time, so they fall at whole
+    multiples of ``bin_s`` after UTC midnight whenever ``bin_s`` divides
+    86400 s. Every station therefore shares the same bins, which is what lets
+    Stage 4 match stations in time. ``origin="first-sample"``: edges start at
+    this dataset's first timestamp (the pre-v0.4.1 behaviour).
+
+    Empty bins are skipped, so no timestamp is ever produced where there is
+    no data.
     """
     if not bin_s > 0:
         raise ValueError("time bin must be positive")
+    if origin not in BIN_ORIGINS:
+        raise ValueError(f"unknown bin origin {origin!r}")
     t = dataset.time_mjd_seconds
-    t0 = float(t.min())
+    if origin == "utc":
+        t0 = float(np.floor(t.min() / bin_s) * bin_s)
+    else:
+        t0 = float(t.min())
     idx = np.floor((t - t0) / bin_s + 1e-9).astype(np.int64)
     order = np.argsort(idx, kind="stable")
     uniq, starts = np.unique(idx[order], return_index=True)

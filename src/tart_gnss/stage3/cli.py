@@ -68,6 +68,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--image-validation", action="store_true",
                    help="also run the image-domain estimator as a cross-check")
     p.add_argument("--time-bin", type=float, default=1.0, help="time-bin width in seconds (default 1)")
+    p.add_argument("--bin-origin", choices=loader_mod.BIN_ORIGINS, default="utc",
+                   help="bin edges on a common UTC grid (multiples of --time-bin after UTC midnight; default, "
+                        "same bins at every station) or from each station's first sample")
     p.add_argument("--min-baselines", type=int, default=10, help="minimum valid baselines per bin (default 10)")
     p.add_argument("--search-radius-deg", type=float, default=10.0,
                    help="search-cap radius about the TLE prediction (default 10)")
@@ -158,12 +161,13 @@ def process_station(
     thresholds: q.QualityThresholds,
     n_boot: int,
     rng: np.random.Generator,
+    bin_origin: str = "utc",
 ) -> StationResult:
     """Estimate a direction in every non-empty time bin of one station."""
     run_image = image_validation or method in ("image", "both")
     primary = "image" if method == "image" else "visibility"
     calib_warn = bool(si.calibration_warnings)
-    bins = list(loader_mod.time_bins(dataset, bin_s))
+    bins = list(loader_mod.time_bins(dataset, bin_s, bin_origin))
     t_unix_all = loader_mod.mjd_seconds_to_unix(dataset.time_mjd_seconds)
     logger.info("%s: %d rows, %s .. %s, %.6g-%.6g MHz, %d/%d antennas valid, %d time bins of %.3g s",
                 si.station_id, dataset.n_rows,
@@ -427,7 +431,7 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
             tle = TleReference(sat["tle_line1"], sat["tle_line2"], si.latitude_deg, si.longitude_deg, si.altitude_m)
         weights_cal = not bool(np.all(dataset.weight[~dataset.flag] == 1.0))
         result = process_station(si, dataset, norad_id=norad, tle=tle, method=args.method,
-                                 image_validation=args.image_validation, bin_s=args.time_bin, options=options,
+                                 image_validation=args.image_validation, bin_s=args.time_bin, bin_origin=args.bin_origin, options=options,
                                  thresholds=replace(thresholds, weights_calibrated=weights_cal),
                                  n_boot=args.bootstrap, rng=rng)
         result.summary["weights_calibrated"] = weights_cal
@@ -471,7 +475,10 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
             "bootstrap": {"n_resamples": args.bootstrap, "unit": "baseline (antenna pair)",
                           "random_seed": args.seed},
         },
-        "time_binning": {"bin_s": args.time_bin, "edges": "from the first timestamp of each station",
+        "time_binning": {"bin_s": args.time_bin, "origin": args.bin_origin,
+                         "edges": "common UTC grid: whole multiples of bin_s of UTC MJD seconds (same at every "
+                                  "station)" if args.bin_origin == "utc"
+                         else "from the first timestamp of each station",
                          "output_time": "weight-averaged time of the samples used", "empty_bins": "omitted"},
         "quality_thresholds": {**thresholds.to_dict(),
                                "weights_calibrated": "per station (stations.<id>.weights_calibrated)"},

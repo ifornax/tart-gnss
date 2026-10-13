@@ -14,7 +14,7 @@ sight to give the satellite's 3-D position with its covariance.**
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
 | 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
 
-> **Status:** Stages 1–4 complete, with dynamic TART station-registry integration (v0.4.0). The repository is private and under active development.
+> **Status:** Stages 1–4 complete, with dynamic TART station-registry integration (v0.4.1). The repository is private and under active development.
 
 ---
 
@@ -320,6 +320,7 @@ tart-localise \
 | `--method` | primary estimator: `visibility`, `image`, or `both` | `visibility` |
 | `--image-validation` | also run the dirty-image estimator as a cross-check | off |
 | `--time-bin` | bin width (s); empty bins are skipped, never fabricated | 1 |
+| `--bin-origin` | `utc`: edges on a common UTC grid (same bins at every station); `first-sample`: from each station's first sample | `utc` |
 | `--min-baselines` | fewer valid baselines → no estimate, `LOW_BASELINE_COUNT` | 10 |
 | `--search-radius-deg` | search cap about the TLE direction (search bound only, never a prior) | 10 |
 | `--blind` | search the whole visible hemisphere | off |
@@ -410,7 +411,7 @@ along-LOS σ is 5–10× the transverse σ. Method, flags and validation:
 | Stage 1, 2026-06-25, GPS+Galileo ([`results/`](results)) | 70 windows. All three stations have 24-h archive coverage that day. |
 | Stage 3, 2026-06-25 PRN 26, real data, 10 s bins ([details](docs/stage3_direction_estimation.md#17-real-data-run-2026-06-25-gps-prn-26-norad-40534)) | ZA-Rhodes tracks PRN 26 in all 68 bins (SNR ≈ 12), within 1° of the 103-day-old TLE. MU-UDM is usable from 09:18:36 onwards (37 bins); before that a brighter source pulls the fit to the cap edge (flagged). MG-Tana is dominated by a quasi-static non-target source (flagged `TLE_UNASSOCIATED`). The bin-to-bin scatter (0.02–0.05°) is within the Jacobian σ (0.06–0.15°). The real error is a slowly varying systematic (0.1–0.2° wander, 1–2° offset from the TLE), which the bootstrap (0.4–0.7°) partly reflects. |
 | Stage 4, synthetic end-to-end ([example](docs/examples/stage4)) | A 3-D truth placed 1000 km off the PRN 26 TLE track (across the line of sight) is observed via simulated visibilities → `tart-localise` → `tart-triangulate`. The recovered position lies a median 996 km from the TLE along the injected offset (scatter 35 km). The 3-D error has median 293 km, almost all along the line of sight (transverse 32 km), and the pulls have std 0.87–0.99. |
-| Stage 4, 2026-06-25 PRN 26, real data ([details](docs/stage4_triangulation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage4_real)) | **The default run finds no 3-station epoch (exit 3).** With 1 s Stage-3 bins only 1 row is usable. With 10 s bins MG-Tana has just 2 usable rows, and MU's bins sit 2.6 s from ZA's (Stage 3 bins each station from its own first sample), beyond the 0.75 s tolerance. A diagnostic run (tolerance 6 s, 2 stations allowed) gives 36 epochs (1 with three stations): crossing angles 4–8°, condition number about 240, σ ≈ (264, 165, 456) km. The solutions lie about 3 000 km too far out along the line of sight (height about 23 400 km), with reduced χ² ≈ 11, which matches the 1–2° Stage-3 direction systematics. This is not a TLE comparison. |
+| Stage 4, 2026-06-25 PRN 26, real data, 10 s UTC-aligned Stage-3 bins ([details](docs/stage4_triangulation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage4_real)) | **The spec command exits 0 with 1 valid three-station epoch** (09:23:54.9). Stations now match within 0.57 s; MG-Tana's 2 usable rows are the limit. With two stations allowed there are 35 epochs: crossing angles 4–8°, condition number about 240, σ ≈ (266, 163, 453) km. The solutions lie about 3 000 km too far out along the line of sight (height about 23 300 km), with reduced χ² ≈ 11, which matches the 1–2° Stage-3 direction systematics. This is not a TLE comparison. |
 | Stage 3, synthetic end-to-end ([example](docs/examples/stage3)) | Sources injected 3.0–3.7° from the real PRN 26 TLE track are recovered to a median of 0.11–0.17° (σ ≈ 0.15°) and stay 3.0–3.7° from the TLE (measurement-driven). The visibility–image disagreement is about 0.3°. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
@@ -432,10 +433,9 @@ manifests). They are kept unchanged as provenance records.
 - Stage-1 excursions shorter than `--step` cannot be detected. Windows at the
   search-interval edge are flagged as clipped.
 - Gain and phase solutions are applied as recorded and are not verified.
-  Stage 3 estimates directions on each station's own timestamps, binned from
-  each station's first sample. Stage 4 matches the nearest rows within
-  `--time-match-tolerance` and never interpolates, so wide Stage-3 bins can
-  leave stations unmatched.
+  Stage 3 estimates directions on each station's own timestamps, in bins on a
+  common UTC grid. Stage 4 matches the nearest rows within
+  `--time-match-tolerance` and never interpolates.
 - Live TART APIs were not needed. At the time of writing, only the
   `za-rhodes` and `ghana` APIs answered.
 
@@ -500,14 +500,14 @@ tart-gnss/
 │       ├── quality.py          # Stage-3 policy, Stage-4 flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-triangulate
-└── tests/                           # 338 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 72, Stage 4: 96, CLI names: 3
+└── tests/                           # 339 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 338 tests, ~40 s, no network needed
+pytest                       # 339 tests, ~40 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
