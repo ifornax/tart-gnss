@@ -79,7 +79,7 @@ plausible. The convention was established and is regression-tested
 | MU-UDM, 09:18:59 UTC | Az 110°, El 67° | GPS PRN 28: Az 106.2°, El 66.6° | Az 290° (nothing predicted) |
 | MG-Tana, 09:19:17 UTC | Az 108°, El 55° | GPS PRN 28: Az 106.0°, El 54.4° | Az 288° |
 
-On every station, the stored UVW matches −**b** to better than 0.015 m, with
+On every station, the stored UVW matches −**b** to ≤ 0.016 m, with
 |w| < 3 × 10⁻⁵ m.
 
 ## 3. Coordinate conventions
@@ -460,15 +460,31 @@ What the flags show:
   1980 bins are `LOW_SNR`. Use `--time-bin 10` for TART. The satellite moves
   about 0.3° in 10 s, well within a 3° beam, and the SNR rises by about √10.
 
-**Uncertainty on real data.** The baseline bootstrap gives a spread 3–7×
-larger than the local Jacobian covariance, whereas the two agree on
-synthetic data. The real residuals are not independent noise: other
-satellites' sidelobes and antenna-gain errors are correlated across
-baselines. For real TART data, **use the bootstrap percentiles (or inflate
-the covariance)**. Do not take `sigma_az_deg`/`sigma_el_deg` at face value
-in Stage 4. The systematic 1–2° offsets from the TLE track are consistent
-with the 103-day TLE propagation and/or residual calibration errors. Stage 3
-cannot separate the two.
+**Uncertainty on real data.** The Jacobian σ was checked against the
+data themselves. 10 s bins do not overlap, so their scatter is an
+independent estimate of the random error:
+
+| Station (usable bins) | Bin-to-bin scatter (successive differences / √2), El / Az·cos El | Residual about a cubic track, El / Az·cos El | Lag-1 autocorrelation of El residuals | Jacobian σ, El / Az·cos El | Bootstrap half-width, El / Az·cos El |
+|---|---|---|---|---|---|
+| ZA-Rhodes (68) | 0.038° / 0.022° | 0.177° / 0.063° | 0.96 | 0.104° / 0.062° | 0.68° / 0.37° |
+| MU-UDM (37) | 0.048° / 0.041° | 0.071° / 0.066° | 0.61 | 0.153° / 0.118° | 0.48° / 0.39° |
+
+What this shows:
+
+- **The per-bin Jacobian σ is honest to conservative** for the random
+  (bin-to-bin) error.
+- **The bootstrap overstates it by about 10×.** Resampling the baselines of
+  a sparse 15–24-element array changes its sidelobe pattern, so on a crowded
+  sky the bootstrap measures sensitivity to confusion, not measurement noise.
+- **The dominant real-data error is systematic.** It is slowly varying and
+  correlated over minutes: there are 0.1–0.2° wanders about a smooth track
+  (high autocorrelation), and the 1–2° offsets from the TLE track are
+  consistent with the 103-day TLE propagation, residual calibration errors
+  and sidelobe confusion. Stage 3 cannot separate these.
+
+Stage 4 should therefore not treat successive bins as independent, and
+should model a per-station systematic term rather than rely on either σ
+alone.
 
 The near-field metric is η = 2.8 × 10⁻⁶ (MU), 2.5 × 10⁻⁶ (MG) and
 6.1 × 10⁻⁶ (ZA), so the plane-wave model holds (§11).
@@ -489,9 +505,12 @@ The near-field metric is η = 2.8 × 10⁻⁶ (MU), 2.5 × 10⁻⁶ (MG) and
   captured by σ.
 - **Weights** in TART MSs are all 1, so `reduced_chi2` is not a calibrated χ²
   and σ is estimated from the residuals.
-- **Uncertainties** are local (Gauss–Newton) and assume independent residuals.
-  They are honest on synthetic data at SNR ≳ 5, but are 3–7× too small on
-  real TART data (§17). Use the bootstrap there.
+- **Uncertainties** are local (Gauss–Newton) per-bin random errors. They are
+  honest on synthetic data at SNR ≳ 5, and match the bin-to-bin scatter of
+  real data. They do **not** include the slowly varying systematics
+  (calibration, confusion) that dominate real TART errors and are correlated
+  across bins (§17). On a crowded sky the baseline bootstrap measures
+  confusion sensitivity and overstates the random error.
 - **Image estimator** is not statistically independent of the visibility
   estimator (§9).
 - **TLE reference.** The TLE in the 2026-06-25 example has an epoch 103 days
