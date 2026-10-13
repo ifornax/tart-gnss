@@ -1,0 +1,17 @@
+Stage-4 synthetic demo: truth = TLE track + 1000 km offset perpendicular to the mean LOS
+middle epoch 2026-06-25T09:14:15.620500Z (3 stations, flags: GOOD)
+                     x (km)         y (km)         z (km)
+true              16151.034       7563.587     -19951.461
+recovered         16216.264       7604.119     -19985.951
+error                65.230         40.532        -34.490
+sigma               228.721         88.670        324.401
+3-D error 84.2 km; distance from the TLE position 989.1 km (injected offset 1000 km)
+condition number 261.1; crossing angles 2.59-8.20 deg; reduced chi2 0.95; max time offset 0.625 s
+station        offset_s   range_km  line_resid_km  norm_resid  sigma_theta_deg
+madagascar       0.000    21884.2          54.06        1.25            0.143
+mauritius       -0.250    22194.2          48.30        0.90            0.172
+south_africa     0.375    20748.5          35.35        0.68            0.148
+all 30 epochs: valid 29; median 3-D error 292.6 km (max 2506.0); median distance from TLE 1043.8 km; pull std (x, y, z) = (0.95, 0.87, 0.99)
+recovered displacement from the TLE along the injected offset direction: median 996.2 km (injected 1000 km; scatter 34.6 km); error along the mean line of sight: median 290.3 km, transverse: median 32.3 km
+
+tart-localise exit 0; tart-triangulate exit 0; outputs in docs/examples/stage4/20260625/NORAD_40534

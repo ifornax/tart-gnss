@@ -1,0 +1,15 @@
+2026-10-13T16:52:28Z INFO    tart_gnss.stage3: station mauritius (synthetic-mauritius): input MS /tmp/stage3_demo__2v01t2t/mauritius/ms/mauritius.ms
+2026-10-13T16:52:28Z INFO    tart_gnss.stage3: mauritius: 5520 rows, 2026-06-25T09:14:00.000Z .. 2026-06-25T09:14:19.469Z, 1575.42-1575.42 MHz, 24/24 antennas valid, 20 time bins of 1 s
+2026-10-13T16:52:28Z INFO    tart_gnss.stage3: mauritius: up to 269 valid baselines per bin (of 276)
+2026-10-13T16:52:32Z INFO    tart_gnss.stage3: mauritius: fit success 100%, usable 20/20, median SNR 8.62, median vis-image offset 0.206 deg
+2026-10-13T16:52:32Z INFO    tart_gnss.stage3: station madagascar (synthetic-madagascar): input MS /tmp/stage3_demo__2v01t2t/madagascar/ms/madagascar.ms
+2026-10-13T16:52:32Z INFO    tart_gnss.stage3: madagascar: 5520 rows, 2026-06-25T09:14:00.000Z .. 2026-06-25T09:14:19.469Z, 1575.42-1575.42 MHz, 24/24 antennas valid, 20 time bins of 1 s
+2026-10-13T16:52:32Z INFO    tart_gnss.stage3: madagascar: up to 270 valid baselines per bin (of 276)
+2026-10-13T16:52:35Z INFO    tart_gnss.stage3: madagascar: fit success 100%, usable 20/20, median SNR 8.62, median vis-image offset 0.266 deg
+2026-10-13T16:52:35Z INFO    tart_gnss.stage3: station south_africa (synthetic-south_africa): input MS /tmp/stage3_demo__2v01t2t/south_africa/ms/south_africa.ms
+2026-10-13T16:52:35Z INFO    tart_gnss.stage3: south_africa: 5520 rows, 2026-06-25T09:14:00.000Z .. 2026-06-25T09:14:19.469Z, 1575.42-1575.42 MHz, 24/24 antennas valid, 20 time bins of 1 s
+2026-10-13T16:52:35Z INFO    tart_gnss.stage3: south_africa: up to 269 valid baselines per bin (of 276)
+2026-10-13T16:52:39Z INFO    tart_gnss.stage3: south_africa: fit success 100%, usable 20/20, median SNR 8.35, median vis-image offset 0.352 deg
+2026-10-13T16:52:39Z INFO    tart_gnss.stage3: wrote docs/examples/stage3/20260625/NORAD_40534/directions.csv and docs/examples/stage3/20260625/NORAD_40534/directions.parquet
+2026-10-13T16:52:41Z INFO    tart_gnss.stage3: wrote 12 diagnostic figures to docs/examples/stage3/20260625/NORAD_40534/diagnostics
+2026-10-13T16:52:41Z INFO    tart_gnss.stage3: wrote docs/examples/stage3/20260625/NORAD_40534/stage3_manifest.json (60 rows, 60 usable)
