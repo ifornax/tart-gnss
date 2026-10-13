@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "stage": 3,
-  "input_manifest": "/tmp/stage3_demo_nu448_67/manifest.json",
+  "input_manifest": "/tmp/stage3_demo_0sc_1nxk/manifest.json",
   "input_manifest_sha256": "16b2c958a19e9fb5e3983f4cc431621696b2319e2d9bf58997fe8d184b0139a9",
   "stage2_three_station_valid": true,
   "stage2_validity_reasons": [],
@@ -23,7 +23,7 @@
       "latitude_deg": -20.2587508,
       "longitude_deg": 57.7591989,
       "altitude_m": 20.0,
-      "measurement_set": "/tmp/stage3_demo_nu448_67/mauritius/ms/mauritius.ms",
+      "measurement_set": "/tmp/stage3_demo_0sc_1nxk/mauritius/ms/mauritius.ms",
       "measurement_set_in_manifest": "mauritius/ms/mauritius.ms",
       "n_antennas": 24,
       "frequency_hz": [
@@ -89,7 +89,7 @@
       "latitude_deg": -18.8971446,
       "longitude_deg": 47.5551677,
       "altitude_m": 1280.0,
-      "measurement_set": "/tmp/stage3_demo_nu448_67/madagascar/ms/madagascar.ms",
+      "measurement_set": "/tmp/stage3_demo_0sc_1nxk/madagascar/ms/madagascar.ms",
       "measurement_set_in_manifest": "madagascar/ms/madagascar.ms",
       "n_antennas": 24,
       "frequency_hz": [
@@ -155,7 +155,7 @@
       "latitude_deg": -33.319413,
       "longitude_deg": 26.507688,
       "altitude_m": 642.26,
-      "measurement_set": "/tmp/stage3_demo_nu448_67/south_africa/ms/south_africa.ms",
+      "measurement_set": "/tmp/stage3_demo_0sc_1nxk/south_africa/ms/south_africa.ms",
       "measurement_set_in_manifest": "south_africa/ms/south_africa.ms",
       "n_antennas": 24,
       "frequency_hz": [
@@ -251,7 +251,7 @@
     "min_snr": 5.0,
     "max_residual_tail_ratio": 1.5,
     "max_reduced_chi2": 3.0,
-    "weights_calibrated": false,
+    "weights_calibrated": "per station (stations.<id>.weights_calibrated)",
     "image_disagreement_beams": 0.5,
     "max_tle_separation_deg": 5.0
   },
@@ -273,14 +273,14 @@
     "pyarrow": "26.0.0",
     "matplotlib": "3.10.0",
     "python-casacore": "3.8.1",
-    "git_commit": "dac2436bd6eb39e129d448e075348b747a792acf",
-    "git_dirty": false
+    "git_commit": "6d4a9d934e9d263808c2f3c99f8496624f1b0771",
+    "git_dirty": true
   },
   "provenance": {
     "command_line": [
       "tart-localise",
       "--manifest",
-      "/tmp/stage3_demo_nu448_67/manifest.json",
+      "/tmp/stage3_demo_0sc_1nxk/manifest.json",
       "--all-stations",
       "--image-validation",
       "--bootstrap",
@@ -290,9 +290,9 @@
       "--output-dir",
       "docs/examples/stage3",
       "--data-root",
-      "/tmp/stage3_demo_nu448_67"
+      "/tmp/stage3_demo_0sc_1nxk"
     ],
-    "run_timestamp_utc": "2026-10-13T13:39:35.130Z",
+    "run_timestamp_utc": "2026-10-13T14:00:19.914Z",
     "working_directory": "/home/nadeem/GitHub/TART/tart-gnss",
     "input_hashes": {
       "stage2_manifest": "16b2c958a19e9fb5e3983f4cc431621696b2319e2d9bf58997fe8d184b0139a9"
