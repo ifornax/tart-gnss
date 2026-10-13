@@ -1,0 +1,15 @@
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/stage4_real/diagnostic_min2/20260625/NORAD_40534/stage4_manifest.json
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: Stage-4 epochs: 69 (table docs/examples/stage4_real/diagnostic_min2/20260625/NORAD_40534/positions.parquet); retained after 'strict' quality policy: 35 (rejected: INSUFFICIENT_STATIONS 34)
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: time span 2026-06-25T09:18:35.110735Z .. 2026-06-25T09:24:14.898546Z (339.8 s); median cadence 9.994 s; maximum gap 10.252 s
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: dynamics two-body; process acceleration sigma 0.0001 m/s^2 (model default)
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: initial position (GCRS) [  2210335.  18981229. -23018814.] m; initial velocity [-4112.9 -7689.5  4079.5] m/s; method linear_fit from 4 point(s) [INITIAL_VELOCITY_WEAK]
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: initialisation: velocity sigma 2.5e+04 m/s exceeds 1000 m/s
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: innovation gate chi2_3(0.9973) = 14.156; rejected innovations 1 of 35 attempted; median NIS 1.968, mean NIS 2.780 (expected 2.37, 3)
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: lag-1 innovation autocorrelation 0.690 (limit 0.306); innovation RMS 248.6 km
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: filter success: True; smoother success: True
+2026-10-13T19:48:58Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered 243.4 km, smoothed 130.2 km
+2026-10-13T19:49:00Z INFO    tart_gnss.stage5: outputs: docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534
+2026-10-13T19:49:00Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/trajectory.csv
+2026-10-13T19:49:00Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/trajectory.parquet
+2026-10-13T19:49:00Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/innovations.csv
+2026-10-13T19:49:00Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/innovations.parquet

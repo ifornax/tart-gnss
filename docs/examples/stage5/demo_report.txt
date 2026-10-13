@@ -1,0 +1,39 @@
+Stage-5 synthetic demonstration (scripts/stage5_synthetic_demo.py)
+Truth: circular orbit r = 26 560 km, i = 55 deg, analytic Kepler propagation; no TLE.
+
+PART A: Stage-4-like positions (no TLE anywhere)
+  epochs 156 over 30 min, jittered 10 s cadence, gap 240 s, outlier at epoch 40 (+150 km)
+  Stage-4 noise: sigma_LOS 30 km, sigma_transverse 3 km; median single-epoch 3-D error 20.4 km
+  tart-track two-body exit code 0
+  true initial position (GCRS, km)     [   345.728  15930.345 -21249.428]
+  true initial velocity (GCRS, m/s)    [-3683.21   988.64   681.24]
+  smoothed initial position (km)       [   345.884  15927.914 -21244.362]
+  smoothed initial velocity (m/s)      [-3682.76   988.28   680.21]
+  error at t0: position 5.622 km, velocity 1.18 m/s
+  position RMSE (all epochs) 5.176 km; velocity RMSE 1.12 m/s
+  predicted (smoothed) 3-D sigma: position median 3.056 km (max 4.105 km, in the gap), velocity median 3.63 m/s
+  mean / median NIS 15.45 / 2.44 (chi2_3: 3 / 2.37); innovation rejection fraction 0.013 (2 of 156); outlier epoch gated: True
+  lag-1 innovation autocorrelation -0.011 (limit 0.140); divergence restarts 0; run flags none
+
+  dynamics comparison (TLE-independent diagnostics):
+    model                               sigma_a  innov RMS km  mean NIS median NIS lag-1 acf accepted pos RMSE km
+    two-body                              1e-04         35.40     15.45       2.44    -0.011    0.987       5.176
+    constant-velocity (default sigma_a)    1e+00         37.55     13.92       2.54     0.010    0.987       8.801
+    constant-velocity (two-body sigma_a)    1e-04         43.25     16.61       3.14     0.042    0.981      15.398
+
+  Monte Carlo (200 realisations, epochs [0, 39, 78, 155]; two-body, no outlier):
+    realisations with a divergence restart: 1 (statistics below exclude them; their pre-restart segment is a bad draw by selection)
+    3-D position error: empirical RMS 3.526 km vs predicted 3.450 km
+    3-D velocity error: empirical RMS 3.618 m/s vs predicted 3.608 m/s
+    mean NEES 6.61, median 5.81 (chi2_6: mean 6, median 5.35); epochs of one run are strongly correlated, so the sd of the mean is ~0.24; with all realisations: mean NEES 6.63
+    coverage           1-sigma  2-sigma  3-sigma ellipsoid
+    expected (chi2_3)    0.199    0.739    0.971
+    position             0.182    0.702    0.962
+    velocity             0.178    0.717    0.950
+
+PART B: end to end (directions -> tart-triangulate -> tart-track), 3 stations, 0.02 deg direction noise
+  90 epochs over 15 min; minimum elevation 43.3 deg; exit codes tart-triangulate 0, tart-track 0
+  Stage-4 single-epoch 3-D error: median 39.0 km
+  Stage-5 smoothed: position RMSE 6.92 km, velocity RMSE 10.50 m/s; median predicted 3-D sigma 8.45 km
+  mean / median NIS 2.81 / 1.92; lag-1 autocorrelation 0.033; run flags none
+

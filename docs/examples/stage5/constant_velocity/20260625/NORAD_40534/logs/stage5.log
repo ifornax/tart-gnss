@@ -1,0 +1,15 @@
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/stage5/stage4_input/stage4_manifest.json
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: Stage-4 epochs: 156 (table docs/examples/stage5/stage4_input/positions.parquet); retained after 'strict' quality policy: 156 (rejected: none)
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: time span 2026-06-25T09:14:00.000000Z .. 2026-06-25T09:43:51.965477Z (1792.0 s); median cadence 10.103 s; maximum gap 250.922 s
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: dynamics constant-velocity; process acceleration sigma 1 m/s^2 (model default)
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: initial position (GCRS) [   344038.  15900250. -21210315.] m; initial velocity [-3563.1  2555.5  -714.6] m/s; method linear_fit from 3 point(s) [INITIAL_VELOCITY_WEAK]
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: initialisation: velocity sigma 1.82e+03 m/s exceeds 1000 m/s
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: innovation gate chi2_3(0.9973) = 14.156; rejected innovations 2 of 156 attempted; median NIS 2.543, mean NIS 13.917 (expected 2.37, 3)
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: lag-1 innovation autocorrelation 0.010 (limit 0.140); innovation RMS 37.55 km
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: filter success: True; smoother success: True
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered 9.45 km, smoothed 4.786 km
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5: outputs: docs/examples/stage5/constant_velocity/20260625/NORAD_40534
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/stage5/constant_velocity/20260625/NORAD_40534/trajectory.csv
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/stage5/constant_velocity/20260625/NORAD_40534/trajectory.parquet
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/stage5/constant_velocity/20260625/NORAD_40534/innovations.csv
+2026-10-13T19:49:04Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/stage5/constant_velocity/20260625/NORAD_40534/innovations.parquet

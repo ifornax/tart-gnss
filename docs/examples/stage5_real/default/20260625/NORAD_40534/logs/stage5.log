@@ -1,0 +1,12 @@
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/stage4_real/default/20260625/NORAD_40534/stage4_manifest.json
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: Stage-4 epochs: 69 (table docs/examples/stage4_real/default/20260625/NORAD_40534/positions.parquet); retained after 'strict' quality policy: 1 (rejected: INSUFFICIENT_STATIONS 68)
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: time span 2026-06-25T09:23:54.912973Z .. 2026-06-25T09:23:54.912973Z (0.0 s); median cadence nan s; maximum gap nan s
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: dynamics two-body; process acceleration sigma 0.0001 m/s^2 (model default)
+2026-10-13T19:48:57Z WARNING tart_gnss.stage5: fewer than 3 usable measurements; no trajectory estimated
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered nan km, smoothed nan km
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5: outputs: docs/examples/stage5_real/default/20260625/NORAD_40534
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/stage5_real/default/20260625/NORAD_40534/trajectory.csv
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/stage5_real/default/20260625/NORAD_40534/trajectory.parquet
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/stage5_real/default/20260625/NORAD_40534/innovations.csv
+2026-10-13T19:48:57Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/stage5_real/default/20260625/NORAD_40534/innovations.parquet
+2026-10-13T19:48:57Z WARNING tart_gnss.stage5: insufficient valid trajectory estimates (assimilated 0, valid rows 0; flags: INSUFFICIENT_MEASUREMENTS 69, MEASUREMENT_REJECTED 34, NO_MEASUREMENT 34, STAGE4_QUALITY_WARNING 1)

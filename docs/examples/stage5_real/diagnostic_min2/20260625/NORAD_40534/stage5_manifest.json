@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "stage": 5,
+  "input_stage4_manifest": "docs/examples/stage4_real/diagnostic_min2/20260625/NORAD_40534/stage4_manifest.json",
+  "input_sha256": "b4416597a9fc1faf5dd0e57f939152f02a66469d5dd713d7efd21023f800df72",
+  "input_positions": "docs/examples/stage4_real/diagnostic_min2/20260625/NORAD_40534/positions.parquet",
+  "input_positions_sha256": "6d7050005d9918c39173878887f06f1c72b3024dc4038ea50dfa94eb7fec2ddb",
+  "norad_id": 40534,
+  "state_frame": "GCRS",
+  "measurement_frame": "ITRS/ECEF",
+  "frame_transformation": "GCRS axes via Skyfield itrs.rotation_at(t) (IAU 2000A/2006 precession-nutation, GAST from UT1; polar motion zero: builtin timescale has no polar-motion table); r_GCRS = R(t)^T r_ITRS, C_GCRS = R(t)^T C_ITRS R(t)",
+  "units": {
+    "position": "m",
+    "velocity": "m/s",
+    "covariance": "SI (m^2, m^2/s, m^2/s^2)",
+    "time": "UTC"
+  },
+  "tle_used": false,
+  "state_model": {
+    "dynamics": "two-body",
+    "state": [
+      "x",
+      "y",
+      "z",
+      "vx",
+      "vy",
+      "vz"
+    ],
+    "gm_earth_m3_s2": 398600441800000.0,
+    "j2": null,
+    "earth_radius_m": null,
+    "constants_source": "IERS Conventions (2010) Table 1.1 (GM equals WGS84, NIMA TR8350.2)",
+    "integrator": "scipy.integrate.solve_ivp DOP853",
+    "rtol": 1e-10,
+    "atol": 1e-06,
+    "state_transition": "variational equations integrated with the state",
+    "j2_pole_gcrs": null
+  },
+  "filter": {
+    "type": "extended Kalman filter, Joseph-form update, Cholesky solves",
+    "measurement_model": "H = [I3 0]; R = full Stage-4 covariance rotated to GCRS",
+    "initialisation": {
+      "method": "linear_fit",
+      "n_points": 4,
+      "window_s": 30.0,
+      "reference_time_unix_s": 1782379115.110735,
+      "position_gcrs_m": [
+        2210335.1123673497,
+        18981229.09638176,
+        -23018813.63063052
+      ],
+      "velocity_gcrs_m_s": [
+        -4112.910660575674,
+        -7689.458068946309,
+        4079.518929476598
+      ],
+      "fit_sigma_position_m": [
+        40798.79995455837,
+        335403.8331856477,
+        479181.17673576757
+      ],
+      "fit_sigma_velocity_m_s": [
+        2123.3088070685526,
+        17401.82274651209,
+        24952.46707421431
+      ],
+      "weak": true,
+      "notes": [
+        "velocity sigma 2.5e+04 m/s exceeds 1000 m/s"
+      ],
+      "hierarchy": "GLS fit with full covariances (>=3 points) -> finite difference (2) -> zero velocity with 10000 m/s sigma (1, flagged)",
+      "prior_inflation": 10000.0,
+      "prior": "P0 = prior_inflation x fit covariance (window data are assimilated again by the filter; the inflation keeps the reused information below 1/prior_inflation)",
+      "weak_velocity_sigma_m_s": 1000.0,
+      "tle_used": false
+    },
+    "success": true,
+    "error": null,
+    "divergence_recovery": "re-initialise after 3 consecutive gated measurements (rows flagged FILTER_DIVERGENCE; the smoother does not cross the restart)",
+    "n_resets": 0,
+    "reset_times_utc": [],
+    "reinitialisations": [],
+    "n_steps": 36,
+    "n_assimilated": 34,
+    "min_measurements": 3,
+    "max_gap_s": 120.0,
+    "robust_update": "none"
+  },
+  "smoother": {
+    "type": "Rauch-Tung-Striebel (nonlinear predictions, flow Jacobians from the filter)",
+    "enabled": true,
+    "success": true,
+    "error": null
+  },
+  "process_noise": {
+    "model": "white acceleration, Q = sigma_a^2 [[dt^4/4 I, dt^3/2 I], [dt^3/2 I, dt^2 I]]",
+    "process_accel_sigma_m_s2": 0.0001,
+    "source": "model default (physics: size of the unmodelled accelerations; not tuned against TLEs)",
+    "defaults_m_s2": {
+      "constant-velocity": 1.0,
+      "two-body": 0.0001,
+      "j2": 1e-05
+    }
+  },
+  "innovation_gate": {
+    "probability": 0.9973,
+    "chi2_dof": 3,
+    "threshold": 14.1562525005409,
+    "gated_measurements": "kept in innovations/trajectory with INNOVATION_OUTLIER; not assimilated",
+    "statistics_burn_in": 2
+  },
+  "innovation_statistics": {
+    "n_attempted": 35,
+    "n_accepted": 34,
+    "n_outliers": 1,
+    "n_outliers_first_pass": 1,
+    "n_resets": 0,
+    "accepted_fraction": 0.9714285714285714,
+    "burn_in": 2,
+    "n_statistics": 33,
+    "mean_nis": 2.7797183649733905,
+    "median_nis": 1.9680882947819671,
+    "expected_mean_nis": 3.0,
+    "expected_median_nis": 2.3659738843753377,
+    "mean_nis_limit": 4.322669591339947,
+    "mean_nis_inside_gate": 1.7393251647511354,
+    "mean_nis_inside_gate_limit": 4.3453227018024165,
+    "n_above_gate": 1,
+    "n_above_gate_limit": 2,
+    "fraction_above_gate": 0.030303030303030304,
+    "gate_threshold": 14.1562525005409,
+    "innovation_rms_m": 248558.8450821446,
+    "innovation_rms_xyz_m": [
+      41898.141140781714,
+      139975.2202073097,
+      201079.5438761284
+    ],
+    "autocorrelation": {
+      "1": 0.6902187676770724,
+      "2": 0.5980364799847467,
+      "3": 0.5118651567417624
+    },
+    "autocorrelation_limit_lag1": 0.3061862178478973,
+    "flags": [
+      "DYNAMICS_MISMATCH"
+    ]
+  },
+  "dynamics_diagnostics": {
+    "innovation_rms_m": 248558.8450821446,
+    "mean_nis": 2.7797183649733905,
+    "median_nis": 1.9680882947819671,
+    "accepted_fraction": 0.9714285714285714,
+    "lag1_autocorrelation": 0.6902187676770724
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "always_rejected": [
+      "COVARIANCE_SINGULAR",
+      "INSUFFICIENT_STATIONS",
+      "NEGATIVE_RANGE",
+      "TRIANGULATION_FAILED",
+      "fit_success false",
+      "non-finite position",
+      "invalid covariance",
+      "duplicate timestamp"
+    ],
+    "rejected_if_strict": [
+      "POOR_GEOMETRY",
+      "STAGE3_QUALITY_WARNING"
+    ],
+    "advisory": [
+      "BOOTSTRAP_UNSTABLE",
+      "CALIBRATION_WARNING",
+      "HIGH_CHI2",
+      "HIGH_LINE_RESIDUAL",
+      "INPUT_DIRECTION_WARNING",
+      "TIME_MISMATCH"
+    ],
+    "covariance_checks": {
+      "asymmetry_tol": 1e-06,
+      "max_condition_number": 1000000000000.0
+    },
+    "n_stage4_epochs": 69,
+    "n_used": 35,
+    "rejected": {
+      "INSUFFICIENT_STATIONS": 34
+    },
+    "input_time_ordered": true
+  },
+  "blocking_flags": [
+    "COVARIANCE_INVALID",
+    "INSUFFICIENT_MEASUREMENTS",
+    "NOT_INITIALISED",
+    "SMOOTHER_FAILED"
+  ],
+  "summary": {
+    "n_rows": 69,
+    "n_valid": 36,
+    "n_assimilated": 34,
+    "run_flags": [
+      "DYNAMICS_MISMATCH"
+    ],
+    "flag_counts": {
+      "NOT_INITIALISED": 33,
+      "NO_MEASUREMENT": 34,
+      "DYNAMICS_MISMATCH": 69,
+      "INITIAL_VELOCITY_WEAK": 4,
+      "STAGE4_QUALITY_WARNING": 35,
+      "INNOVATION_OUTLIER": 1,
+      "EXTRAPOLATED": 1
+    },
+    "time_span_s": 339.7878110408783,
+    "median_cadence_s": 9.993980526924133,
+    "max_gap_s": 10.251986980438232,
+    "median_position_sigma_filtered_m": 243389.9092447738,
+    "median_position_sigma_smoothed_m": 130229.93452898541
+  },
+  "stage4_reference": {
+    "note": "Stage-4 provenance; the satellite/TLE block of the Stage-4 manifest is not read by Stage 5",
+    "command_line": [
+      "tart-triangulate",
+      "--stage3-manifest",
+      "docs/examples/stage4_real/stage3_input/20260625/NORAD_40534/stage3_manifest.json",
+      "--output-dir",
+      "docs/examples/stage4_real/diagnostic_min2",
+      "--min-stations",
+      "2",
+      "--bootstrap",
+      "200",
+      "--no-plots"
+    ],
+    "git_commit": "57d732e2fcd4760e75953352dc72ec2c0a3fa296",
+    "input_stage3_manifest": "docs/examples/stage4_real/stage3_input/20260625/NORAD_40534/stage3_manifest.json"
+  },
+  "software": {
+    "tart_gnss": "0.5.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "scipy": "1.15.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "19eb5128c76c763981dbafbfc0705300ca8940dd",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-track",
+      "--stage4-manifest",
+      "docs/examples/stage4_real/diagnostic_min2/20260625/NORAD_40534/stage4_manifest.json",
+      "--dynamics",
+      "two-body",
+      "--output-dir",
+      "docs/examples/stage5_real/diagnostic_min2"
+    ],
+    "run_timestamp_utc": "2026-10-13T19:48:57.745Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss"
+  },
+  "outputs": {
+    "trajectory_csv": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/trajectory.csv",
+    "trajectory_parquet": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/trajectory.parquet",
+    "innovations_csv": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/innovations.csv",
+    "innovations_parquet": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/innovations.parquet",
+    "diagnostics": [
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/position_track.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/velocity_track.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/uncertainty_track.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/innovations.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/nis.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/stage4_vs_smoothed.png",
+      "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/diagnostics/covariance_eigenvalues.png"
+    ],
+    "log": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/logs/stage5.log",
+    "manifest": "docs/examples/stage5_real/diagnostic_min2/20260625/NORAD_40534/stage5_manifest.json"
+  }
+}
