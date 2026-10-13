@@ -36,9 +36,9 @@ TLE = (
 )
 #: Real station coordinates (Stage-2 manifest); offsets (dAz, dEl) of the injected source from the TLE track.
 STATIONS = {
-    "mauritius": ({"latitude_deg": -20.2587508, "longitude_deg": 57.7591989, "altitude_m": 20.0}, (6.0, 2.0), 1),
-    "madagascar": ({"latitude_deg": -18.8971446, "longitude_deg": 47.5551677, "altitude_m": 1280.0}, (-4.0, 3.0), 2),
-    "south_africa": ({"latitude_deg": -33.319413, "longitude_deg": 26.507688, "altitude_m": 642.26}, (10.0, -4.0), 3),
+    "mauritius": ({"latitude_deg": -20.2587508, "longitude_deg": 57.7591989, "altitude_m": 20.0}, (4.0, 1.5), 1),
+    "madagascar": ({"latitude_deg": -18.8971446, "longitude_deg": 47.5551677, "altitude_m": 1280.0}, (-4.0, 2.5), 2),
+    "south_africa": ({"latitude_deg": -33.319413, "longitude_deg": 26.507688, "altitude_m": 642.26}, (6.0, -2.5), 3),
 }
 N_TIMES = 20
 

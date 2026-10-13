@@ -77,6 +77,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", type=int, default=20260625, help="random seed for the bootstrap")
     p.add_argument("--min-snr", type=float, default=5.0)
     p.add_argument("--max-flagged-fraction", type=float, default=0.5)
+    p.add_argument("--association-radius-deg", type=float, default=5.0,
+                   help="flag fits further than this from the TLE prediction as TLE_UNASSOCIATED "
+                        "(post-fit check; <= 0 disables; default 5)")
     p.add_argument("--allow-invalid-stage2", action="store_true",
                    help="process individually valid stations of a Stage-2 run that is not three-station valid")
     p.add_argument("--data-root", type=Path, default=None,
@@ -266,7 +269,8 @@ def process_station(
             fitted=fitted, fit_success=success, boundary=boundary, invalid_geometry=bool(invalid_geom),
             snr=snr, residual_tail_ratio=tail, reduced_chi2=rchi2, covariance_finite=cov_finite,
             zenith_az_uncertain=zen, vis_image_separation_deg=sep_img, resolution_deg=res_deg,
-            sigma_position_deg=sigma_pos, calibration_warning=calib_warn,
+            sigma_position_deg=sigma_pos, tle_separation_deg=row["tle_separation_deg"]
+            if np.isfinite(row["tle_separation_deg"]) else None, calibration_warning=calib_warn,
         )
         row["quality_flags"] = flags
         row["usable"] = q.is_usable(flags)
@@ -405,7 +409,9 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
     log_path_holder.append(out_dir / "logs" / "stage3.log")
     sat = manifest["satellite"]
     thresholds = q.QualityThresholds(min_baselines=args.min_baselines, max_flagged_fraction=args.max_flagged_fraction,
-                                     min_snr=args.min_snr)
+                                     min_snr=args.min_snr,
+                                     max_tle_separation_deg=args.association_radius_deg
+                                     if args.association_radius_deg > 0 else None)
     rng = np.random.default_rng(args.seed)
     all_rows: List[Dict[str, object]] = []
     summaries: Dict[str, object] = {}
@@ -468,7 +474,8 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                          "output_time": "weight-averaged time of the samples used", "empty_bins": "omitted"},
         "quality_thresholds": thresholds.to_dict(),
         "tle_reference": {
-            "use": "search-cap centre and plotting reference only; never a prior or a measurement",
+            "use": "search-cap centre, post-fit association check (TLE_UNASSOCIATED) and plotting "
+                   "reference only; never a prior or a measurement",
             "tle_epoch": tle_epoch,
         },
         "software": {**_software(), **_git_state()},

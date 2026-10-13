@@ -112,3 +112,22 @@ def test_near_field_diagnostic_values():
     d = cli.near_field_diagnostic(4.9, 1575.42e6, 20000.0, "test")
     assert 5e-6 < d["eta_B2_over_lambda_R"] < 7e-6 and d["far_field_valid"]
     assert not cli.near_field_diagnostic(4.9, 1575.42e6, 0.01, "test")["far_field_valid"]
+
+
+@needs_casacore
+def test_unrelated_source_is_measured_but_flagged_unassociated(tmp_path):
+    """A source ~8 deg from the TLE is fitted where it is, then flagged TLE_UNASSOCIATED (not usable)."""
+    manifest, run, obs = _synthetic_run(tmp_path, offset_az=10.0, offset_el=5.0, n_t=2)
+    out = tmp_path / "r"
+    code = cli.main(["--manifest", str(manifest), "--all-stations", "--output-dir", str(out), "--no-plots",
+                     "--data-root", str(run)])
+    assert code == cli.EXIT_NO_ESTIMATES
+    df = read_directions(out / "20260625" / "NORAD_40534" / "directions.csv")
+    for _, r in df.iterrows():
+        assert "TLE_UNASSOCIATED" in r["quality_flags"] and not r["usable"]
+        err = angular_separation_deg(azel_to_unit(r["az_obs_deg"], r["el_obs_deg"]),
+                                     azel_to_unit(obs.true_az_deg[0], obs.true_el_deg[0]))
+        assert err < 0.5 and r["tle_separation_deg"] > 7.0
+    # disabling the association check makes the same measurements usable
+    assert cli.main(["--manifest", str(manifest), "--all-stations", "--output-dir", str(tmp_path / "r2"),
+                     "--no-plots", "--data-root", str(run), "--association-radius-deg", "0"]) == cli.EXIT_OK

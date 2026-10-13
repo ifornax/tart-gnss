@@ -12,6 +12,9 @@ Flags (several may apply; an estimate with no flag is ``GOOD``):
                             ``reduced_chi2 > max_reduced_chi2``
 ``IMAGE_DISAGREEMENT``      visibility/image separation larger than
                             ``max(image_disagreement_beams x lambda/B_max, 3 sigma_position)``
+``TLE_UNASSOCIATED``        fitted direction more than ``max_tle_separation_deg`` from the TLE
+                            prediction: a detection of some other source (post-fit association
+                            check only; the fitted value is never altered)
 ``ZENITH_AZ_UNCERTAIN``     zenith distance below 3 sigma: azimuth undefined, ``sigma_az`` is NaN
 ``INVALID_GEOMETRY``        solution at/below the horizon (or the minimum elevation)
 ``CALIBRATION_WARNING``     Stage-2 calibration issue for the station (see the Stage-3 manifest)
@@ -35,19 +38,21 @@ BOUNDARY_SOLUTION = "BOUNDARY_SOLUTION"
 LOW_SNR = "LOW_SNR"
 HIGH_RESIDUAL = "HIGH_RESIDUAL"
 IMAGE_DISAGREEMENT = "IMAGE_DISAGREEMENT"
+TLE_UNASSOCIATED = "TLE_UNASSOCIATED"
 ZENITH_AZ_UNCERTAIN = "ZENITH_AZ_UNCERTAIN"
 INVALID_GEOMETRY = "INVALID_GEOMETRY"
 CALIBRATION_WARNING = "CALIBRATION_WARNING"
 
 ALL_FLAGS = (LOW_BASELINE_COUNT, HIGH_FLAGGED_FRACTION, FIT_FAILED, BOUNDARY_SOLUTION, LOW_SNR,
-             HIGH_RESIDUAL, IMAGE_DISAGREEMENT, ZENITH_AZ_UNCERTAIN, INVALID_GEOMETRY, CALIBRATION_WARNING)
+             HIGH_RESIDUAL, IMAGE_DISAGREEMENT, TLE_UNASSOCIATED, ZENITH_AZ_UNCERTAIN, INVALID_GEOMETRY, CALIBRATION_WARNING)
 
 #: Flags that make an estimate unusable as a measurement. The others are
 #: warnings: the estimate is a measurement but should be down-weighted or
 #: cross-checked in Stage 4. ``LOW_SNR`` blocks because below SNR ~ 5 the fit
 #: can lock onto noise or sidelobe peaks (heavy-tailed errors in the
 #: synthetic pull tests).
-BLOCKING_FLAGS = frozenset({LOW_BASELINE_COUNT, FIT_FAILED, BOUNDARY_SOLUTION, INVALID_GEOMETRY, LOW_SNR})
+BLOCKING_FLAGS = frozenset({LOW_BASELINE_COUNT, FIT_FAILED, BOUNDARY_SOLUTION, INVALID_GEOMETRY, LOW_SNR,
+                            TLE_UNASSOCIATED})
 
 
 @dataclass
@@ -61,6 +66,7 @@ class QualityThresholds:
     max_reduced_chi2: float = 3.0
     weights_calibrated: bool = False
     image_disagreement_beams: float = 0.5
+    max_tle_separation_deg: Optional[float] = 5.0
 
     def to_dict(self) -> Dict[str, object]:
         """JSON-serialisable description."""
@@ -84,6 +90,7 @@ def assess(
     vis_image_separation_deg: Optional[float] = None,
     resolution_deg: Optional[float] = None,
     sigma_position_deg: Optional[float] = None,
+    tle_separation_deg: Optional[float] = None,
     calibration_warning: bool = False,
 ) -> List[str]:
     """Return the sorted-by-definition list of quality flags for one estimate."""
@@ -108,6 +115,9 @@ def assess(
                 limit = max(limit, 3.0 * sigma_position_deg)
             if vis_image_separation_deg > limit:
                 flags.append(IMAGE_DISAGREEMENT)
+        if (thresholds.max_tle_separation_deg is not None and tle_separation_deg is not None
+                and tle_separation_deg > thresholds.max_tle_separation_deg):
+            flags.append(TLE_UNASSOCIATED)
         if zenith_az_uncertain:
             flags.append(ZENITH_AZ_UNCERTAIN)
         if invalid_geometry:

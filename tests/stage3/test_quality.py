@@ -27,6 +27,11 @@ def test_each_flag_triggers():
     assert q.ZENITH_AZ_UNCERTAIN in _assess(zenith_az_uncertain=True)
     assert q.INVALID_GEOMETRY in _assess(invalid_geometry=True)
     assert q.CALIBRATION_WARNING in _assess(calibration_warning=True)
+    assert q.TLE_UNASSOCIATED in _assess(tle_separation_deg=7.0)
+    assert q.TLE_UNASSOCIATED not in _assess(tle_separation_deg=3.0)
+    off = q.QualityThresholds(max_tle_separation_deg=None)
+    assert q.TLE_UNASSOCIATED not in q.assess(thresholds=off, n_baselines_used=200, flagged_fraction=0.0,
+                                              fitted=True, fit_success=True, snr=20.0, tle_separation_deg=40.0)
 
 
 def test_reduced_chi2_only_used_with_calibrated_weights():
@@ -49,3 +54,4 @@ def test_multiple_flags_and_blocking():
     assert not q.is_usable(flags)
     assert q.is_usable([q.CALIBRATION_WARNING, q.HIGH_RESIDUAL, q.IMAGE_DISAGREEMENT, q.HIGH_FLAGGED_FRACTION])
     assert not q.is_usable([q.LOW_SNR])
+    assert not q.is_usable([q.TLE_UNASSOCIATED])
