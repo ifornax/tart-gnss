@@ -1,0 +1,10 @@
+
+station          injected az/el   recovered az/el     err   sigma az/el       image az/el  vis-img  TLE sep    snr  flags
+mauritius      217.563  45.014   217.689  45.189   0.196  0.144 0.129   217.438  45.462    0.326    3.392    9.3  GOOD
+              all 20 bins: median error 0.167 deg, max 0.378 deg, median sigma_el 0.139 deg, min TLE separation 3.08 deg, usable 20
+madagascar     199.878  50.191   199.710  50.180   0.108  0.159 0.123   199.599  50.339    0.174    3.699    9.1  GOOD
+              all 20 bins: median error 0.112 deg, max 0.338 deg, median sigma_el 0.133 deg, min TLE separation 3.32 deg, usable 20
+south_africa   181.449  68.184   181.299  68.216   0.064  0.307 0.189   180.804  67.883    0.381    3.208    7.2  GOOD
+              all 20 bins: median error 0.108 deg, max 0.345 deg, median sigma_el 0.166 deg, min TLE separation 3.04 deg, usable 20
+
+tart-localise exit status 0; outputs in docs/examples/stage3/20260625/NORAD_40534
