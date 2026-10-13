@@ -36,7 +36,7 @@ POSITION_COLUMNS: List[str] = [
 ]
 
 CONTRIBUTION_COLUMNS: List[str] = [
-    "time_utc", "station_id", "station_time_utc", "station_time_offset_s",
+    "time_utc", "reference_time_utc", "station_id", "station_time_utc", "station_time_offset_s",
     "station_x_ecef_m", "station_y_ecef_m", "station_z_ecef_m",
     "az_obs_deg", "el_obs_deg", "sigma_az_deg", "sigma_el_deg", "cov_az_el",
     "l", "m", "sigma_theta_deg", "direction_source",
@@ -104,7 +104,7 @@ def read_table(path):
         for col in FLAG_COLUMNS:
             if col in df.columns:
                 df[col] = df[col].map(lambda f: [x for x in str(f).split(";") if x] if isinstance(f, str) else [])
-    for col in ("time_utc", "station_time_utc"):
+    for col in ("time_utc", "reference_time_utc", "station_time_utc"):
         if col in df.columns:
             df[col] = pd.to_datetime(df[col], utc=True)
     return df

@@ -130,7 +130,6 @@ def test_missing_inputs_exit_2(tmp_path):
 
 def test_no_valid_estimates_exit_3(tmp_path):
     r = [row for row in rows() if row["station_id"] == "mauritius"]
-    r += [dict(row, station_id="madagascar") for row in rows() if row["station_id"] == "madagascar"][:0]
     code, pos, _, man = run_cli(tmp_path, r)
     assert code == 3 and man["summary"]["n_valid"] == 0
 

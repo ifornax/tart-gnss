@@ -153,7 +153,7 @@ def _solve_epoch(r, s, cov3, method: str, notes: List[str], flags: List[str]) ->
 
 
 def process_epoch(ep, kept, run, rates, args, thresholds, rng) -> tuple:
-    """Triangulate one matched epoch; return ``(position_row, contribution_rows)``."""
+    """Triangulate one matched epoch; return ``(position_row, contribution_rows, notes)``."""
     flags: List[str] = []
     notes: List[str] = []
     members = []
@@ -221,7 +221,7 @@ def process_epoch(ep, kept, run, rates, args, thresholds, rng) -> tuple:
                 st_flags.append(q.HIGH_LINE_RESIDUAL)
         flags += st_flags
         contribs.append({
-            "time_utc": pos["time_utc"], "station_id": sid, "station_time_utc": _iso(ref_t + off),
+            "time_utc": pos["time_utc"], "reference_time_utc": pos["time_utc"], "station_id": sid, "station_time_utc": _iso(ref_t + off),
             "station_time_offset_s": off,
             "station_x_ecef_m": coords.ecef_m[0], "station_y_ecef_m": coords.ecef_m[1],
             "station_z_ecef_m": coords.ecef_m[2],
@@ -360,7 +360,7 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
     n_fallback = 0
     for ep in epochs:
         pos, con, notes = process_epoch(ep, kept, run3, rates, args, thresholds, rng)
-        n_fallback += int(pos.get("solver") == "lstsq") + int(any("fallback" in n for n in notes))
+        n_fallback += int(any("fallback" in n for n in notes))
         positions.append(pos)
         contributions += con
 

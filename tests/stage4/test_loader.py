@@ -108,6 +108,21 @@ def test_stage2_cross_check(tmp_path, run_dir):
     assert "SHA-256 mismatch" in load_stage3_run(run_dir).stations["mauritius"].cross_check
 
 
+def test_stage2_cross_check_relative_to_stage3_working_directory(tmp_path, run_dir):
+    # Stage 3 recorded a relative Stage-2 path, valid from the directory it was run in.
+    work = tmp_path / "elsewhere"
+    (work / "data").mkdir(parents=True)
+    s2 = work / "data" / "manifest.json"
+    stations = {sid: {"latitude_deg": lat, "longitude_deg": lon, "altitude_m": alt}
+                for sid, (lat, lon, alt) in syn.EXAMPLE_STATIONS.items()}
+    s2.write_text(json.dumps({"stations": stations}))
+    doc = json.loads(run_dir.read_text())
+    doc.update({"input_manifest": "data/manifest.json", "input_manifest_sha256": sha256_file(s2),
+                "provenance": {"working_directory": str(work)}})
+    run_dir.write_text(json.dumps(doc))
+    assert load_stage3_run(run_dir).stations["madagascar"].cross_check.startswith("verified")
+
+
 def test_sight_line_lm_and_azel_and_zenith(run_dir):
     run = load_stage3_run(run_dir)
     row = run.directions.iloc[3].copy()

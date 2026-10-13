@@ -57,7 +57,8 @@ quality_flags`.
 Station coordinates come from the run's own provenance:
 `stage3_manifest.stations.<id>.{latitude_deg, longitude_deg, altitude_m}`,
 which Stage 3 copied from the Stage-2 manifest. If that Stage-2 manifest is
-still reachable and its SHA-256 equals the hash Stage 3 recorded, the
+still reachable (as recorded, relative to the Stage-3 manifest, or relative to
+the directory Stage 3 ran in) and its SHA-256 equals the hash Stage 3 recorded, the
 coordinates are cross-checked against it, and any disagreement is an error.
 The live station registry is never consulted, so a later registry update
 cannot change a past result. The source and the outcome of the cross-check
@@ -97,7 +98,7 @@ by row number, and nothing is interpolated.
   contributes its nearest valid row with `|t_i − t| ≤ tolerance`.
 * A row is used in at most one epoch. When two epochs want the same row, the
   closer epoch keeps it.
-* The contributions table stores `time_utc` (the reference),
+* The contributions table stores `time_utc` and `reference_time_utc` (the reference),
   `station_time_utc` and `station_time_offset_s` for every contributing
   station. `positions.max_time_offset_s` is the spread of the matched
   timestamps.

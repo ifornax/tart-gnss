@@ -146,6 +146,9 @@ def _stage2_cross_check(manifest: Dict[str, object], manifest_path: Path) -> Tup
     if not rec:
         return None, "no Stage-2 manifest recorded"
     cands = [Path(rec), manifest_path.parent / Path(rec)]
+    run_cwd = (manifest.get("provenance") or {}).get("working_directory")
+    if run_cwd and not Path(rec).is_absolute():
+        cands.append(Path(run_cwd) / rec)  # relative to where Stage 3 was run
     found = next((c for c in cands if c.is_file()), None)
     if found is None:
         return None, f"Stage-2 manifest {rec} not reachable; coordinates taken from the Stage-3 manifest only"

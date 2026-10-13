@@ -23,7 +23,7 @@ def test_required_columns_present():
                 "rms_line_residual_m", "max_line_residual_m", "condition_number", "min_crossing_angle_deg",
                 "max_crossing_angle_deg", "chi2", "reduced_chi2", "fit_success", "quality_flags", "latitude_deg",
                 "longitude_deg", "altitude_m", "x_p16", "x_p50", "x_p84", "z_p84"]
-    spec_con = ["time_utc", "station_id", "station_time_utc", "station_time_offset_s", "station_x_ecef_m",
+    spec_con = ["time_utc", "reference_time_utc", "station_id", "station_time_utc", "station_time_offset_s", "station_x_ecef_m",
                 "station_y_ecef_m", "station_z_ecef_m", "az_obs_deg", "el_obs_deg", "sigma_az_deg", "sigma_el_deg",
                 "cov_az_el", "range_m", "line_residual_m", "stage3_quality_flags", "stage4_station_flags"]
     assert set(spec_pos) <= set(POSITION_COLUMNS)

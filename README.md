@@ -14,7 +14,7 @@ sight to give the satellite's 3-D position with its covariance.**
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
 | 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
 
-> **Status:** Stages 1–4 complete, with dynamic TART station-registry integration (v0.3.0). The repository is private and under active development.
+> **Status:** Stages 1–4 complete, with dynamic TART station-registry integration (v0.4.0). The repository is private and under active development.
 
 ---
 
@@ -500,14 +500,14 @@ tart-gnss/
 │       ├── quality.py          # Stage-3 policy, Stage-4 flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-triangulate
-└── tests/                           # 337 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 72, Stage 4: 95, CLI names: 3
+└── tests/                           # 338 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 72, Stage 4: 96, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 337 tests, ~40 s, no network needed
+pytest                       # 338 tests, ~40 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
