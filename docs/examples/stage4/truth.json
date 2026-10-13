@@ -1,0 +1,8 @@
+{
+  "offset_ecef_m": [
+    359280.82959709555,
+    -933229.4923993897,
+    0.0
+  ],
+  "construction": "TLE ITRS track (skyfield SGP4) + offset"
+}
