@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convenience wrapper: ``python common_gnss.py ...`` == ``common-gnss ...``.
+"""Convenience wrapper: ``python common_gnss.py ...`` == ``tart-common-gnss ...``.
 
 Requires the package to be installed (``pip install .``) or ``src/`` on the path.
 """

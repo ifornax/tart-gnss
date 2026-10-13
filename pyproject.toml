@@ -38,10 +38,10 @@ dev = ["pytest>=7", "h5py>=3.1", "minio>=7", "matplotlib>=3.5", "scipy>=1.7", "p
        "build"]
 
 [project.scripts]
-common-gnss = "tart_gnss.cli:main"
-retrieve-tart = "tart_gnss.stage2.cli:main"
-update-tart-stations = "tart_gnss.registry_cli:main_update"
-list-tart-stations = "tart_gnss.registry_cli:main_list"
+tart-common-gnss = "tart_gnss.cli:main"
+tart-retrieve = "tart_gnss.stage2.cli:main"
+tart-stations-update = "tart_gnss.registry_cli:main_update"
+tart-stations-list = "tart_gnss.registry_cli:main_list"
 tart-localise = "tart_gnss.stage3.cli:main"
 
 [project.urls]

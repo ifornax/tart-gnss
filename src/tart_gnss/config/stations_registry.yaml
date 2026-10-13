@@ -1,4 +1,4 @@
-# GENERATED FILE - do not edit by hand. Regenerate with `update-tart-stations`.
+# GENERATED FILE - do not edit by hand. Regenerate with `tart-stations-update`.
 #
 # Normalised TART station catalogue built from a frozen snapshot of the TART
 # network registry (see `metadata`). Stations are keyed by canonical TART id.
@@ -8,7 +8,7 @@
 
 metadata:
   format_version: 1
-  generated_by: update-tart-stations
+  generated_by: tart-stations-update
   source: https://map.elec.ac.nz/api/v1/telescopes
   retrieved_utc: '2026-10-09T16:06:41Z'
   sha256: df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9

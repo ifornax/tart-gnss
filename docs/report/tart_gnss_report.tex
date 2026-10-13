@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{microtype}
+\DisableLigatures[-]{encoding = T1, family = tt*}  % keep "--option" as two hyphens
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -27,9 +28,9 @@
 
 \title{\textbf{Satellite Localisation with the TART Network}\\[4pt]
 \large Stages 1--2: Common GNSS Visibility and TART Observation Retrieval\\
-\normalsize Technical report --- \code{tart\_gnss} v0.2.0}
+\normalsize Technical report --- \code{tart\_gnss} v0.3.0}
 \author{Nadeem Oozeer\\ Rhodes University}
-\date{7 October 2026 (Stage 2 added)}
+\date{9 October 2026 (TART station registry added)}
 
 \begin{document}
 \maketitle
@@ -58,9 +59,13 @@ valid only when all three stations hold real, validated data over a common
 interval. On real data from 2026-06-25 (GPS BIIF-9), Stage~2 produced three
 validated Measurement Sets with a 10.75-minute overlap. It also found that
 the station dumps are offset by 0.2--0.5~s and that 9 of the 24 Rhodes
-antennas had zero gains. The software is a pip-installable Python package
-with two command-line tools, 127 automated tests and machine-readable
-outputs.
+antennas had zero gains. Station metadata are discovered from the official
+TART network registry, which currently lists 18 telescopes. The registry is
+archived as hashed snapshots and normalised into a frozen, validated catalogue
+(17 valid stations, 14 with verified archive data), so that any three
+registered stations can be used without code changes and old analyses stay
+reproducible. The software is a pip-installable Python package with four
+command-line tools, 167 automated tests and machine-readable outputs.
 \end{abstract}
 
 \tableofcontents
@@ -88,10 +93,278 @@ The full project has six steps:
 \item infer the satellite position $(x,y,z)$ with Bayesian inference;
 \item compare the inferred position with the TLE-predicted orbital position.
 \end{enumerate}
-Part~I of this report describes step~1 (\code{common-gnss}) and Part~II
-step~2 (\code{retrieve-tart}). Imaging, source extraction and inference are
+Part~I of this report describes the TART station registry, which supplies
+station metadata to every step (\code{tart-stations-update},
+\code{tart-stations-list}). Part~II describes step~1 (\code{tart-common-gnss})
+and Part~III step~2 (\code{tart-retrieve}). Imaging, source extraction and inference are
 deliberately not implemented yet, but the outputs of both stages are
 designed to drive them (Section~\ref{sec:future}).
+
+%======================================================================
+\part{TART station registry}
+\label{sec:registry-part}
+%======================================================================
+
+\section{Purpose and design}
+\label{sec:registry}
+
+All stages need the positions and identifiers of the TART telescopes. The
+TART project publishes every registered telescope in a network registry, a
+JSON endpoint at \url{https://map.elec.ac.nz/api/v1/telescopes} that also
+drives the interactive network map. Versions up to 0.2.0 copied seven
+stations from this registry into a hand-maintained YAML file. The registry
+layer added in v0.3.0 replaces that manual step with a reproducible
+pipeline:
+\begin{center}
+live registry $\rightarrow$ archived raw snapshot $\rightarrow$ validated,
+normalised catalogue $\rightarrow$ \code{Station} objects.
+\end{center}
+The live registry is used only for \emph{discovery}. Scientific runs read a
+frozen catalogue, so a later registry update cannot change the meaning of an
+earlier result. Four kinds of identifier are kept apart:
+\begin{description}
+\item[TART id] the registry \code{nodeName} (e.g.\ \code{mu-udm},
+\code{mg-tana}, \code{za-rhodes}). This is the canonical identity of a
+station in every catalogue and in all new output files.
+\item[Alias] a hand-maintained convenience name (\code{mauritius},
+\code{madagascar}, \code{south\_africa}, \dots) that maps to a TART id. It
+is never used as the authoritative identity.
+\item[Display name] the registry's human-readable \code{telescopeName}
+(e.g.\ ``Bel Air - Mauritius'').
+\item[Snapshot] the exact registry content downloaded at a known UTC time,
+identified by its SHA-256.
+\end{description}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=5mm and 6mm,
+  box/.style={draw,rounded corners=2pt,fill=blue!4,align=center,font=\footnotesize,minimum height=9mm,text width=27mm},
+  io/.style={draw,trapezium,trapezium left angle=72,trapezium right angle=108,fill=orange!8,align=center,font=\footnotesize,text width=32mm},
+  >={Stealth[length=2mm]}]
+\node[io] (api) {registry JSON\\map.elec.ac.nz};
+\node[box, right=of api] (fetch) {download\_registry\\raw bytes, UTC time};
+\node[box, right=of fetch] (parse) {parse\_registry\\validate, diagnose};
+\node[box, right=of parse] (conv) {to Station objects;\\catalogue + diff};
+\node[io, below=of fetch] (snap) {registry\_<UTC>.json\\+ .meta.json (SHA-256)};
+\node[box, below=of parse] (arch) {verify\_archives\\(optional)};
+\node[io, below=of conv] (cat) {stations\_registry.yaml\\(frozen, generated)};
+\node[box, below=of cat] (res) {resolve\_stations\\Stage 1 / Stage 2};
+\node[io, left=of res] (al) {station\_aliases.yaml\\(hand-maintained)};
+\draw[->] (api) -- (fetch); \draw[->] (fetch) -- (parse); \draw[->] (parse) -- (conv);
+\draw[->] (fetch) -- (snap); \draw[->] (arch) -- (conv);
+\draw[->] (conv) -- (cat); \draw[->] (cat) -- (res); \draw[->] (al) -- (res);
+\end{tikzpicture}
+\caption{Station-registry data flow. Only \code{download\_registry} and the
+optional archive check use the network. Stage~1 and Stage~2 read the frozen
+catalogue.}
+\label{fig:registry}
+\end{figure}
+
+\section{Retrieval, snapshots and normalisation}
+
+\paragraph{Retrieval.} \code{tart\_gnss.registry} is the only module that
+contacts the registry or knows its JSON layout. It never scrapes the map
+HTML. The response is kept as raw bytes, and each successful refresh writes
+\code{data/stations/registry\_<UTC>.json} (the exact payload),
+a sidecar \code{registry\_<UTC>.meta.json} (source URL, retrieval time,
+SHA-256, station count) and \code{latest.json}. Historical snapshots are
+never overwritten. If the registry cannot be reached, returns an HTTP error
+or returns invalid JSON, a \code{RegistryFetchError} is raised and no file is
+changed. The registry embeds ``last seen'' timestamps, so the snapshot hash
+changes on every fetch even when no station has changed; changes are
+therefore assessed with the catalogue diff described below, not the hash.
+
+\paragraph{Parsing.} The supported schema is a mapping with a
+\code{telescopes} list, whose entries carry \code{nodeName},
+\code{telescopeName} and \code{telescopeInfo.info.location}
+$\{$\code{lat}, \code{lon}, \code{alt}$\}$. Any other top-level structure raises
+\code{RegistrySchemaError}. Each entry is validated with the same
+\code{validate\_coordinates} function used for hand-written catalogues
+(finite numbers; latitude in $[-90,90]$; longitude in $[-180,180]$; height
+in $[-500,9000]$\,m). A malformed entry is skipped and recorded as a
+diagnostic, and a missing value is never replaced by zero. If two entries
+share a TART id, the registry is ambiguous about that station, so every
+copy is skipped. With \code{--strict}, any such entry raises
+\code{RegistryStationError}.
+
+\paragraph{Derived metadata.} The registry does not publish API URLs or
+archive locations. \code{api\_url} is derived from the convention
+\code{https://api.elec.ac.nz/tart/<tart\_id>} in a single function,
+\code{default\_api\_url}. It is recorded as convention-derived and does not
+mean that the API is online. Registry presence also does not imply archived
+data. \code{archive\_name} is set only when \code{--verify-archives} finds
+at least one object under \code{<tart\_id>/vis/} in the archive bucket
+(Section~\ref{sec:archive}). In that case \code{archive\_verified} and
+\code{archive\_verified\_utc} record the check. Verifications are carried
+over from the previous catalogue, and a failed query never erases one.
+
+\paragraph{Catalogue.} The result is written to
+\code{stations\_registry.yaml}, a generated file keyed by TART id. Its
+\code{metadata} block records the source URL, retrieval time, snapshot
+SHA-256 and file name, the number of registry entries and valid stations,
+the skipped entries with reasons, and the changes from the previous
+catalogue. Each station's \code{source} field names the registry, node,
+retrieval time and snapshot hash. The catalogue is read by the existing
+\code{load\_stations}. The original alias-keyed \code{stations.yaml} remains
+a supported legacy catalogue with the same format.
+
+\section{Identifier resolution}
+
+\code{resolve\_stations} tries each requested identifier, in order, as (1)
+an exact catalogue id, (2) a normalised id (case-insensitive, with
+\code{-} equivalent to \code{\_}), (3) an alias, whose target is then
+resolved by id or TART id, and (4) a station's TART id. Thus
+\code{za-rhodes}, \code{za\_rhodes} and \code{south\_africa} all select the
+same station, and requesting the same station twice (for example
+\code{mauritius mu-udm}) is rejected. An unknown name, or an alias that
+points outside the catalogue, fails with a message listing the known
+stations and aliases.
+
+\section{Change detection}
+
+Every refresh is compared with the previous catalogue, matching stations by
+TART id. New and removed stations, display-name changes, metadata changes
+(\code{api\_url}, \code{archive\_name}, \code{archive\_verified}) and
+coordinate changes are reported. A coordinate change is reported with its
+latitude, longitude and height deltas and with the straight-line
+displacement
+\begin{equation}
+\Delta = \lVert \vect r(\phi',\lambda',h') - \vect r(\phi,\lambda,h)\rVert,
+\end{equation}
+where $\vect r$ is the Earth-centred Cartesian position from Skyfield's
+WGS84 model, so horizontal and vertical changes both contribute. A
+displacement above a configurable flag level (\SI{100}{\metre} by default)
+is logged as a warning. This level is only a reporting threshold, chosen to
+be well above the metre-level rounding seen in the registry. No change is
+rejected on this basis. The change record is written next to the snapshot
+(\code{registry\_<UTC>.diff.json}) and into the catalogue metadata.
+
+\section{Command-line tools}
+
+\begin{lstlisting}
+tart-stations-list                         # packaged catalogue, with aliases
+tart-stations-list --archive-only --format json
+tart-stations-update                       # snapshot + data/stations/stations_registry.yaml
+tart-stations-update --verify-archives     # also check <tart_id>/vis/ in the archive
+tart-stations-update --diff --dry-run      # report changes, write nothing
+tart-stations-update --verify-archives \
+    --output src/tart_gnss/config/stations_registry.yaml   # refresh the packaged default
+\end{lstlisting}
+Further options of \code{tart-stations-update} are \code{--registry-url},
+\code{--snapshot-dir}, \code{--strict}, \code{--timeout},
+\code{--displacement-warning-m} and \code{--aliases}, which warns about
+aliases whose target has disappeared. The command exits with status~1 if the registry
+cannot be retrieved, and the message names the frozen catalogue that
+remains available.
+
+\section{Reproducibility rules}
+
+\begin{itemize}
+\item \code{tart-common-gnss} reads the packaged frozen catalogue by default and
+needs no network access. A live refresh happens only with
+\code{--refresh-stations}, which writes a run-specific catalogue and
+snapshot under \code{data/stations/}.
+\item Stage-1 run metadata copy the selected stations' full coordinates and
+record \code{station\_catalogue\_path}, \code{station\_file\_sha256},
+\code{station\_registry\_source}, \code{station\_registry\_retrieved\_utc},
+\code{station\_registry\_sha256} and the alias file. Results and metadata
+carry \code{schema\_version}~2, in which stations are identified by TART id.
+Older, unversioned files identify them by legacy names such as
+\code{mauritius} and remain readable.
+\item Stage~2 never refreshes stations. It takes each station's identity and
+coordinates from the Stage-1 results, and uses the catalogue only for
+archive and API metadata (Section~\ref{sec:stage2method}). If the catalogue
+coordinates now differ, the manifest records
+\code{station\_metadata\_changed: true} together with the catalogue values.
+\end{itemize}
+
+\section{Current network}
+
+The packaged catalogue was generated from the registry retrieved on
+2026-10-09 at 16:06:41~UTC (snapshot SHA-256 \code{df55cafb\dots}). Of 18
+entries, 17 validated. \code{bw-biust} was skipped because it publishes no
+height, and its latitude and longitude are those of New York, a placeholder.
+The archive prefix was verified for 14 stations. No archive data were found
+for \code{nz-test}, \code{nz-rock2f} and \code{tart3-test}. The seven
+stations of the previous hand-maintained file have identical coordinates in
+the registry. Only their display names differ, and they gained explicit
+archive verifications. Table~\ref{tab:network} lists the valid stations.
+
+\begin{table}[h]
+\centering
+\caption{Valid stations of the packaged registry catalogue (WGS84, as
+published; height datum undocumented). Alt.\ in metres. ``Archive'' marks a
+verified \code{<tart\_id>/vis/} prefix.}
+\label{tab:network}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.3cm}rrrc}
+\toprule
+TART id & Alias & Display name & Lat.\ (deg) & Lon.\ (deg) & Alt. & Archive\\
+\midrule
+\code{bd-iub} & -- & IUB - Bangladesh & $23.815474$ & $90.427748$ & 50 & \checkmark\\
+\code{ghana} & \code{ghana} & GRAO - Ghana & $5.749725$ & $-0.305557$ & 72 & \checkmark\\
+\code{it-ant} & -- & Italia - Antola & $44.591152$ & $9.203245$ & 1400 & \checkmark\\
+\code{mg-tana} & \code{madagascar} & Madagascar - Antananarivo & $-18.8971446$ & $47.5551677$ & 1280 & \checkmark\\
+\code{mu-udm} & \code{mauritius} & Bel Air - Mauritius & $-20.2587508$ & $57.7591989$ & 20 & \checkmark\\
+\code{na-unam} & \code{namibia} & Namibia - UNAM & $-22.612053$ & $17.856784$ & 1655 & \checkmark\\
+\code{nz-dunedin} & -- & Dunedin - Testbench & $-45.8568084^\dagger$ & $170.5291560^\dagger$ & 110 & \checkmark\\
+\code{nz-elec} & -- & New Zealand - Dunedin & $-45.85177$ & $170.5456$ & 270 & \checkmark\\
+\code{nz-nelson} & -- & Nelson - New Zealand & $-41.277584$ & $173.271655$ & 26 & \checkmark\\
+\code{nz-nelson-32} & -- & Nelson & $-41.277584$ & $173.271655$ & 26 & \checkmark\\
+\code{nz-rock2f} & -- & New Zealand - Rock Test Dunedin & $-45.85177$ & $170.5456$ & 270 & --\\
+\code{nz-test} & -- & NZ Test TART: Dunedin & $-45.85177$ & $170.5456$ & 270 & --\\
+\code{se-kth} & -- & Sweden - KTH & $59.349$ & $18.07$ & 28 & \checkmark\\
+\code{tart3-test} & -- & TUK/KSA - Kenya & $-1.2921912$ & $36.8255432$ & 751 & --\\
+\code{za-hammanskraal} & \code{south\_africa\_hammanskraal} & Kwalata - South Africa & $-25.38948$ & $28.32231$ & 1163 & \checkmark\\
+\code{za-rhodes} & \code{south\_africa} & Rhodes University, Grahamstown & $-33.319413$ & $26.507688$ & 642.26 & \checkmark\\
+\code{zm-cbu} & \code{zambia} & Copperbelt University - Zambia & $-12.80527778$ & $28.23722222$ & 1270 & \checkmark\\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^\dagger$ rounded here to 7 decimals; the catalogue keeps the registry's full precision.}
+\end{table}
+
+Several entries share a site. For example, \code{nz-elec}, \code{nz-test}
+and \code{nz-rock2f} have identical coordinates, as do \code{nz-nelson} and
+\code{nz-nelson-32}. They are distinct registered telescopes and are kept
+as such. Choosing among them is a scientific decision, not a registry one.
+
+\section{Registry verification}
+
+There are 36 registry tests. They use local registry fixtures and mocked
+HTTP, so none of them needs the network:
+\begin{itemize}
+\item a valid registry normalises every entry; \code{null}, absent,
+non-finite or non-numeric coordinates are skipped and never become zero;
+a longitude above \ang{180} is rejected by the shared validator; missing
+locations and ids are diagnosed; strict mode raises;
+\item duplicated TART ids are diagnosed and excluded, and raise in strict
+mode; unexpected top-level structures raise \code{RegistrySchemaError};
+\item conversion keeps the TART id, the provenance and the
+convention-derived API URL; \code{archive\_name} is set only after a
+successful verification; a failed archive query leaves the station
+unverified without erasing an earlier verification;
+\item a catalogue written to disk reloads into identical \code{Station}
+objects and exposes its metadata;
+\item aliases and TART ids resolve to the same station; mixed duplicates
+and unknown aliases fail clearly; the bundled aliases resolve in the
+bundled catalogue; the legacy file still resolves by name and TART id;
+\item SHA-256 is deterministic, the snapshot and sidecar are written as
+specified, and an existing snapshot is never overwritten;
+\item the diff detects an added station, a removed station, a coordinate
+change (\SI{0.001}{\degree} of latitude at \ang{33}\,S gives
+$\approx$\SI{111}{\metre}), a name change and metadata changes;
+\item a timeout, an HTTP 502 or a non-JSON response leaves the existing
+catalogue untouched and creates no snapshot directory; an end-to-end
+refresh writes the snapshots, catalogue and change record; a dry run writes
+nothing; \code{tart-stations-list} prints aliases and filters by archive.
+\end{itemize}
+Further tests check that the packaged and legacy catalogues have identical
+coordinates for their shared stations, and that Stage~2 resolves legacy
+Stage-1 identifiers through aliases and uses the Stage-1 coordinates when
+the catalogue has changed.
 
 %======================================================================
 \part{Stage 1: common GNSS visibility windows}
@@ -126,21 +399,25 @@ list of satellite/window pairs ranked by decreasing $T_{\rm common}$.
 
 \subsection{Station coordinates}
 
-Station coordinates are never written into the code. They are read from a
-YAML (or JSON) configuration file, \code{config/stations.yaml}, in which each
-entry records the WGS84 geodetic latitude, longitude and height, the TART
-telescope identifier, its REST API URL, and the provenance of the
-coordinates. No coordinate was estimated or invented: the values were taken
-from the TART network-monitor registry
+Station coordinates are never written into the code. By default they are
+read from the frozen registry catalogue \code{stations\_registry.yaml}
+(Part~\ref{sec:registry-part}). Any YAML or JSON catalogue in the same format
+can be given with \code{--station-file}, including the legacy hand-maintained
+\code{stations.yaml}. Each entry records the WGS84 geodetic latitude,
+longitude and height, the TART telescope identifier, its REST API URL, and
+the provenance of the coordinates. No coordinate was estimated or invented.
+All values come from the TART network registry
 (\url{https://map.elec.ac.nz/api/v1/telescopes}, field
 \code{telescopeInfo.info.location}), which mirrors each telescope's own
 \code{/api/v1/info} endpoint. For \code{za-rhodes} the values were
 independently confirmed from
-\url{https://api.elec.ac.nz/tart/za-rhodes/api/v1/info}. All were retrieved
-on 2026-10-07 at 10:03~UTC. Table~\ref{tab:stations} lists the three
-stations used in this report; the configuration also contains four other
-African TART stations (Hammanskraal, Namibia, Zambia, Ghana), and further
-stations can be added without code changes.
+\url{https://api.elec.ac.nz/tart/za-rhodes/api/v1/info}. The Stage-1
+results in this report were produced on 2026-10-07 from the legacy file
+(registry retrieved at 10:03~UTC that day). They therefore identify
+stations by legacy names such as \code{mauritius}. The registry snapshot of
+2026-10-09 gives identical coordinates. Table~\ref{tab:stations} lists the
+three stations used in this report. Any other registered station
+(Table~\ref{tab:network}) can be used without code changes.
 
 \begin{table}[h]
 \centering
@@ -151,7 +428,7 @@ Skyfield.}
 \small
 \begin{tabular}{llrrrr}
 \toprule
-ID & TART id & Lat.\ (deg) & Lon.\ (deg) & Alt.\ (m) & ITRS $(x,y,z)$ (km)\\
+Legacy ID & TART id & Lat.\ (deg) & Lon.\ (deg) & Alt.\ (m) & ITRS $(x,y,z)$ (km)\\
 \midrule
 \code{mauritius}    & \code{mu-udm}    & $-20.2587508$ & $57.7591989$ & 20.00   & (3193.40, 5063.04, $-2194.60$)\\
 \code{madagascar}   & \code{mg-tana}   & $-18.8971446$ & $47.5551677$ & 1280.00 & (4074.72, 4455.38, $-2053.00$)\\
@@ -164,8 +441,8 @@ Two caveats apply. (i) These are the coordinates configured on each
 telescope by its operators; their survey accuracy is not documented. An
 error of a few metres is irrelevant for visibility prediction but will matter
 for the Stage-5 inference, where surveyed antenna-array centres should be
-used. (ii) The identifier \code{south\_africa} denotes the Rhodes University
-telescope; South Africa also hosts \code{za-hammanskraal}, available as
+used. (ii) The alias \code{south\_africa} denotes the Rhodes University
+telescope; South Africa also hosts \code{za-hammanskraal}, with the alias
 \code{south\_africa\_hammanskraal}. Configuration loading validates each
 coordinate (latitude in $[-90,90]$, longitude in $[-180,180]$, height in
 $[-500,9000]$\,m, finite, non-null) and requires a non-empty \code{source}.
@@ -289,10 +566,11 @@ giving a deterministic 1-based rank.
 \subsection{Architecture}
 
 The package \code{tart\_gnss} (Python $\ge 3.9$; dependencies NumPy,
-Skyfield, sgp4, PyYAML) is organised as in Table~\ref{tab:modules} and
+Skyfield, sgp4, PyYAML, requests) is organised as in Table~\ref{tab:modules} and
 Fig.~\ref{fig:flow}. Visibility and window logic operate on a sequence of
 stations of any length; only the CLI enforces the Stage-1 requirement of
-exactly three stations. Network access is confined to the TLE module.
+exactly three stations. Network access is confined to the TLE module and,
+when explicitly requested, the registry module.
 Diagnostics use Python's \code{logging} with UTC timestamps; only the final
 summary is printed.
 
@@ -305,7 +583,9 @@ summary is printed.
 \toprule
 Module & Responsibility\\
 \midrule
-\code{stations.py} & load YAML/JSON configuration; validate coordinates; resolve identifiers (case-insensitive, TART ids accepted)\\
+\code{stations.py} & load YAML/JSON catalogues and aliases; validate coordinates; resolve identifiers (id, normalised id, alias, TART id)\\
+\code{registry.py} & TART registry: download, snapshots with SHA-256, schema-checked parsing, archive verification, catalogue generation, diffs\\
+\code{registry\_cli.py} & \code{tart-stations-update} and \code{tart-stations-list}\\
 \code{tle.py} & parse and checksum TLEs; epochs; constellation labels; CelesTrak download and archival with SHA-256 sidecar\\
 \code{propagation.py} & SGP4 via Skyfield; azimuth, elevation, range, range rate; ITRS positions; line-of-sight vectors\\
 \code{visibility.py} & $E_i\ge E_{\min}$ per station and the AND over $N$ stations; exact predicate for refinement\\
@@ -324,7 +604,7 @@ Module & Responsibility\\
   box/.style={draw,rounded corners=2pt,fill=blue!4,align=center,font=\small,minimum height=9mm,text width=27mm},
   io/.style={draw,trapezium,trapezium left angle=72,trapezium right angle=108,fill=orange!8,align=center,font=\small,text width=24mm},
   >={Stealth[length=2mm]}]
-\node[io] (st) {stations.yaml};
+\node[io] (st) {station catalogue\\+ aliases};
 \node[io, below=of st] (tle) {TLE file /\\CelesTrak};
 \node[box, right=of st] (ld) {stations.py\\validate, resolve};
 \node[box, right=of tle] (tl) {tle.py\\parse, provenance};
@@ -346,14 +626,18 @@ Module & Responsibility\\
 
 \begin{lstlisting}
 pip install .                      # or: pip install -e ".[dev]"
-common-gnss --stations mauritius madagascar south_africa \
+tart-common-gnss --stations mauritius madagascar south_africa \
     --start 2026-10-01T00:00:00Z --end 2026-10-02T00:00:00Z \
     --min-elevation 20 --step 10
 \end{lstlisting}
 \code{python common\_gnss.py} and \code{python -m tart\_gnss} are equivalent.
-Optional arguments: \code{--tle-file} (use an archived catalogue exactly),
-\code{--tle-dir}, \code{--constellations GPS Galileo \dots},
-\code{--output}, \code{--station-file}, \code{--min-duration},
+Stations may be given as TART ids (\code{mu-udm mg-tana za-rhodes}) or as
+aliases; both select the same stations. Optional arguments:
+\code{--tle-file} (use an archived catalogue exactly), \code{--tle-dir},
+\code{--constellations GPS Galileo \dots}, \code{--output},
+\code{--station-file}, \code{--aliases}, \code{--refresh-stations} (fetch
+the live registry first; off by default), \code{--station-snapshot-dir},
+\code{--min-duration},
 \code{--tolerance}, \code{--tle-age-warning-days}, \code{--verbose}. Input
 errors (unknown station, malformed date, start not before end, wrong number
 of stations) terminate with exit status~2 and a clear message.
@@ -369,14 +653,15 @@ station its identifier and azimuth/elevation at start, middle and end plus
 the mid-window range; midpoint ITRS satellite position with the frame name;
 TLE epoch, TLE age at start and middle, TLE source. TLE lines are not
 embedded in the CSV.
-\item[JSON] run parameters; frame description; stations with ITRS vectors
+\item[JSON] \code{schema\_version}; run parameters; frame description; stations with ITRS vectors
 and sources; catalogue provenance; every searched satellite with full TLE;
 and for every window the station geometry (azimuth, elevation, range, range
 rate) at start/mid/end, satellite ITRS position and velocity at the same
 epochs, midpoint line-of-sight vectors, and the TLE lines, epoch and ages.
 \item[Metadata] versions of \code{tart\_gnss}, Python, Skyfield, sgp4, NumPy
 and PyYAML; platform; run timestamp; full command line; interval;
-stations and coordinates; SHA-256 of the station file; threshold, step and
+stations and coordinates; the station catalogue path and SHA-256; the
+registry source, retrieval time and snapshot SHA-256; threshold, step and
 tolerance; TLE file, source, retrieval time and SHA-256; TLE-age summary;
 failed propagations; output paths.
 \end{description}
@@ -386,12 +671,13 @@ failed propagations; output paths.
 \label{sec:verification}
 %======================================================================
 
-The Stage-1 tests (\code{pytest}, 62 tests, $<\SI{1}{\second}$) cover:
+The Stage-1 tests (\code{pytest}, 64 tests, $<\SI{1}{\second}$) cover:
 \begin{itemize}
 \item \textbf{Stations:} latitude \ang{100}, longitude \ang{300}, implausible
 heights, \code{null} or non-numeric coordinates and missing provenance are
 rejected; unknown and duplicated stations fail with clear messages; the
-bundled configuration validates and is sourced.
+bundled registry catalogue and the legacy file validate, are sourced, and
+agree on every shared station.
 \item \textbf{TLEs:} checksum, two- and three-line parsing, epoch decoding,
 name classification, constellation filtering, archival with sidecar
 metadata (network mocked) and detection of a modified catalogue.
@@ -560,6 +846,7 @@ detection, triangulation and inference are not part of Stage~2.
 \section{The TART visibility archive}
 
 \subsection{Location and layout}
+\label{sec:archive}
 
 The TART project archives native visibility files in a public, read-only S3
 bucket. The maintained client \code{tart\_tools.archive\_handler} \cite{tarttools} (used by
@@ -570,11 +857,12 @@ at \code{s3.us-west-2.amazonaws.com}, with objects
 \end{center}
 where month and day are not zero-padded. \code{tart\_gnss} imports this
 location from \code{tart\_tools} when it is installed and lists the bucket
-with the same \code{minio} client. The archive name of every configured
-station was verified by listing the bucket on 2026-10-07. It equals the
-TART identifier (\code{mu-udm}, \code{mg-tana}, \code{za-rhodes}, \dots)
-and is stored as \code{archive\_name} in the station configuration, next to
-\code{api\_url}. No archive name or URL was guessed.
+with the same \code{minio} client. The archive name of a station equals its
+TART identifier (\code{mu-udm}, \code{mg-tana}, \code{za-rhodes}, \dots).
+It is stored as \code{archive\_name} in the station catalogue only after
+\code{tart-stations-update --verify-archives} has found the prefix in the
+bucket (Section~\ref{sec:registry}). On 2026-10-09 this held for 14 of the
+17 registered stations. No archive name or URL was guessed.
 
 \subsection{Why the archive helper is not called directly}
 
@@ -613,15 +901,23 @@ outside the query interval are recorded but not used.
 \section{Method}
 
 \subsection{Selection and query interval}
+\label{sec:stage2method}
 
 The Stage-1 JSON is loaded, and exactly one window is chosen by
 \code{--rank}, or by \code{--norad-id} with \code{--window-index} when the
 satellite has several windows. An ambiguous or inconsistent selection is an
 error. The window's geometry, TLE and provenance are copied verbatim into
 \code{stage1\_window.json} and the manifest, together with the SHA-256 of
-the Stage-1 file; Stage-1 geometry is never recomputed. The station
-coordinates in the configuration must equal those used in Stage~1, or the
-run stops. The archive query interval is
+the Stage-1 file; Stage-1 geometry is never recomputed. Each Stage-1
+station is looked up in the station catalogue by TART id, then by its
+Stage-1 id, with aliases accepted. Older results that use names such as
+\code{mauritius} therefore still resolve. The catalogue supplies only the
+archive name and API URL. Identity and coordinates always come from the
+Stage-1 results, and the catalogue is never refreshed during Stage~2. If
+the catalogue coordinates differ from the Stage-1 values, a warning is
+logged and the manifest records \code{station\_metadata\_changed: true}
+with the catalogue coordinates and source next to the Stage-1 values. The
+archive query interval is
 \begin{equation}
 t_{q,\rm start}=t_{\rm pred,start}-P,\qquad t_{q,\rm end}=t_{\rm pred,end}+P,
 \end{equation}
@@ -723,7 +1019,8 @@ only input Stage~3 needs. It has the sections \code{satellite}, including
 \code{signal\_relevance}, the TLE epoch, source and lines; \code{prediction},
 covering the predicted and query intervals, padding, the Stage-1 file with
 its SHA-256, the ITRS position and lines of sight; \code{stations}, one
-entry per station with coordinates, archive status and query bounds, raw
+entry per station with coordinates, \code{station\_metadata\_changed},
+archive status and query bounds, raw
 files with hashes, native metadata and coverage, calibration status, the MS
 metadata and the Stage-1 predicted az/el; \code{synchronisation};
 \code{software}; and \code{provenance}. It is checked against the required
@@ -752,7 +1049,7 @@ Module & Responsibility\\
 \code{synchronise.py} & common interval; coverage fractions; cross-station timing\\
 \code{measurement\_set.py} & \code{tart2ms} wrapper; MS inspection and validation\\
 \code{manifest.py} & manifest assembly, schema check and safe writing\\
-\code{cli.py} & \code{retrieve-tart}: orchestration, logging, terminal summary\\
+\code{cli.py} & \code{tart-retrieve}: orchestration, logging, terminal summary\\
 \code{errors.py} & \code{Stage1SelectionError}, \code{ArchiveUnavailableError}, \code{ObservationNotFoundError}, \code{DownloadError}, \code{ObservationValidationError}, \code{NoCommonTimeError}, \code{MeasurementSetConversionError}\\
 \bottomrule
 \end{tabular}
@@ -764,7 +1061,7 @@ installs \code{tart2ms} and python-casacore.
 
 \section{Stage-2 verification}
 
-There are 65 Stage-2 tests. They use a mocked archive and synthetic HDF5
+There are 67 Stage-2 tests. They use a mocked archive and synthetic HDF5
 files that follow the real layout (random visibilities, not real data), so
 they need no live service:
 \begin{itemize}
@@ -794,9 +1091,12 @@ runs the \emph{real} \code{tart2ms} on a synthetic file and is skipped when
 which stays invalid; no common time; a query without download; a dry run,
 which writes nothing; a conversion failure at one station; a re-run with
 verified reuse and the old manifest kept; usage errors; and manifest
-validation, including the station count.
+validation, including the station count; a changed catalogue coordinate,
+which keeps the Stage-1 value and sets \code{station\_metadata\_changed};
+and legacy Stage-1 identifiers resolved through aliases.
 \end{itemize}
-With the 62 Stage-1 tests, the suite has 127 tests and runs in about
+With the 64 Stage-1 and 36 registry tests, the suite has 167 tests (one is
+skipped when \code{tart2ms} is not installed) and runs in about
 \SI{6}{\second}.
 
 \section{Stage-2 results}
@@ -804,7 +1104,7 @@ With the 62 Stage-1 tests, the suite has 127 tests and runs in about
 \subsection{Acceptance run on 2026-10-01 (rank 1)}
 
 The command in the specification,
-\code{retrieve-tart --visibility-results results/common\_gnss\_20261001.json
+\code{tart-retrieve --visibility-results results/common\_gnss\_20261001.json
 --rank 1 --padding 120 --download --convert-ms}, selects BeiDou-2~G5. This
 satellite is labelled \code{OUT\_OF\_BAND} (B1I) and its window is clipped
 by the Stage-1 interval. The archive holds 694 Madagascar files and 1411
@@ -830,7 +1130,7 @@ rank~8, GPS BIIF-9 (PRN~26, \code{GPS\_L1}), with predicted window
 \code{--max-duration 600} as the specification recommends for a first
 experiment:
 \begin{center}
-\code{retrieve-tart --visibility-results results/common\_gnss\_20260625.json
+\code{tart-retrieve --visibility-results results/common\_gnss\_20260625.json
 --rank 8 --max-duration 600 --download --convert-ms --keep-native}
 \end{center}
 The results are in Table~\ref{tab:stage2} and Fig.~\ref{fig:stage2}. In
@@ -863,7 +1163,10 @@ manifest and are directly relevant to Stage-3 imaging quality.
 The run took about \SI{55}{\second}, including downloads of 36 files
 (\SI{5}{\mega\byte}) and three conversions. Its manifest, Stage-1 window,
 log and terminal output are in
-\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}.
+\code{docs/examples/stage2/valid\_20260625\_NORAD\_40534/}. The example
+Stage-1 and Stage-2 runs predate the renaming of the commands, so their
+recorded command lines begin with the former names \code{common-gnss} and
+\code{retrieve-tart}. They are kept unchanged as provenance records.
 
 \begin{table}[h]
 \centering
@@ -948,7 +1251,11 @@ data are not suitable for reconstructing old observations
 and antenna patterns are not modelled.
 \item ITRS positions neglect polar motion ($\sim$\SI{10}{\metre}).
 \item Station coordinates are as published by TART, with undocumented
-accuracy and height datum.
+accuracy and height datum. The registry schema is external and may change.
+The parser then fails explicitly, and the frozen catalogue remains usable.
+\item Registry presence does not mean a station is online or has archived
+data. The registry's \code{online} flag is not used, and archive presence
+is verified only at the prefix level, not for a particular date.
 \item Excursions shorter than the coarse step are not detected.
 \item Stage~1 does not filter satellites by transmitted signal. Stage~2
 labels each window with \code{signal\_relevance}, but does not check
@@ -969,8 +1276,10 @@ station uploading its data; for example, Mauritius has no data after
 %======================================================================
 
 A run is fully reproducible from its metadata file: the archived TLE file
-(verified by SHA-256), the station file (also hashed), the software versions
-and the full command line. Re-running with
+(verified by SHA-256), the station catalogue (also hashed, together with the
+SHA-256 and retrieval time of the registry snapshot it was built from), the
+software versions and the full command line. Registry snapshots, like TLE
+catalogues, are archived under \code{data/stations/} and never overwritten. Re-running with
 \code{--tle-file data/tle/gnss\_2026-10-07T101156Z.tle} reproduces the
 Stage-1 results in this report. Historical catalogues are never
 overwritten. A Stage-2 manifest records the SHA-256 of the Stage-1 file and

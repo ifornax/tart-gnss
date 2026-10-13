@@ -1,10 +1,10 @@
 """Command-line tools for the TART station registry.
 
-* ``update-tart-stations``: fetch the live registry, archive the raw snapshot,
+* ``tart-stations-update``: fetch the live registry, archive the raw snapshot,
   and write a normalised station catalogue (optionally diffing it against the
   previous one). Fails if the registry cannot be retrieved; existing files are
   then left untouched.
-* ``list-tart-stations``: show the stations of a (frozen) catalogue.
+* ``tart-stations-list``: show the stations of a (frozen) catalogue.
 
 Exit status: 0 success, 1 registry/network failure, 2 input/configuration error.
 """
@@ -144,14 +144,14 @@ def _setup_logging(verbose: bool) -> None:
 
 
 # --------------------------------------------------------------------------
-# update-tart-stations
+# tart-stations-update
 # --------------------------------------------------------------------------
 
 
 def build_update_parser() -> argparse.ArgumentParser:
-    """Argument parser for ``update-tart-stations``."""
+    """Argument parser for ``tart-stations-update``."""
     p = argparse.ArgumentParser(
-        prog="update-tart-stations",
+        prog="tart-stations-update",
         description="Fetch the TART network registry, archive the raw snapshot and write a "
                     "normalised station catalogue.",
     )
@@ -187,7 +187,7 @@ def _check_aliases(aliases: Dict[str, str], stations: Dict[str, Station]) -> Non
 
 
 def main_update(argv: Optional[List[str]] = None) -> int:
-    """Entry point of ``update-tart-stations``."""
+    """Entry point of ``tart-stations-update``."""
     args = build_update_parser().parse_args(argv)
     _setup_logging(args.verbose)
     # Baseline for the diff and for carried-over archive verifications.
@@ -239,13 +239,13 @@ def main_update(argv: Optional[List[str]] = None) -> int:
 
 
 # --------------------------------------------------------------------------
-# list-tart-stations
+# tart-stations-list
 # --------------------------------------------------------------------------
 
 
 def build_list_parser() -> argparse.ArgumentParser:
-    """Argument parser for ``list-tart-stations``."""
-    p = argparse.ArgumentParser(prog="list-tart-stations",
+    """Argument parser for ``tart-stations-list``."""
+    p = argparse.ArgumentParser(prog="tart-stations-list",
                                 description="List the stations of a TART station catalogue.")
     p.add_argument("--station-file", type=Path, help="catalogue (default: packaged frozen registry snapshot)")
     p.add_argument("--aliases", type=Path, help="alias file (default: bundled station_aliases.yaml)")
@@ -286,7 +286,7 @@ def format_table(rows: Sequence[Dict[str, object]]) -> str:
 
 
 def main_list(argv: Optional[List[str]] = None) -> int:
-    """Entry point of ``list-tart-stations``."""
+    """Entry point of ``tart-stations-list``."""
     args = build_list_parser().parse_args(argv)
     _setup_logging(args.verbose)
     path = args.station_file or default_station_file()
