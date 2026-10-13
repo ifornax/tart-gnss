@@ -10,8 +10,9 @@ with ``a, b`` in ``x y z vx vy vz`` (m^2, m^2/s, m^2/s^2); use
 smoothed 3x3 position covariance rotated to ECEF. ``quality_flags`` is a
 ``;``-separated string in CSV and a list in Parquet.
 
-``innovations``: one row per Stage-4 epoch with a finite position, from the
-final filter pass; ``nis_first_pass`` is the NIS of the first (sequential)
+``innovations``: one row per Stage-4 epoch with a finite position from the
+first usable epoch on (earlier epochs have no prediction), from the final
+filter pass; ``nis_first_pass`` is the NIS of the first (sequential)
 evaluation, which differs only for rows re-processed after a divergence restart.
 """
 

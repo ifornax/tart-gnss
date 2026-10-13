@@ -42,7 +42,8 @@ Stage-5 flags (per trajectory row; a row with none is ``GOOD``)
                                was re-initialised from the data (a smoother segment boundary)
 ``EXTRAPOLATED``               after the last assimilated measurement (prediction only)
 ``STAGE4_QUALITY_WARNING``     the Stage-4 row carried advisory flags
-``COVARIANCE_INVALID``         the state covariance failed its checks
+``COVARIANCE_INVALID``         reserved: a state-covariance failure currently aborts the run
+                               (FilterDivergenceError, exit 3)
 ``SMOOTHER_FAILED``            the RTS smoother failed (filtered state reported)
 ``NOT_INITIALISED``            before the first usable measurement (no state)
 ``INSUFFICIENT_MEASUREMENTS``  fewer than ``MIN_MEASUREMENTS`` usable measurements

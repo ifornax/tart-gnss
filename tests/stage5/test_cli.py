@@ -103,3 +103,15 @@ def test_bad_manifest_exit_2(tmp_path):
 
 def test_prog_name():
     assert cli.build_parser().prog == "tart-track"
+
+
+def test_j2_dynamics_end_to_end(tmp_path):
+    code, traj, _, man = run_cli(tmp_path, _rows(10), "--no-plots", "--dynamics", "j2")
+    assert code == cli.EXIT_OK
+    pole = np.array(man["state_model"]["j2_pole_gcrs"])
+    assert np.linalg.norm(pole) == pytest.approx(1.0) and pole[2] > 0.9999
+    assert man["state_model"]["j2"] == pytest.approx(1.0826359e-3)
+    acc = traj["acceleration_m_s2"].to_numpy(float)
+    r = traj["radius_m"].to_numpy(float)
+    assert np.all(np.isfinite(acc)) and np.allclose(acc, 3.986004418e14 / r ** 2, rtol=1e-3)
+    assert not np.allclose(acc, 3.986004418e14 / r ** 2, rtol=1e-9)  # the J2 term is included

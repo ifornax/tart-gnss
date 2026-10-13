@@ -294,7 +294,7 @@ covariance is never repaired.
 | `INSUFFICIENT_MEASUREMENTS` | fewer than 3 usable measurements (no filter run) | yes |
 | `NOT_INITIALISED` | before the first usable measurement (no state) | yes |
 | `SMOOTHER_FAILED` | RTS smoother failed | yes |
-| `COVARIANCE_INVALID` | state covariance failed its checks | yes |
+| `COVARIANCE_INVALID` | reserved: a state-covariance failure currently aborts the run (`FilterDivergenceError`, exit 3) | yes |
 | `FILTER_DIVERGENCE` | one of ≥ 3 consecutive gated measurements that triggered a restart | no |
 | `INVALID_STAGE4_COVARIANCE` | the Stage-4 covariance failed the checks | no |
 | `MEASUREMENT_REJECTED` / `NO_MEASUREMENT` | row not used by the policy / no finite Stage-4 position | no |
@@ -347,7 +347,9 @@ results/stage5/<YYYYMMDD>/NORAD_<id>/
   x y z vx vy vz. `tart_gnss.stage5.output.state_covariance(row, kind)`
   rebuilds the matrix.
 
-**`innovations`** holds, per row:
+**`innovations`** has one row per epoch with a finite Stage-4 position,
+from the first usable epoch on (earlier epochs have no prediction). It holds,
+per row:
 
 - ν and S (six terms);
 - the whitened innovation;
@@ -396,7 +398,7 @@ analytic Kepler solution.
 anisotropic covariance: σ_LOS along the line of sight from the South-Africa
 station, σ_T across it. This is the shape of real Stage-4 covariances.
 
-**Tests** (`tests/stage5/`, 89 in total). Each line below is one of the
+**Tests** (`tests/stage5/`, 90 in total). Each line below is one of the
 specification's §32 tests, or a related check:
 
 - **32.1 Exact two-body.** 60 epochs at 5 km / 1 km. Smoothed position RMSE
@@ -484,9 +486,12 @@ segment is a bad draw, so it is excluded below; with it, mean NEES is 6.63.
 | position coverage 1σ / 2σ / 3σ | 0.182 / 0.702 / 0.962 | 0.199 / 0.739 / 0.971 (χ²₃) |
 | velocity coverage 1σ / 2σ / 3σ | 0.178 / 0.717 / 0.950 | 0.199 / 0.739 / 0.971 |
 
-The epochs within one run are strongly correlated, so batch means scatter.
-Eight further batches of 100 runs gave mean NEES of 5.25–6.28, averaging
-5.9. The 6.61 above is therefore sampling noise, not a calibration error.
+The epochs within one run are strongly correlated, so batch means scatter
+widely. Two further 100-run batches of the same setup (every 10th epoch,
+restarted runs excluded) gave mean NEES 6.24 and 5.73. The 6.61 above is
+therefore within about 2.5σ of 6, given the batch scatter. A scratch check
+with variants of the setup gave 5.25–6.29 (σₐ = 0, isotropic 10 km noise, no
+gap); that script is not committed.
 The predicted σ matches the empirical error to within about 2% for position and
 0.3% for velocity.
 
@@ -500,7 +505,7 @@ The predicted σ matches the empirical error to within about 2% for position and
 
 At 30 km noise, constant velocity with its large default σₐ is *consistent*,
 but less precise: 1.7× the position error. Constant velocity with the
-two-body σₐ is inconsistent. It needs restarts, and it is 3× worse.
+two-body σₐ is worse on every diagnostic and has 3× the position error.
 
 **Part B (end to end).** The same orbit is observed for 15 min (90 epochs,
 elevation ≥ 43°) as directions from the three example stations, with 0.02°
@@ -544,8 +549,9 @@ with 34 assimilated.
 
 What this shows:
 
-- **The size of the Stage-4 covariance is about right, but its errors are not
-  white.** NIS is close to χ²₃. However, the innovations are strongly
+- **The epoch-to-epoch scatter matches the Stage-4 covariance, but the errors
+  are not white.** NIS is close to χ²₃. NIS cannot see an error common to
+  all epochs, such as the ~3 000 km along-LOS offset found in Stage 4. However, the innovations are strongly
   autocorrelated out to lag 3 (`DYNAMICS_MISMATCH`). The Stage-4 positions
   wander about the smoothed track in a slow, correlated pattern
   (`stage4_vs_smoothed.png`, `position_track.png`). This matches the

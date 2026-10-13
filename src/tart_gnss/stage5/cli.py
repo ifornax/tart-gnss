@@ -127,7 +127,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--innovation-gate-probability", type=float, default=0.9973,
                    help="chi^2_3 probability of the innovation gate (default 0.9973)")
     p.add_argument("--quality-policy", choices=q.POLICIES, default="strict",
-                   help="strict (default): Stage-4 valid epochs only; permissive: also POOR_GEOMETRY and "
+                   help="strict (default): Stage-4 valid epochs, excluding STAGE3_QUALITY_WARNING ones (built on "
+                        "Stage-3 rows Stage 3 marked unusable); permissive: also POOR_GEOMETRY and "
                         "STAGE3_QUALITY_WARNING epochs")
     p.add_argument("--max-gap-s", type=float, default=120.0,
                    help="LARGE_TIME_GAP when more than this many seconds pass without an assimilated "
