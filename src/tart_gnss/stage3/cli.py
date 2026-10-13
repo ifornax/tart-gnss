@@ -18,7 +18,7 @@ import logging
 import subprocess
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
@@ -425,10 +425,10 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
         if sat.get("tle_line1") and sat.get("tle_line2"):
             tle = TleReference(sat["tle_line1"], sat["tle_line2"], si.latitude_deg, si.longitude_deg, si.altitude_m)
         weights_cal = not bool(np.all(dataset.weight[~dataset.flag] == 1.0))
-        thresholds.weights_calibrated = weights_cal
         result = process_station(si, dataset, norad_id=norad, tle=tle, method=args.method,
                                  image_validation=args.image_validation, bin_s=args.time_bin, options=options,
-                                 thresholds=thresholds, n_boot=args.bootstrap, rng=rng)
+                                 thresholds=replace(thresholds, weights_calibrated=weights_cal),
+                                 n_boot=args.bootstrap, rng=rng)
         result.summary["weights_calibrated"] = weights_cal
         all_rows.extend(result.rows)
         summaries[si.station_id] = result.summary
@@ -472,7 +472,8 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
         },
         "time_binning": {"bin_s": args.time_bin, "edges": "from the first timestamp of each station",
                          "output_time": "weight-averaged time of the samples used", "empty_bins": "omitted"},
-        "quality_thresholds": thresholds.to_dict(),
+        "quality_thresholds": {**thresholds.to_dict(),
+                               "weights_calibrated": "per station (stations.<id>.weights_calibrated)"},
         "tle_reference": {
             "use": "search-cap centre, post-fit association check (TLE_UNASSOCIATED) and plotting "
                    "reference only; never a prior or a measurement",
