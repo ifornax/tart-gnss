@@ -98,3 +98,27 @@ def test_robust_inflate_assimilates_outlier_with_inflated_covariance():
     assert none.filtered.outlier[j] and not none.filtered.accepted[j]
     assert infl.filtered.outlier[j] and infl.filtered.accepted[j]
     assert infl.filtered.inflation[j] > 1.0
+
+
+def test_divergence_recovery_reinitialises_instead_of_locking_out():
+    # After 8 epochs the measured track jumps by 300 km (e.g. a different source): with hard gating and
+    # near-deterministic dynamics every later measurement would be gated for ever. The filter must
+    # restart from the data after three consecutive gated measurements, and the smoother must not
+    # smooth across the restart.
+    rng = np.random.default_rng(5)
+    t = times(30)
+    x = truth(t)
+    jump = {k: np.array([3e5, 0.0, 0.0]) for k in range(8, 30)}
+    res = run_track(syn.stage4_rows(t, x, 1e3, 1e3, rng, outliers=jump))
+    fr, sm = res.filtered, res.smoothed
+    assert list(np.flatnonzero(fr.reset)) == [8]
+    assert list(np.flatnonzero(fr.diverged)) == [8, 9, 10]
+    assert fr.accepted[8:].all() and len(fr.initials) == 2
+    assert all("FILTER_DIVERGENCE" in res.trajectory[k]["quality_flags"] for k in (8, 9, 10))
+    assert res.trajectory[8]["valid"]
+    m = np.array([res.measurements.matrices[k] for k in range(30)])
+    ecef = np.einsum("nji,nj->ni", m, sm.x_smooth[:, :3])
+    true_ecef = np.einsum("nji,nj->ni", m, x[:, :3])
+    assert np.all(np.linalg.norm(ecef[:8] - true_ecef[:8], axis=1) < 3e4)
+    assert np.all(np.linalg.norm(ecef[8:] - true_ecef[8:] - [3e5, 0, 0], axis=1) < 3e4)
+    assert res.summary["n_resets"] == 1

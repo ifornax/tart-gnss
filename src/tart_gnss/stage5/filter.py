@@ -20,6 +20,17 @@ of ``--innovation-gate-probability`` is an ``INNOVATION_OUTLIER``: with
 it is assimilated with ``R_k`` multiplied by ``D_k^2 / gate``, which brings
 its NIS down to the gate. Gated measurements always stay in the output.
 
+Divergence recovery: with near-deterministic orbital dynamics an early
+unlucky gate decision can lock the filter onto a wrong state, after which the
+predicted error and its sigma grow together and every later measurement is
+gated too. After ``DIVERGENCE_RUN`` (3) consecutive gated measurements the
+filter therefore restarts at the first of them, re-initialised from the data
+(same TLE-independent initialisation, inflated prior); those rows are marked
+``diverged`` (``FILTER_DIVERGENCE``) and the step is a segment boundary
+(``reset``) that the smoother does not cross. ``*_first`` arrays keep the innovation and NIS of
+each measurement's first (sequential, predictive) evaluation, before any
+restart, so the consistency statistics still see the gated values.
+
 After every prediction and update the covariance is symmetrised and checked
 (finite, smallest eigenvalue not below ``-1e-9`` times the largest); a failure
 raises :class:`FilterDivergenceError` instead of continuing silently.
@@ -44,6 +55,8 @@ from tart_gnss.stage5.initialisation import (
 H = np.hstack([np.eye(3), np.zeros((3, 3))])
 ROBUST_UPDATES = ("none", "inflate")
 EIG_TOL = 1e-9
+#: Consecutive gated measurements that trigger a re-initialisation (FILTER_DIVERGENCE).
+DIVERGENCE_RUN = 3
 
 
 @dataclass
@@ -113,6 +126,13 @@ class FilterResult:
     outlier: np.ndarray
     inflation: np.ndarray
     gap_s: np.ndarray
+    reset: np.ndarray
+    diverged: np.ndarray
+    nis_first: np.ndarray
+    outlier_first: np.ndarray
+    innovation_first: np.ndarray
+    innovation_cov_first: np.ndarray
+    initials: List[InitialState]
 
 
 def gate_threshold(probability: float, dof: int = 3) -> float:
@@ -165,13 +185,8 @@ def ekf_filter(measurements: List[TrajectoryMeasurement], config: FilterConfig) 
     """
     if config.robust_update not in ROBUST_UPDATES:
         raise ValueError(f"robust_update must be one of {ROBUST_UPDATES}")
-    usable = [m for m in measurements if m.used and m.finite]
-    if not usable or not (measurements[0].used and measurements[0].finite):
+    if not measurements or not (measurements[0].used and measurements[0].finite):
         raise InitialisationError("the first measurement passed to the filter must be usable")
-    init = initial_state([m.time_s for m in usable], [m.position_gcrs_m for m in usable],
-                         [m.covariance_gcrs_m2 for m in usable], config.initial_velocity_window_s,
-                         config.dynamics, config.prior_inflation, config.weak_velocity_sigma_m_s,
-                         config.pole_gcrs)
     gate = gate_threshold(config.gate_probability)
     n = len(measurements)
     out = {
@@ -181,15 +196,26 @@ def ekf_filter(measurements: List[TrajectoryMeasurement], config: FilterConfig) 
         "innovation": np.full((n, 3), np.nan), "innovation_cov": np.full((n, 3, 3), np.nan),
         "nis": np.full(n, np.nan), "attempted": np.zeros(n, bool), "accepted": np.zeros(n, bool),
         "outlier": np.zeros(n, bool), "inflation": np.ones(n), "gap_s": np.zeros(n),
+        "reset": np.zeros(n, bool), "diverged": np.zeros(n, bool),
+        "nis_first": np.full(n, np.nan), "outlier_first": np.zeros(n, bool),
+        "innovation_first": np.full((n, 3), np.nan), "innovation_cov_first": np.full((n, 3, 3), np.nan),
     }
     times = np.array([m.time_s for m in measurements], dtype=float)
     if np.any(np.diff(times) < 0):
         raise ValueError("measurements must be time ordered")
-    x, p = init.state.copy(), check_covariance(init.prior_covariance, "initial prior")
+    initials: List[InitialState] = []
+    gated_run: List[int] = []
     last_update = times[0]
-    for k, meas in enumerate(measurements):
-        if k == 0:
+    x = p = None
+    k = 0
+    while k < n:
+        meas = measurements[k]
+        if k == 0 or out["reset"][k]:
+            init = _initialise(measurements[k:], config)
+            initials.append(init)
+            x, p = init.state.copy(), check_covariance(init.prior_covariance, f"prior at step {k}")
             f, q = np.eye(6), np.zeros((6, 6))
+            gated_run = []
         else:
             dt = times[k] - times[k - 1]
             x, f = propagate(x, dt, config.dynamics, config.pole_gcrs)
@@ -197,10 +223,16 @@ def ekf_filter(measurements: List[TrajectoryMeasurement], config: FilterConfig) 
             p = check_covariance(f @ p @ f.T + q, f"prediction at step {k}")
         out["x_pred"][k], out["p_pred"][k], out["transition"][k], out["process"][k] = x, p, f, q
         out["gap_s"][k] = times[k] - last_update
+        out["outlier"][k] = out["accepted"][k] = False
+        out["inflation"][k] = 1.0
         if meas.finite:
             r = meas.covariance_gcrs_m2
             x_new, p_new, nu, s, nis = kalman_update(x, p, meas.position_gcrs_m, r)
             out["innovation"][k], out["innovation_cov"][k], out["nis"][k] = nu, s, nis
+            if not np.isfinite(out["nis_first"][k]):  # first (sequential, predictive) evaluation
+                out["nis_first"][k] = nis
+                out["innovation_first"][k], out["innovation_cov_first"][k] = nu, s
+                out["outlier_first"][k] = bool(meas.used and nis > gate)
             if meas.used:
                 out["attempted"][k] = True
                 if nis > gate:
@@ -211,10 +243,28 @@ def ekf_filter(measurements: List[TrajectoryMeasurement], config: FilterConfig) 
                         x_new, p_new, _, _, _ = kalman_update(x, p, meas.position_gcrs_m, lam * r)
                     else:
                         x_new = None
+                        gated_run.append(k)
                 if x_new is not None:
                     x, p = x_new, check_covariance(p_new, f"update at step {k}")
                     out["accepted"][k] = True
                     last_update = times[k]
+                    gated_run = []
         out["x_filt"][k], out["p_filt"][k] = x, p
-    return FilterResult(measurements=measurements, config=config, initial=init, gate_threshold=gate,
-                        times_s=times, **out)
+        if len(gated_run) >= DIVERGENCE_RUN:
+            # The data disagree with the state, not the other way round: restart from the gated run.
+            k = gated_run[0]
+            out["reset"][k] = True
+            out["diverged"][gated_run] = True
+            gated_run = []
+            continue
+        k += 1
+    return FilterResult(measurements=measurements, config=config, initial=initials[0], gate_threshold=gate,
+                        times_s=times, initials=initials, **out)
+
+
+def _initialise(measurements: List[TrajectoryMeasurement], config: FilterConfig) -> InitialState:
+    usable = [m for m in measurements if m.used and m.finite]
+    return initial_state([m.time_s for m in usable], [m.position_gcrs_m for m in usable],
+                         [m.covariance_gcrs_m2 for m in usable], config.initial_velocity_window_s,
+                         config.dynamics, config.prior_inflation, config.weak_velocity_sigma_m_s,
+                         config.pole_gcrs)

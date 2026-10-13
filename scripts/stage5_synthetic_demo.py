@@ -118,7 +118,8 @@ def part_a(out: Path, x0: np.ndarray, n_mc: int, lines: list) -> dict:
         f"rejection fraction {1 - s['accepted_fraction']:.3f} ({s['n_outliers']} of {s['n_attempted']}); "
         f"outlier epoch gated: {bool(traj['quality_flags'].iloc[OUTLIER[0]].count('INNOVATION_OUTLIER'))}",
         f"  lag-1 innovation autocorrelation {s['autocorrelation']['1']:.3f} (limit "
-        f"{s['autocorrelation_limit_lag1']:.3f}); run flags {man['summary']['run_flags'] or 'none'}",
+        f"{s['autocorrelation_limit_lag1']:.3f}); divergence restarts {s['n_resets']}; run flags "
+        f"{man['summary']['run_flags'] or 'none'}",
         "",
     ]
     # Dynamics comparison (TLE-independent diagnostics only).
@@ -140,11 +141,12 @@ def part_a(out: Path, x0: np.ndarray, n_mc: int, lines: list) -> dict:
     from scipy.stats import chi2
 
     mc_rng = np.random.default_rng(7)
-    dpos, dvel, nees, errs_p, errs_v, pred_p, pred_v = [], [], [], [], [], [], []
+    dpos, dvel, nees, errs_p, errs_v, pred_p, pred_v, restarted = [], [], [], [], [], [], [], []
     probe = [0, len(t) // 4, len(t) // 2, len(t) - 1]
     for _ in range(n_mc):
         r_mc = syn.stage4_rows(t, truth, SIGMA_LOS_M, SIGMA_T_M, mc_rng)
         res = track(build_measurements(frame(r_mc), "strict"), FilterConfig())
+        restarted += [res.summary["n_resets"] > 0] * len(probe)
         for k in probe:
             e = res.smoothed.x_smooth[k] - truth[k]
             p = res.smoothed.p_smooth[k]
@@ -156,16 +158,24 @@ def part_a(out: Path, x0: np.ndarray, n_mc: int, lines: list) -> dict:
             pred_p.append(np.trace(p[:3, :3]))
             pred_v.append(np.trace(p[3:, 3:]))
     dpos, dvel, nees = np.array(dpos), np.array(dvel), np.array(nees)
+    ok = ~np.array(restarted)
+    errs_p, errs_v, pred_p, pred_v = map(np.array, (errs_p, errs_v, pred_p, pred_v))
     lines += [f"  Monte Carlo ({n_mc} realisations, epochs {probe}; two-body, no outlier):",
-              f"    3-D position error: empirical RMS {np.sqrt(np.mean(errs_p)) / 1e3:.3f} km vs predicted "
-              f"{np.sqrt(np.mean(pred_p)) / 1e3:.3f} km",
-              f"    3-D velocity error: empirical RMS {np.sqrt(np.mean(errs_v)):.3f} m/s vs predicted "
-              f"{np.sqrt(np.mean(pred_v)):.3f} m/s",
-              f"    mean NEES {nees.mean():.2f} (chi2_6: 6); per-run sd of the mean ~{np.sqrt(12 / n_mc):.2f}",
+              f"    realisations with a divergence restart: {int((~ok).sum() // len(probe))} (statistics below "
+              "exclude them; their pre-restart segment is a bad draw by selection)",
+              f"    3-D position error: empirical RMS {np.sqrt(np.mean(errs_p[ok])) / 1e3:.3f} km vs predicted "
+              f"{np.sqrt(np.mean(pred_p[ok])) / 1e3:.3f} km",
+              f"    3-D velocity error: empirical RMS {np.sqrt(np.mean(errs_v[ok])):.3f} m/s vs predicted "
+              f"{np.sqrt(np.mean(pred_v[ok])):.3f} m/s",
+              f"    mean NEES {nees[ok].mean():.2f}, median {np.median(nees[ok]):.2f} (chi2_6: mean 6, median "
+              f"{chi2.ppf(0.5, 6):.2f}); epochs of one run are strongly correlated, so the sd of the mean is "
+              f"~{np.sqrt(12 / n_mc):.2f}; with all realisations: mean NEES {nees.mean():.2f}",
               "    coverage           1-sigma  2-sigma  3-sigma ellipsoid",
               f"    expected (chi2_3)  {chi2.cdf(1, 3):7.3f}  {chi2.cdf(4, 3):7.3f}  {chi2.cdf(9, 3):7.3f}",
-              f"    position           {np.mean(dpos <= 1):7.3f}  {np.mean(dpos <= 4):7.3f}  {np.mean(dpos <= 9):7.3f}",
-              f"    velocity           {np.mean(dvel <= 1):7.3f}  {np.mean(dvel <= 4):7.3f}  {np.mean(dvel <= 9):7.3f}",
+              f"    position           {np.mean(dpos[ok] <= 1):7.3f}  {np.mean(dpos[ok] <= 4):7.3f}  "
+              f"{np.mean(dpos[ok] <= 9):7.3f}",
+              f"    velocity           {np.mean(dvel[ok] <= 1):7.3f}  {np.mean(dvel[ok] <= 4):7.3f}  "
+              f"{np.mean(dvel[ok] <= 9):7.3f}",
               ""]
     return {"truth_initial_state_gcrs": truth[0].tolist(), "epochs_unix_s": t.tolist(),
             "outlier_epoch": OUTLIER[0], "outlier_offset_ecef_m": OUTLIER[1].tolist()}

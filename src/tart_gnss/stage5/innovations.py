@@ -2,8 +2,10 @@
 
 For a correct model and correct covariances the innovations ``nu_k`` are
 zero-mean, white, with covariance ``S_k``; the NIS ``nu^T S^-1 nu`` is
-``chi^2_3`` (mean 3, median 2.37). Statistics are taken over the measurements
-the quality policy offered to the filter (``attempted``), gated ones included,
+``chi^2_3`` (mean 3, median 2.37). Statistics use each measurement's *first*
+(sequential, predictive) NIS, taken before any divergence restart re-processed
+it, over the measurements the quality policy offered to the filter
+(``attempted``), gated ones included,
 after a burn-in of :data:`BURN_IN` measurements: the filter starts from an
 almost uninformative prior, so the first two innovations (which fix the six
 state parameters) have ``S`` dominated by the prior and NIS near zero.
@@ -53,7 +55,7 @@ def whitened(innovation: np.ndarray, innovation_cov: np.ndarray) -> np.ndarray:
 
 def statistics_mask(fr: FilterResult) -> np.ndarray:
     """Measurements entering the statistics: attempted, finite NIS, after the burn-in."""
-    m = fr.attempted & np.isfinite(fr.nis)
+    m = fr.attempted & np.isfinite(fr.nis_first)
     idx = np.flatnonzero(m)
     m[idx[:BURN_IN]] = False
     return m
@@ -77,14 +79,14 @@ def summarise(fr: FilterResult, nis_probability: float = DEFAULT_NIS_PROBABILITY
     from scipy.stats import chi2
 
     mask = statistics_mask(fr)
-    nis = fr.nis[mask]
+    nis = fr.nis_first[mask]
     n = int(mask.sum())
-    white = whitened(fr.innovation, fr.innovation_cov)
+    white = whitened(fr.innovation_first, fr.innovation_cov_first)
     acf = autocorrelation(white, mask)
     n_pairs = max(n - 1, 0)
     acf_limit = 3.0 / np.sqrt(3 * n_pairs) if n_pairs else float("nan")
     nis_limit = float(chi2.ppf(nis_probability, 3 * n) / n) if n else float("nan")  # reference only
-    inn = fr.innovation[mask]
+    inn = fr.innovation_first[mask]
     flags: List[str] = []
     from scipy.stats import binom
 
@@ -103,6 +105,8 @@ def summarise(fr: FilterResult, nis_probability: float = DEFAULT_NIS_PROBABILITY
         "n_attempted": att,
         "n_accepted": int(fr.accepted.sum()),
         "n_outliers": int(fr.outlier.sum()),
+        "n_outliers_first_pass": int(fr.outlier_first.sum()),
+        "n_resets": int(fr.reset.sum()),
         "accepted_fraction": float(fr.accepted.sum() / att) if att else float("nan"),
         "burn_in": BURN_IN,
         "n_statistics": n,

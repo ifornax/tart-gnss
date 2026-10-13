@@ -54,7 +54,7 @@ from tart_gnss.stage5.errors import (
     SmootherError,
     Stage5Error,
 )
-from tart_gnss.stage5.filter import ROBUST_UPDATES, FilterConfig, FilterResult, ekf_filter
+from tart_gnss.stage5.filter import DIVERGENCE_RUN, ROBUST_UPDATES, FilterConfig, FilterResult, ekf_filter
 from tart_gnss.stage5.frames import FRAME_DESCRIPTION, earth_pole_gcrs, gcrs_to_ecef_positions
 from tart_gnss.stage5.initialisation import LAST_RESORT_VELOCITY_SIGMA_M_S
 from tart_gnss.stage5.innovations import BURN_IN, dynamics_diagnostics, summarise, whitened
@@ -178,21 +178,6 @@ class TrackingResult:
     smoother_error: Optional[str]
 
 
-def _divergence_steps(fr: FilterResult) -> set:
-    """Steps inside runs of >= DIVERGENCE_RUN consecutive gated (attempted) measurements."""
-    out, run = set(), []
-    for k in np.flatnonzero(fr.attempted):
-        if fr.outlier[k] and not fr.accepted[k]:
-            run.append(int(k))
-        else:
-            if len(run) >= q.DIVERGENCE_RUN:
-                out.update(run)
-            run = []
-    if len(run) >= q.DIVERGENCE_RUN:
-        out.update(run)
-    return out
-
-
 def track(mset: MeasurementSet, config: FilterConfig, smoother: bool = True, norad_id=None,
           policy: str = "strict") -> TrackingResult:
     """Filter and smooth a measurement set; build the trajectory and innovation rows."""
@@ -219,12 +204,14 @@ def track(mset: MeasurementSet, config: FilterConfig, smoother: bool = True, nor
                 smoother_error = str(exc)
                 run_flags.append(q.SMOOTHER_FAILED)
                 logger.error("RTS smoother failed: %s", exc)
-    diverged = _divergence_steps(fr) if fr is not None else set()
+    diverged = set(np.flatnonzero(fr.diverged)) if fr is not None else set()
     last_acc = (k0 + int(np.flatnonzero(fr.accepted)[-1])) if fr is not None and fr.accepted.any() else None
-    init_end = None
+    weak_spans = []  # (start, end) times of the data behind each weak initial velocity
     if fr is not None:
-        fit_times = sorted(m.time_s for m in meas[k0:] if m.used and m.finite)[:fr.initial.n_points]
-        init_end = fit_times[-1] if fit_times else None
+        for init in fr.initials:
+            if init.weak:
+                fit_t = sorted(m.time_s for m in meas[k0:] if m.used and m.finite and m.time_s >= init.time_s)
+                weak_spans.append((init.time_s, fit_t[init.n_points - 1] if fit_t else init.time_s))
     white = whitened(fr.innovation, fr.innovation_cov) if fr is not None else None
     rows4 = mset.rows
     mats = mset.matrices
@@ -295,7 +282,7 @@ def track(mset: MeasurementSet, config: FilterConfig, smoother: bool = True, nor
                 flags.append(q.LARGE_TIME_GAP)
             if last_acc is not None and k > last_acc:
                 flags.append(q.EXTRAPOLATED)
-            if fr.initial.weak and init_end is not None and m.time_s <= init_end:
+            if any(a <= m.time_s <= b for a, b in weak_spans):
                 flags.append(q.INITIAL_VELOCITY_WEAK)
         flags += run_flags
         rec["quality_flags"] = q.ordered(flags)
@@ -309,7 +296,8 @@ def track(mset: MeasurementSet, config: FilterConfig, smoother: bool = True, nor
                 "innovation_z_m": nu[2], "innovation_cov_xx": s[0, 0], "innovation_cov_xy": s[0, 1],
                 "innovation_cov_xz": s[0, 2], "innovation_cov_yy": s[1, 1], "innovation_cov_yz": s[1, 2],
                 "innovation_cov_zz": s[2, 2], "whitened_x": w[0], "whitened_y": w[1], "whitened_z": w[2],
-                "nis": fr.nis[j], "gate_threshold": fr.gate_threshold, "accepted": bool(fr.accepted[j]),
+                "nis": fr.nis[j], "nis_first_pass": fr.nis_first[j], "gate_threshold": fr.gate_threshold,
+                "accepted": bool(fr.accepted[j]),
                 "attempted": bool(fr.attempted[j]), "inflation": fr.inflation[j],
                 "stage4_quality_flags": list(m.stage4_flags), "stage5_quality_flags": rec["quality_flags"],
             })
@@ -369,6 +357,10 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                     s["mean_nis"])
         logger.info("lag-1 innovation autocorrelation %.3f (limit %.3f); innovation RMS %.4g km",
                     s["autocorrelation"]["1"], s["autocorrelation_limit_lag1"], s["innovation_rms_m"] / 1e3)
+        if fr.reset.any():
+            logger.warning("filter re-initialised %d time(s) after %d consecutive gated measurements (%s)",
+                           int(fr.reset.sum()), DIVERGENCE_RUN,
+                           ", ".join(_iso(fr.times_s[j]) for j in np.flatnonzero(fr.reset)))
         logger.info("filter success: True; smoother success: %s", (res.smoothed is not None) if not
                     args.no_smoother else "skipped")
     elif res is not None:
@@ -451,6 +443,11 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
             },
             "success": fr is not None,
             "error": filter_error,
+            "divergence_recovery": f"re-initialise after {DIVERGENCE_RUN} consecutive gated measurements "
+                                   "(rows flagged FILTER_DIVERGENCE; the smoother does not cross the restart)",
+            "n_resets": int(fr.reset.sum()) if fr is not None else 0,
+            "reset_times_utc": [_iso(fr.times_s[j]) for j in np.flatnonzero(fr.reset)] if fr is not None else [],
+            "reinitialisations": [i.to_dict() for i in fr.initials[1:]] if fr is not None else [],
             "n_steps": len(fr.times_s) if fr is not None else 0,
             "n_assimilated": n_acc,
             "min_measurements": q.MIN_MEASUREMENTS,

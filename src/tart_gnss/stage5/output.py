@@ -10,7 +10,9 @@ with ``a, b`` in ``x y z vx vy vz`` (m^2, m^2/s, m^2/s^2); use
 smoothed 3x3 position covariance rotated to ECEF. ``quality_flags`` is a
 ``;``-separated string in CSV and a list in Parquet.
 
-``innovations``: one row per Stage-4 epoch with a finite position.
+``innovations``: one row per Stage-4 epoch with a finite position, from the
+final filter pass; ``nis_first_pass`` is the NIS of the first (sequential)
+evaluation, which differs only for rows re-processed after a divergence restart.
 """
 
 from __future__ import annotations
@@ -72,7 +74,7 @@ INNOVATION_COLUMNS: List[str] = [
     "innovation_cov_xx", "innovation_cov_xy", "innovation_cov_xz",
     "innovation_cov_yy", "innovation_cov_yz", "innovation_cov_zz",
     "whitened_x", "whitened_y", "whitened_z",
-    "nis", "gate_threshold", "accepted", "attempted", "inflation",
+    "nis", "nis_first_pass", "gate_threshold", "accepted", "attempted", "inflation",
     "stage4_quality_flags", "stage5_quality_flags",
 ]
 

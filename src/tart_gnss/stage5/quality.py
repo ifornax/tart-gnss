@@ -38,7 +38,8 @@ Stage-5 flags (per trajectory row; a row with none is ``GOOD``)
 ``INNOVATION_OUTLIER``         NIS above the gate (not assimilated unless ``--robust-update inflate``)
 ``HIGH_NIS``                   run-level: mean NIS too high for chi^2_3
 ``DYNAMICS_MISMATCH``          run-level: innovations significantly autocorrelated
-``FILTER_DIVERGENCE``          part of a run of >= 3 consecutive gated measurements
+``FILTER_DIVERGENCE``          one of >= 3 consecutive gated measurements after which the filter
+                               was re-initialised from the data (a smoother segment boundary)
 ``EXTRAPOLATED``               after the last assimilated measurement (prediction only)
 ``STAGE4_QUALITY_WARNING``     the Stage-4 row carried advisory flags
 ``COVARIANCE_INVALID``         the state covariance failed its checks
@@ -46,8 +47,9 @@ Stage-5 flags (per trajectory row; a row with none is ``GOOD``)
 ``NOT_INITIALISED``            before the first usable measurement (no state)
 ``INSUFFICIENT_MEASUREMENTS``  fewer than ``MIN_MEASUREMENTS`` usable measurements
 
-Blocking (row not ``valid``): ``FILTER_DIVERGENCE``, ``COVARIANCE_INVALID``,
-``SMOOTHER_FAILED``, ``NOT_INITIALISED``, ``INSUFFICIENT_MEASUREMENTS``.
+Blocking (row not ``valid``): ``COVARIANCE_INVALID``, ``SMOOTHER_FAILED``,
+``NOT_INITIALISED``, ``INSUFFICIENT_MEASUREMENTS``. ``FILTER_DIVERGENCE`` is
+advisory: the re-initialised filter assimilates those rows again.
 """
 
 from __future__ import annotations
@@ -58,7 +60,6 @@ import numpy as np
 
 POLICIES = ("strict", "permissive")
 MIN_MEASUREMENTS = 3
-DIVERGENCE_RUN = 3
 COVARIANCE_ASYMMETRY_TOL = 1e-6
 MAX_COVARIANCE_CONDITION = 1e12
 
@@ -90,8 +91,7 @@ FLAG_ORDER = (
     INVALID_STAGE4_COVARIANCE, MEASUREMENT_REJECTED, NO_MEASUREMENT, INNOVATION_OUTLIER, LARGE_TIME_GAP,
     EXTRAPOLATED, INITIAL_VELOCITY_WEAK, HIGH_NIS, DYNAMICS_MISMATCH, STAGE4_QUALITY_WARNING,
 )
-BLOCKING_FLAGS = frozenset({FILTER_DIVERGENCE, COVARIANCE_INVALID, SMOOTHER_FAILED, NOT_INITIALISED,
-                            INSUFFICIENT_MEASUREMENTS})
+BLOCKING_FLAGS = frozenset({COVARIANCE_INVALID, SMOOTHER_FAILED, NOT_INITIALISED, INSUFFICIENT_MEASUREMENTS})
 
 
 def stage4_rejection_reason(flags: Iterable[str], fit_success: bool, policy: str) -> str:

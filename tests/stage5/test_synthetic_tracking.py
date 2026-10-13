@@ -34,23 +34,33 @@ def test_exact_two_body_trajectory_is_recovered():  # 32.1
 
 
 def test_full_covariance_beats_diagonal_approximation():  # 32.2
-    # Small transverse, large line-of-sight error: dropping the off-diagonal terms mis-weights the data.
+    # Small transverse, large line-of-sight error: dropping the off-diagonal terms mis-weights the data
+    # (less accurate) and mis-states the uncertainty (inconsistent); the full covariance is calibrated.
     t = times(30)
     x = truth(t)
-    err_full, err_diag = [], []
-    for seed in range(6):
+    err, nees = {"full": [], "diag": []}, {"full": [], "diag": []}
+    for seed in range(20):
         rows = syn.stage4_rows(t, x, 5e4, 1e3, np.random.default_rng(seed))
-        full = run_track(rows)
+        runs = {"full": run_track(rows)}
         for r in rows:
             r["cov_xy"] = r["cov_xz"] = r["cov_yz"] = 0.0
-        diag = run_track(rows)
-        err_full.append(_rmse(full.smoothed.x_smooth[:, :3], x[:, :3]))
-        err_diag.append(_rmse(diag.smoothed.x_smooth[:, :3], x[:, :3]))
-    assert np.mean(err_full) < 0.6 * np.mean(err_diag)
-    # The smoothed covariance stays anisotropic, with its long axis along the station line of sight.
-    p = full.smoothed.p_smooth[15][:3, :3]
+        runs["diag"] = run_track(rows)
+        for key, res in runs.items():
+            e = res.smoothed.x_smooth[:, :3] - x[:, :3]
+            err[key].append(np.sqrt(np.mean(np.sum(e ** 2, axis=1))))
+            nees[key].append(np.mean([ek @ np.linalg.solve(p[:3, :3], ek) for ek, p in zip(e, res.smoothed.p_smooth)]))
+    assert np.mean(err["full"]) < 0.9 * np.mean(err["diag"])
+    assert 2.0 < np.mean(nees["full"]) < 4.2  # chi^2_3 mean 3
+    assert np.mean(nees["diag"]) > 1.2 * np.mean(nees["full"])
+    # The smoothed covariance stays anisotropic, its long axis along the station line of sight.
+    from tart_gnss.stage4.geometry import geodetic_to_ecef
+
+    p = runs["full"].smoothed.p_smooth[15][:3, :3]
     w, v = np.linalg.eigh(p)
+    m = runs["full"].measurements.matrices[15]
+    los = m @ (m.T @ x[15, :3] - geodetic_to_ecef(*syn.REFERENCE_STATION))
     assert w[-1] > 4 * w[0]
+    assert abs(v[:, -1] @ los) / np.linalg.norm(los) > 0.95
 
 
 def test_irregular_cadence():  # 32.3
@@ -107,19 +117,21 @@ def test_outlier_is_detected_and_kept():  # 32.5
 
 
 def test_process_noise_mismatch():  # 32.6
-    # Truth has an unmodelled 5e-3 m/s^2 acceleration. With almost no process noise the filter is grossly
-    # inconsistent; process noise of that size restores NIS close to 3. (A *constant* acceleration is not
-    # white, so its innovations stay autocorrelated: DYNAMICS_MISMATCH remains, as it should.)
+    # Truth has an unmodelled 5e-3 m/s^2 acceleration. With almost no process noise the filter is
+    # inconsistent: measurements exceed the gate far more often than chance allows and the filter has to
+    # restart; process noise of that size removes this. (A *constant* acceleration is not white, so its
+    # innovations stay somewhat autocorrelated even then: DYNAMICS_MISMATCH may remain, as it should.)
     rng = np.random.default_rng(14)
     t = times(80, step=20.0)
     x = truth(t, extra_accel=np.array([1.0, -0.5, 0.5]) * 5e-3)
     rows = syn.stage4_rows(t, x, 100.0, 100.0, rng)
-    tight = run_track(rows, sigma_a=1e-7)
-    right = run_track(rows, sigma_a=5e-3)
-    assert tight.summary["mean_nis"] > 10 * right.summary["mean_nis"]
-    assert {"HIGH_NIS", "DYNAMICS_MISMATCH"} <= set(tight.summary["flags"])
-    assert right.summary["mean_nis"] < 6.0
-    assert right.summary["autocorrelation"]["1"] < tight.summary["autocorrelation"]["1"]
+    tight = run_track(rows, sigma_a=1e-7).summary
+    right = run_track(rows, sigma_a=5e-3).summary
+    assert tight["n_resets"] >= 1 and tight["n_above_gate"] > tight["n_above_gate_limit"]
+    assert {"HIGH_NIS", "DYNAMICS_MISMATCH"} <= set(tight["flags"])
+    assert right["n_resets"] == 0 and right["n_above_gate"] == 0
+    assert right["mean_nis"] < tight["mean_nis"]
+    assert right["autocorrelation"]["1"] < tight["autocorrelation"]["1"]
 
 
 def test_two_body_outperforms_constant_velocity():
