@@ -141,11 +141,14 @@ def supported_tags(corr) -> Dict[str, List[Dict[str, object]]]:
 
 
 def strongest(corr, family: str):
-    """The test of ``family`` with the largest |partial coefficient| (None if none)."""
+    """The valid test of ``family`` with the largest |partial coefficient| (None if none).
+
+    Tests without enough samples or variation, and expected relations, are not candidates.
+    """
     if corr is None or not len(corr):
         return None
     g = corr[(corr["family"] == family) & corr["partial_coefficient"].notna()
-             & ~corr["interpretation_tag"].isin(["EXPECTED", "INSUFFICIENT_SAMPLES"])]
+             & ~corr["interpretation_tag"].isin(["EXPECTED", "INSUFFICIENT_SAMPLES", "INSUFFICIENT_VARIATION"])]
     if not len(g):
         return None
     return g.loc[g["partial_coefficient"].abs().idxmax()].to_dict()
