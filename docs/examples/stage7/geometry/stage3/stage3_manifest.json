@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "stage": 3,
+  "input_manifest": "docs/examples/stage7/geometry/stage2/manifest.json",
+  "norad_id": 40534,
+  "satellite": {
+    "satellite_name": "SYNTHETIC"
+  },
+  "stations": {
+    "mauritius": {
+      "station_id": "mauritius",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "madagascar": {
+      "station_id": "madagascar",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "south_africa": {
+      "station_id": "south_africa",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "namibia": {
+      "station_id": "namibia",
+      "latitude_deg": -22.612053,
+      "longitude_deg": 17.856784,
+      "altitude_m": 1655.0,
+      "calibration": {
+        "warnings": []
+      }
+    }
+  },
+  "software": {
+    "git_commit": null
+  },
+  "provenance": {
+    "command_line": [
+      "synthetic"
+    ]
+  },
+  "outputs": {
+    "directions_csv": "docs/examples/stage7/geometry/stage3/directions.csv",
+    "directions_parquet": "docs/examples/stage7/geometry/stage3/directions.parquet"
+  },
+  "input_manifest_sha256": "4f3f365b7ba51cab816289c3c191392b09d8db56c62ff20b0fc62bb6268d7d85"
+}

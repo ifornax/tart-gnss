@@ -1,0 +1,13 @@
+2026-10-14T14:24:39Z INFO    tart_gnss.stage7: input Stage-6 manifest: docs/examples/stage6_real/default/20260625/NORAD_40534/stage6_manifest.json
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: provenance Stage 6: docs/examples/stage6_real/default/20260625/NORAD_40534/stage6_manifest.json (input)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: provenance Stage 5: docs/examples/stage5_real/default/20260625/NORAD_40534/stage5_manifest.json (verified)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: provenance Stage 4: docs/examples/stage4_real/default/20260625/NORAD_40534/stage4_manifest.json (verified)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: provenance Stage 3: docs/examples/stage4_real/stage3_input/20260625/NORAD_40534/stage3_manifest.json (verified)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: provenance Stage 2: /home/nadeem/GitHub/TART/sat_position/data/observations/20260625/NORAD_40534/manifest.json (verified)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: NORAD 40534; stations 3 (madagascar, mauritius, south_africa)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: epochs: 69 Stage-6 rows; 0 diagnosed under 'strict' policy (links: Stage 5 69, Stage 4 69)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: leave-one-out solutions: 0; pairwise solutions: 0; full-solution reproduction vs Stage 4: max nan m
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: anomalous epochs 0 of 0 (threshold 14.2 on position_mahalanobis_obs_cov); persistent intervals 0; most influential station undetermined (0 leave-one-out epoch(s); 3 needed)
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: reference quality: precision_validation False; maximum evidence level 0 (LOW); tags: REFERENCE_LIMITED
+2026-10-14T14:24:40Z INFO    tart_gnss.stage7: outputs: docs/examples/stage7_real/default/20260625/NORAD_40534
+2026-10-14T14:24:40Z WARNING tart_gnss.stage7: insufficient data for diagnosis: 0 diagnosable epoch(s)

@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "stage": 4,
+  "input_stage3_manifest": "docs/examples/stage7/timing/stage3/stage3_manifest.json",
+  "input_sha256": "ed654cea8da6ee7a5bfe6ac6c07aa4a8ef6a463250118b107d6a1f3c0c5337dc",
+  "input_directions": "docs/examples/stage7/timing/stage3/directions.parquet",
+  "input_directions_sha256": "f7d8246f16360f582d9ab31f936ed6bada42a8fe0bbaff1e3c3b1691e7648c7e",
+  "norad_id": 40534,
+  "coordinate_frame": "ITRS/ECEF",
+  "units": {
+    "position": "m",
+    "covariance": "m^2",
+    "angles": "deg",
+    "time": "UTC"
+  },
+  "time_matching": {
+    "tolerance_s": 6.0,
+    "reference_station": "madagascar",
+    "reference_station_rule": "station with the most valid Stage-3 rows (ties: alphabetical)",
+    "reference_time": null,
+    "interpolation": "none (nearest valid estimate within tolerance; each estimate used at most once)",
+    "n_epochs": 36,
+    "n_epochs_min_stations": 36,
+    "median_abs_offset_s": 0.0,
+    "max_abs_offset_s": 4.893841028213501,
+    "angular_rate_source": "each station's own Stage-3 track (linear fit over a 120 s sliding window); never a TLE",
+    "light_time": "rho/c recorded (~70 ms for GNSS); not corrected (no retarded-time modelling)"
+  },
+  "triangulation": {
+    "method": "weighted",
+    "baseline_estimator": "argmin sum |P_i (x - r_i)|^2, closed form (sum P_i) x = sum P_i r_i",
+    "weighted_estimator": "iteratively reweighted: W_i = (rho_i^2 E_i^T Sigma_theta,i E_i)^-1, start from the unweighted solution, tol 1 mm, max 50 iterations",
+    "direction_input": "Stage-3 (l, m) and cov(l, m) (Az/El + cov_az_el only if (l, m) are missing)",
+    "solver": "numpy.linalg.solve; SVD lstsq if the condition number exceeds 1e12",
+    "n_epochs_numerical_fallback": 0,
+    "tle_used": false
+  },
+  "uncertainty": {
+    "linear_covariance": "Sigma_x = N^-1 (weighted) or A^-1 (sum P_i rho_i^2 Sigma_theta,i P_i) A^-1 (unweighted); first order in the angular errors, valid while they are small compared with the crossing angles",
+    "bootstrap": 0,
+    "bootstrap_model": "Gaussian redraw of each direction from its Stage-3 covariance (tangent plane)",
+    "random_seed": 20260625
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "always_rejected": [
+      "FIT_FAILED",
+      "INVALID_GEOMETRY",
+      "LOW_BASELINE_COUNT"
+    ],
+    "rejected_if_strict": [
+      "BOUNDARY_SOLUTION",
+      "LOW_SNR",
+      "TLE_UNASSOCIATED"
+    ],
+    "advisory": [
+      "HIGH_FLAGGED_FRACTION",
+      "HIGH_RESIDUAL",
+      "IMAGE_DISAGREEMENT",
+      "ZENITH_AZ_UNCERTAIN",
+      "CALIBRATION_WARNING"
+    ],
+    "n_stage3_rows": 108,
+    "n_kept": 108,
+    "rejected": {},
+    "rejected_fraction": 0.0
+  },
+  "quality_thresholds": {
+    "min_stations": 3,
+    "max_condition_number": 100000000.0,
+    "max_normalised_residual": 5.0,
+    "max_line_residual_m": 1000000.0,
+    "max_reduced_chi2": 5.0,
+    "time_mismatch_sigma": 1.0,
+    "bootstrap_max_failure_fraction": 0.1,
+    "bootstrap_max_sigma_ratio": 2.0,
+    "bootstrap_max_median_shift_sigma": 0.25
+  },
+  "blocking_flags": [
+    "COVARIANCE_SINGULAR",
+    "INSUFFICIENT_STATIONS",
+    "NEGATIVE_RANGE",
+    "POOR_GEOMETRY",
+    "TRIANGULATION_FAILED"
+  ],
+  "summary": {
+    "n_epochs": 36,
+    "n_valid": 36,
+    "n_with_min_stations": 36,
+    "flag_counts": {
+      "TIME_MISMATCH": 36,
+      "HIGH_CHI2": 14
+    }
+  },
+  "stations": {
+    "mauritius": {
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "ecef_m": [
+        3193402.1359140202,
+        5063037.098932373,
+        -2194599.221947558
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/stage7/timing/stage3/stage3_manifest.json: stations.mauritius (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/stage7/timing/stage2/manifest.json (sha256 407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 36,
+      "n_kept": 36,
+      "n_epochs_contributed": 36,
+      "median_line_residual_m": 4533.856423955976,
+      "median_normalised_residual": 2.3665159648437566,
+      "median_abs_time_offset_s": 2.9007219076156616
+    },
+    "madagascar": {
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "ecef_m": [
+        4074720.1061290107,
+        4455381.675076537,
+        -2052995.7643685571
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/stage7/timing/stage3/stage3_manifest.json: stations.madagascar (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/stage7/timing/stage2/manifest.json (sha256 407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 36,
+      "n_kept": 36,
+      "n_epochs_contributed": 36,
+      "median_line_residual_m": 2969.7292982518297,
+      "median_normalised_residual": 1.5607272918778574,
+      "median_abs_time_offset_s": 0.0
+    },
+    "south_africa": {
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "ecef_m": [
+        4774723.423104711,
+        2381389.274319161,
+        -3483967.6056532
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/stage7/timing/stage3/stage3_manifest.json: stations.south_africa (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/stage7/timing/stage2/manifest.json (sha256 407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 36,
+      "n_kept": 36,
+      "n_epochs_contributed": 36,
+      "median_line_residual_m": 2904.699208934997,
+      "median_normalised_residual": 1.5942961961629623,
+      "median_abs_time_offset_s": 0.0
+    }
+  },
+  "satellite_reference": {
+    "note": "copied from the Stage-3 manifest for later comparison (Stage 6); not used by Stage 4",
+    "satellite": {
+      "satellite_name": "SYNTHETIC"
+    }
+  },
+  "software": {
+    "tart_gnss": "0.7.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "17544444c1e2d77f9b8ba8ff2f69c9f7ad21b280",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-triangulate",
+      "--stage3-manifest",
+      "docs/examples/stage7/timing/stage3/stage3_manifest.json",
+      "--output-dir",
+      "docs/examples/stage7/timing/stage4",
+      "--no-plots",
+      "--min-stations",
+      "3",
+      "--time-match-tolerance",
+      "6.0"
+    ],
+    "run_timestamp_utc": "2026-10-14T14:24:48.065Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss",
+    "stage3_run": {
+      "command_line": [
+        "synthetic"
+      ],
+      "git_commit": null
+    }
+  },
+  "outputs": {
+    "positions_csv": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/positions.csv",
+    "positions_parquet": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/positions.parquet",
+    "station_contributions_csv": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/station_contributions.csv",
+    "station_contributions_parquet": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/station_contributions.parquet",
+    "diagnostics": [],
+    "log": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/logs/stage4.log",
+    "manifest": "docs/examples/stage7/timing/stage4/20261007/NORAD_40534/stage4_manifest.json"
+  }
+}

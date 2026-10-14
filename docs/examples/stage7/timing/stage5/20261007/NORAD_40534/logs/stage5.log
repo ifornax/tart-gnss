@@ -1,0 +1,14 @@
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/stage7/timing/stage4/20261007/NORAD_40534/stage4_manifest.json
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: Stage-4 epochs: 36 (table docs/examples/stage7/timing/stage4/20261007/NORAD_40534/positions.parquet); retained after 'strict' quality policy: 36 (rejected: none)
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: time span 2026-10-07T02:12:11.977045Z .. 2026-10-07T02:18:01.977045Z (350.0 s); median cadence 10.000 s; maximum gap 10.000 s
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: dynamics two-body; process acceleration sigma 0.0001 m/s^2 (model default)
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: initial position (GCRS) [  2322064.  17101101. -20536673.] m; initial velocity [-3606.7   220.5 -2200.8] m/s; method linear_fit from 4 point(s)
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: innovation gate chi2_3(0.9973) = 14.156; rejected innovations 0 of 36 attempted; median NIS 2.758, mean NIS 3.828 (expected 2.37, 3)
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: lag-1 innovation autocorrelation -0.171 (limit 0.302); innovation RMS 23.64 km
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: filter success: True; smoother success: True
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered 7.394 km, smoothed 3.625 km
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5: outputs: docs/examples/stage7/timing/stage5/20261007/NORAD_40534
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/stage7/timing/stage5/20261007/NORAD_40534/trajectory.csv
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/stage7/timing/stage5/20261007/NORAD_40534/trajectory.parquet
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/stage7/timing/stage5/20261007/NORAD_40534/innovations.csv
+2026-10-14T14:24:48Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/stage7/timing/stage5/20261007/NORAD_40534/innovations.parquet
