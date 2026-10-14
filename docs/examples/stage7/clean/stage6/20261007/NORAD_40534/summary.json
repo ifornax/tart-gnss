@@ -1,0 +1,256 @@
+{
+  "residual_definition": "observed_minus_tle",
+  "n_epochs": 36,
+  "n_compared": 36,
+  "n_valid": 36,
+  "time_span_utc": [
+    "2026-10-07T02:12:11.977045Z",
+    "2026-10-07T02:18:01.977045Z"
+  ],
+  "time_span_s": 350.0,
+  "selected_tle": {
+    "norad_id": 40534,
+    "name": "GPS BIIF-9  (PRN 26)",
+    "line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+    "line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063",
+    "epoch_utc": "2026-10-06T17:48:11.977045Z",
+    "source_kind": "tle-file",
+    "file": "docs/examples/stage7/clean/reference.tle",
+    "sha256": "f04037f96948e41257e79fd7109c29a40aafa06b889a4eaa9618a519fa109853",
+    "source": "local file docs/examples/stage7/clean/reference.tle",
+    "selection_rule": "only element set for this NORAD ID in the file",
+    "provenance": {
+      "candidates": [
+        "2026-10-06T17:48:11.977045Z"
+      ]
+    }
+  },
+  "tle_epoch_utc": "2026-10-06T17:48:11.977045Z",
+  "median_tle_age_days": 0.352025462962963,
+  "max_abs_tle_age_days": 0.3540509259259259,
+  "precision_validation": true,
+  "precision_validation_conditions": {
+    "tle_found_and_norad_matches": true,
+    "tle_age_within_stale_limit": true,
+    "stage5_trajectory_valid": true,
+    "frame_transformation_ok": true,
+    "no_state_covariance_failure": true
+  },
+  "statistics": {
+    "radial": {
+      "n": 36,
+      "mean": 2642.432375168499,
+      "median": 2642.8535466611675,
+      "rms": 3638.3263372877072,
+      "mad_sigma": 3212.5079618769473,
+      "p16": -222.68877367091338,
+      "p84": 5507.288013592244,
+      "min": -1571.3289037581021,
+      "max": 6854.642173448056,
+      "trend": {
+        "intercept": -1570.6087881890808,
+        "slope": 24.07533589007969,
+        "slope_sigma_formal": 6.860019268833009,
+        "span_s": 350.0,
+        "change_over_span": 8426.367561527892,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.9166729659933376,
+      "effective_sample_size": 1.5650939296705635,
+      "median_sigma_obs_m": 3569.5454038017824
+    },
+    "velocity_radial": {
+      "n": 36,
+      "mean": 24.061326528683928,
+      "median": 24.060141421881983,
+      "rms": 24.061326762876618,
+      "mad_sigma": 0.0025212903405741486,
+      "p16": 24.058356946129955,
+      "p84": 24.064865505711577,
+      "min": 24.058132087755975,
+      "max": 24.070218422361346
+    },
+    "along_track": {
+      "n": 36,
+      "mean": 96.63169654746802,
+      "median": 133.6201677414261,
+      "rms": 125.94189276258456,
+      "mad_sigma": 52.32501714075967,
+      "p16": 0.5883959399048733,
+      "p84": 167.1215584985537,
+      "min": -95.60079887659901,
+      "max": 170.28690422814086,
+      "trend": {
+        "intercept": 233.57857643114784,
+        "slope": -0.7111390049662869,
+        "slope_sigma_formal": 0.4652467585235733,
+        "span_s": 350.0,
+        "change_over_span": -248.8986517382004,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.9073236569271348,
+      "effective_sample_size": 1.7492303094474781,
+      "median_sigma_obs_m": 240.2423976071433
+    },
+    "velocity_along_track": {
+      "n": 36,
+      "mean": -0.3283061619543563,
+      "median": -0.3282907703371689,
+      "rms": 0.4842443523718013,
+      "mad_sigma": 0.45723359684706166,
+      "p16": -0.7360776225380725,
+      "p84": 0.07945521230361523,
+      "min": -0.9279580468185133,
+      "max": 0.2712900946171972
+    },
+    "cross_track": {
+      "n": 36,
+      "mean": -411.61731403341196,
+      "median": -411.3995269215244,
+      "rms": 529.195647357091,
+      "mad_sigma": 427.1950522869853,
+      "p16": -792.6863136137545,
+      "p84": -30.685618526736437,
+      "min": -972.2825962593138,
+      "max": 148.24572223043685,
+      "trend": {
+        "intercept": 148.74643004580918,
+        "slope": -3.2016554348453767,
+        "slope_sigma_formal": 0.998229103716334,
+        "span_s": 350.0,
+        "change_over_span": -1120.5794021958818,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.9166728518844608,
+      "effective_sample_size": 1.5650961661036984,
+      "median_sigma_obs_m": 519.1378050013383
+    },
+    "velocity_cross_track": {
+      "n": 36,
+      "mean": -3.2156207115338735,
+      "median": -3.2159646510530937,
+      "rms": 3.2156233684716327,
+      "mad_sigma": 0.00525307797354647,
+      "p16": -3.2202346369668193,
+      "p84": -3.210789552424279,
+      "min": -3.2219305256259663,
+      "max": -3.2080443390019937
+    },
+    "position_3d": {
+      "n": 36,
+      "mean": 3016.71509874113,
+      "median": 2678.0362979441784,
+      "rms": 3678.7671753096442,
+      "mad_sigma": 2683.0080641777868,
+      "p16": 773.7594351534175,
+      "p84": 5564.048069613351,
+      "min": 216.09069488798636,
+      "max": 6923.914520395763
+    },
+    "velocity_3d": {
+      "n": 36,
+      "mean": 24.28007600787712,
+      "median": 24.275937027488993,
+      "rms": 24.280077673487526,
+      "mad_sigma": 0.005343471533916113,
+      "p16": 24.272470726220604,
+      "p84": 24.290528078090354,
+      "min": 24.27202592085966,
+      "max": 24.30262038029643
+    },
+    "angular_deg": {
+      "n": 36,
+      "mean": 0.0010193804622525993,
+      "median": 0.0009241723298446999,
+      "rms": 0.001162011989501371,
+      "mad_sigma": 0.0007179129087656887,
+      "p16": 0.0004097578114999778,
+      "p84": 0.001693370479473625,
+      "min": 0.00035903498579109425,
+      "max": 0.0020869560474096396
+    },
+    "range_m": {
+      "n": 36,
+      "mean": 2642.437891334916,
+      "median": 2642.857039552182,
+      "rms": 3638.3337268321843,
+      "mad_sigma": 3212.5143945030513,
+      "p16": -222.68821685761202,
+      "p84": 5507.299732601642,
+      "min": -1571.3280600085855,
+      "max": 6854.659966170788
+    },
+    "along_track_time_s": {
+      "n": 36,
+      "mean": 0.02519115063895394,
+      "median": 0.03483134509443148,
+      "rms": 0.03283166432433634,
+      "mad_sigma": 0.013645791055713634,
+      "p16": 0.0001533720097413988,
+      "p84": 0.04356852623468231,
+      "min": -0.024916717145677707,
+      "max": 0.04439350641032629
+    },
+    "position_mahalanobis_obs_cov": {
+      "n": 36,
+      "mean": 1.28495742164925,
+      "median": 1.5413514038183682,
+      "rms": 1.4255539254107017,
+      "mad_sigma": 0.5545211072046987,
+      "p16": 0.43363456959663493,
+      "p84": 1.8971767689135126,
+      "min": 0.3491285538437292,
+      "max": 1.9296873445390694
+    },
+    "state_mahalanobis_obs_cov": {
+      "n": 36,
+      "mean": 2.421631220500238,
+      "median": 2.423006957350875,
+      "rms": 2.421646434892877,
+      "mad_sigma": 0.010464918692956437,
+      "p16": 2.4114360110628277,
+      "p84": 2.4309554153957786,
+      "min": 2.4048835741479597,
+      "max": 2.433327473677698
+    },
+    "position_mahalanobis_total_cov": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "rms": null,
+      "mad_sigma": null,
+      "p16": null,
+      "p84": null,
+      "min": null,
+      "max": null
+    },
+    "state_mahalanobis_total_cov": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "rms": null,
+      "mad_sigma": null,
+      "p16": null,
+      "p84": null,
+      "min": null,
+      "max": null
+    },
+    "fraction_position_d2_above_14.16": 0.0
+  },
+  "mahalanobis_note": "squared distances per epoch; *_obs_cov conditional on the TLE being fixed; epochs are correlated, so no chi-square over epochs is formed",
+  "ensemble": {
+    "requested": false,
+    "n_tle_ensemble": 0,
+    "label": "empirical reference dispersion",
+    "min_members_for_total_covariance": 3
+  },
+  "run_flags": [
+    "REFERENCE_UNCERTAINTY_UNKNOWN",
+    "RESIDUAL_AUTOCORRELATED"
+  ],
+  "flag_counts": {
+    "REFERENCE_UNCERTAINTY_UNKNOWN": 36,
+    "RESIDUAL_AUTOCORRELATED": 36
+  },
+  "light_time_note": "Stages 4-5 do not correct light time: a measured position refers to about t - 70 ms for GNSS, so an along-track residual of about -0.27 km (-0.07 s equivalent) is expected from that alone"
+}

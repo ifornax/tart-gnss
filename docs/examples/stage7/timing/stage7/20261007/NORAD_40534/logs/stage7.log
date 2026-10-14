@@ -1,0 +1,15 @@
+2026-10-14T14:16:52Z INFO    tart_gnss.stage7: input Stage-6 manifest: docs/examples/stage7/timing/stage6/20261007/NORAD_40534/stage6_manifest.json
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: provenance Stage 6: docs/examples/stage7/timing/stage6/20261007/NORAD_40534/stage6_manifest.json (input)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: provenance Stage 5: docs/examples/stage7/timing/stage5/20261007/NORAD_40534/stage5_manifest.json (verified)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: provenance Stage 4: docs/examples/stage7/timing/stage4/20261007/NORAD_40534/stage4_manifest.json (verified)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: provenance Stage 3: docs/examples/stage7/timing/stage3/stage3_manifest.json (verified)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: provenance Stage 2: docs/examples/stage7/timing/stage2/manifest.json (verified)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: NORAD 40534; stations 3 (madagascar, mauritius, south_africa)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: epochs: 36 Stage-6 rows; 36 diagnosed under 'strict' policy (links: Stage 5 36, Stage 4 36)
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: leave-one-out solutions: 108; pairwise solutions: 108; full-solution reproduction vs Stage 4: max 0 m
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: strongest localisation correlation: reduced_chi2 vs direction_residual_angle_deg (south_africa) partial -0.302, Holm p 1, n 36 -> NOT_SUPPORTED
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: strongest timing correlation: max_abs_station_time_offset_s vs stage4_residual_3d_m (network) partial 0.778, Holm p 3.73e-06, n 36 -> TIMING_CORRELATED
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: strongest trajectory correlation: stage5_nis vs stage4_residual_3d_m (network) partial -0.182, Holm p 1, n 36 -> NOT_SUPPORTED
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: anomalous epochs 36 of 36 (threshold 21.7 on position_mahalanobis_obs_cov); persistent intervals 1; most influential station mauritius
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: reference quality: precision_validation True; maximum evidence level 3 (MODERATE); tags: STATISTICAL_ANOMALY, TIMING_CORRELATED, LOCALISATION_CORRELATED
+2026-10-14T14:16:53Z INFO    tart_gnss.stage7: outputs: docs/examples/stage7/timing/stage7/20261007/NORAD_40534

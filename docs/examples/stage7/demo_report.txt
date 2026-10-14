@@ -1,0 +1,96 @@
+Stage-7 synthetic demonstration (scripts/stage7_synthetic_demo.py)
+Chain per scenario: synthetic Stage-3 directions (+ Stage-2 calibration manifest) -> tart-triangulate -> tart-track -> tart-validate (fresh TLE unless stated) -> tart-diagnose
+
+[clean]
+  injected cause pattern     none (consistent measurements, fresh TLE)
+  expected                   Level 0, NORMAL
+  recovered tags             NORMAL
+  evidence level             0 (confidence HIGH); anomalous epochs 0/36; exit 0
+  most influential station   south_africa (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 4.7 km, mauritius 9.9 km, south_africa 33.0 km
+  strongest correlation      trajectory_model: stage5_nis vs stage4_residual_3d_m (network) r=+0.39 -> NOT_SUPPORTED
+  matched expectation        YES
+
+[biased_station]
+  injected cause pattern     fixed 0.036 deg direction bias at madagascar
+  expected                   STATION_SPECIFIC (madagascar), Level >= 2
+  recovered tags             STATISTICAL_ANOMALY, STATION_SPECIFIC, LOCALISATION_CORRELATED
+  evidence level             3 (confidence MODERATE); anomalous epochs 36/36; exit 0
+  most influential station   madagascar (station test picks {'madagascar': 36})
+  leave-one-out shift        median per removed station: madagascar 39.5 km, mauritius 104.1 km, south_africa 229.3 km
+  strongest correlation      localisation: vis_image_separation_deg vs direction_residual_angle_deg (south_africa) r=-0.38 -> NOT_SUPPORTED
+  matched expectation        YES
+
+[calibration]
+  injected cause pattern     0.036 deg bias at madagascar only on epochs with a high flagged fraction
+  expected                   CALIBRATION_CORRELATED, Level >= 3
+  recovered tags             STATISTICAL_ANOMALY, CALIBRATION_CORRELATED, LOCALISATION_CORRELATED, TRAJECTORY_MODEL_CORRELATED
+  evidence level             3 (confidence MODERATE); anomalous epochs 23/36; exit 0
+  most influential station   south_africa (station test picks {'madagascar': 12})
+  leave-one-out shift        median per removed station: madagascar 6.7 km, mauritius 20.3 km, south_africa 66.1 km
+  strongest correlation      calibration: flagged_fraction vs line_residual_m (madagascar) r=+0.83 -> CALIBRATION_CORRELATED
+  matched expectation        YES
+
+[timing]
+  injected cause pattern     mauritius samples 1-5 s late (recorded), matched without interpolation
+  expected                   TIMING_CORRELATED
+  recovered tags             STATISTICAL_ANOMALY, TIMING_CORRELATED, LOCALISATION_CORRELATED
+  evidence level             3 (confidence MODERATE); anomalous epochs 36/36; exit 0
+  most influential station   mauritius (station test picks {'mauritius': 11})
+  leave-one-out shift        median per removed station: madagascar 7.6 km, mauritius 32.2 km, south_africa 124.9 km
+  strongest correlation      timing: max_abs_station_time_offset_s vs stage4_residual_3d_m (network) r=+0.78 -> TIMING_CORRELATED
+  matched expectation        YES
+
+[geometry]
+  injected cause pattern     blocks of 4-station and narrow 2-station (2.8 deg) epochs, no bias
+  expected                   GEOMETRY_CORRELATED, not NETWORK_CONSISTENT
+  recovered tags             NORMAL, GEOMETRY_CORRELATED
+  evidence level             0 (confidence HIGH); anomalous epochs 0/60; exit 0
+  most influential station   madagascar (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 3.7 km, mauritius 7.2 km, namibia 5.0 km, south_africa 3.0 km
+  strongest correlation      geometry: predicted_condition_number vs stage4_residual_3d_m (network) r=+0.72 -> GEOMETRY_CORRELATED
+  matched expectation        YES
+
+[dynamics]
+  injected cause pattern     unmodelled 0.5 m/s^2 acceleration of the truth
+  expected                   TRAJECTORY_MODEL_CORRELATED, Level < 4
+  recovered tags             STATISTICAL_ANOMALY, TRAJECTORY_MODEL_CORRELATED
+  evidence level             1 (confidence HIGH); anomalous epochs 32/36; exit 0
+  most influential station   south_africa (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 4.7 km, mauritius 9.9 km, south_africa 33.0 km
+  strongest correlation      localisation: vis_image_separation_deg vs direction_residual_angle_deg (mauritius) r=+0.36 -> NOT_SUPPORTED
+  matched expectation        YES
+
+[stale_reference]
+  injected cause pattern     10 s along-track offset validated against a 20-day-old TLE
+  expected                   REFERENCE_LIMITED, Level <= 3
+  recovered tags             STATISTICAL_ANOMALY, REFERENCE_LIMITED
+  evidence level             1 (confidence MODERATE); anomalous epochs 36/36; exit 0
+  most influential station   south_africa (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 4.7 km, mauritius 9.9 km, south_africa 33.1 km
+  strongest correlation      trajectory_model: stage5_nis vs stage4_residual_3d_m (network) r=+0.37 -> NOT_SUPPORTED
+  matched expectation        YES
+
+[network_unexplained]
+  injected cause pattern     10 s network-wide time shift of the truth (39 km along-track), clean instruments
+  expected                   NETWORK_CONSISTENT + UNEXPLAINED, Level 5
+  recovered tags             STATISTICAL_ANOMALY, NETWORK_CONSISTENT, UNEXPLAINED
+  evidence level             5 (confidence HIGH); anomalous epochs 36/36; exit 0
+  most influential station   south_africa (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 4.7 km, mauritius 9.9 km, south_africa 33.1 km
+  strongest correlation      trajectory_model: stage5_nis vs stage4_residual_3d_m (network) r=+0.36 -> NOT_SUPPORTED
+  matched expectation        YES
+
+[missing_stage2]
+  injected cause pattern     as network_unexplained, but no Stage-2 calibration metadata
+  expected                   Level 4 (Level 5 blocked), CALIBRATION_METADATA_MISSING
+  recovered tags             STATISTICAL_ANOMALY, NETWORK_CONSISTENT
+  evidence level             4 (confidence MODERATE); anomalous epochs 36/36; exit 0
+  most influential station   south_africa (station test picks none)
+  leave-one-out shift        median per removed station: madagascar 4.7 km, mauritius 9.9 km, south_africa 33.1 km
+  strongest correlation      trajectory_model: stage5_nis vs stage4_residual_3d_m (network) r=+0.36 -> NOT_SUPPORTED
+  matched expectation        YES
+
+False-positive control: 20 clean networks with random-walk flagged-fraction / SNR metadata: 0 with a supported calibration/localisation correlation, 0 with an evidence level above 0.
+Scenarios matching expectation: 9 of 9.
+

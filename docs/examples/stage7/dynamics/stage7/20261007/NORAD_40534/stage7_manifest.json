@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "stage": 7,
+  "input_stage6_manifest": "docs/examples/stage7/dynamics/stage6/20261007/NORAD_40534/stage6_manifest.json",
+  "input_hashes": {
+    "stage6_manifest": "cab573f60fdfb03528088131aba6de72c3a81ddfaf5dfccc617d6ad2ace575f5",
+    "stage5_manifest": "24d6f429ac26cf444c0ce4ae4f116d6d0c86824fe41fe1ef046d498560721636",
+    "stage4_manifest": "79799071a3d1c3303e878f22881a72b06b84905469b876fd51605af6a0db4d02",
+    "stage3_manifest": "aa7972d2696837f8552f7f9417b3ce11438d14efec5f1961e815b3e4af3993fc",
+    "stage2_manifest": "407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42",
+    "stage6_residuals": "78d8a021b0c72f7800dd1ffe5a57c391837498222f6c67e42dd92235290e3cd8",
+    "stage6_tle_trajectory": "512d556469e62b6ccbe9aa2f2e223f264343f2b64a28d5adc55e3263901bf628"
+  },
+  "provenance_chain": [
+    {
+      "stage": 6,
+      "recorded": "docs/examples/stage7/dynamics/stage6/20261007/NORAD_40534/stage6_manifest.json",
+      "path": "docs/examples/stage7/dynamics/stage6/20261007/NORAD_40534/stage6_manifest.json",
+      "sha256": "cab573f60fdfb03528088131aba6de72c3a81ddfaf5dfccc617d6ad2ace575f5",
+      "expected_sha256": null,
+      "status": "input"
+    },
+    {
+      "stage": 5,
+      "recorded": "docs/examples/stage7/dynamics/stage5/20261007/NORAD_40534/stage5_manifest.json",
+      "path": "docs/examples/stage7/dynamics/stage5/20261007/NORAD_40534/stage5_manifest.json",
+      "sha256": "24d6f429ac26cf444c0ce4ae4f116d6d0c86824fe41fe1ef046d498560721636",
+      "expected_sha256": "24d6f429ac26cf444c0ce4ae4f116d6d0c86824fe41fe1ef046d498560721636",
+      "status": "verified"
+    },
+    {
+      "stage": 4,
+      "recorded": "docs/examples/stage7/dynamics/stage4/20261007/NORAD_40534/stage4_manifest.json",
+      "path": "docs/examples/stage7/dynamics/stage4/20261007/NORAD_40534/stage4_manifest.json",
+      "sha256": "79799071a3d1c3303e878f22881a72b06b84905469b876fd51605af6a0db4d02",
+      "expected_sha256": "79799071a3d1c3303e878f22881a72b06b84905469b876fd51605af6a0db4d02",
+      "status": "verified"
+    },
+    {
+      "stage": 3,
+      "recorded": "docs/examples/stage7/dynamics/stage3/stage3_manifest.json",
+      "path": "docs/examples/stage7/dynamics/stage3/stage3_manifest.json",
+      "sha256": "aa7972d2696837f8552f7f9417b3ce11438d14efec5f1961e815b3e4af3993fc",
+      "expected_sha256": "aa7972d2696837f8552f7f9417b3ce11438d14efec5f1961e815b3e4af3993fc",
+      "status": "verified"
+    },
+    {
+      "stage": 2,
+      "recorded": "docs/examples/stage7/dynamics/stage2/manifest.json",
+      "path": "docs/examples/stage7/dynamics/stage2/manifest.json",
+      "sha256": "407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42",
+      "expected_sha256": "407baf1f7dbd1ca836021c38398200f3a5b7652ee3d81997d65b2666bfe7fd42",
+      "status": "verified"
+    }
+  ],
+  "alignment": {
+    "keys": [
+      "time_utc",
+      "station_id",
+      "norad_id"
+    ],
+    "tolerance_s": 0.01,
+    "n_epochs": 36,
+    "n_linked_stage5": 36,
+    "n_linked_stage4": 36,
+    "n_station_rows": 108,
+    "n_station_rows_linked_stage3": 108,
+    "n_station_rows_linked_stage2": 108,
+    "row_number_joins": false
+  },
+  "leave_one_out": {
+    "enabled": true,
+    "n_solutions": 108,
+    "solver": "tart_gnss.stage4.triangulation.triangulate_weighted (reused)",
+    "normalised_influence": "shift^T (C_loo - C_full)^-1 shift (nested estimates); NaN -> physical shift only",
+    "degraded_geometry": "fewer than 3 stations remaining or condition number > 1e+08",
+    "full_solution_reproduction_max_m": 0.0
+  },
+  "pairwise": {
+    "enabled": true,
+    "n_solutions": 108,
+    "separation_z": "closest-approach separation / sqrt(n^T (rho1^2 C1 + rho2^2 C2) n)"
+  },
+  "correlation_analysis": {
+    "method": "spearman",
+    "min_samples": 8,
+    "min_correlation": 0.5,
+    "alpha": 0.01,
+    "decision_coefficient": "rank correlation after removing a linear time trend",
+    "p_value": "effective sample size n(1-r_x r_y)/(1+r_x r_y); Holm over all tests",
+    "n_tests": 130,
+    "supported_tags": []
+  },
+  "evidence_rules": {
+    "anomaly_threshold": null,
+    "anomaly_tail_probability": 0.0027,
+    "stage4_threshold": 14.156,
+    "pair_z": 4.0,
+    "min_persistent_epochs": 5,
+    "min_samples": 8,
+    "min_correlation": 0.5,
+    "alpha": 0.01,
+    "station_min_epochs": 3,
+    "station_min_fraction": 0.5,
+    "anomaly_threshold_used": 21.70864419508207,
+    "anomaly_threshold_rule": "chi2_3 quantile at 1 - 0.0027 / n_epochs (Bonferroni)"
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "n_diagnosed": 36,
+    "missing_evidence": "recorded as quality flags; never treated as evidence of absence"
+  },
+  "software": {
+    "tart_gnss": "0.7.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "scipy": "1.15.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "82835b026aa71d97a8ad1943868f144391272b2f",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-diagnose",
+      "--stage6-manifest",
+      "docs/examples/stage7/dynamics/stage6/20261007/NORAD_40534/stage6_manifest.json",
+      "--output-dir",
+      "docs/examples/stage7/dynamics/stage7",
+      "--no-plots"
+    ],
+    "run_timestamp_utc": "2026-10-14T14:16:56.245Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss"
+  },
+  "outputs": {
+    "diagnosis_csv": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/diagnosis.csv",
+    "diagnosis_parquet": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/diagnosis.parquet",
+    "station_influence_csv": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/station_influence.csv",
+    "station_influence_parquet": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/station_influence.parquet",
+    "pairwise_csv": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/pairwise.csv",
+    "pairwise_parquet": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/pairwise.parquet",
+    "correlations_csv": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/correlations.csv",
+    "summary": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/summary.json",
+    "diagnostics": [],
+    "log": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/logs/stage7.log",
+    "manifest": "docs/examples/stage7/dynamics/stage7/20261007/NORAD_40534/stage7_manifest.json"
+  }
+}

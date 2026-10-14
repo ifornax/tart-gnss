@@ -1,0 +1,15 @@
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: input Stage-6 manifest: docs/examples/stage7/geometry/stage6/20261007/NORAD_40534/stage6_manifest.json
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: provenance Stage 6: docs/examples/stage7/geometry/stage6/20261007/NORAD_40534/stage6_manifest.json (input)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: provenance Stage 5: docs/examples/stage7/geometry/stage5/20261007/NORAD_40534/stage5_manifest.json (verified)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: provenance Stage 4: docs/examples/stage7/geometry/stage4/20261007/NORAD_40534/stage4_manifest.json (verified)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: provenance Stage 3: docs/examples/stage7/geometry/stage3/stage3_manifest.json (verified)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: provenance Stage 2: docs/examples/stage7/geometry/stage2/manifest.json (verified)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: NORAD 40534; stations 4 (madagascar, mauritius, namibia, south_africa)
+2026-10-14T14:16:54Z INFO    tart_gnss.stage7: epochs: 60 Stage-6 rows; 60 diagnosed under 'strict' policy (links: Stage 5 60, Stage 4 60)
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: leave-one-out solutions: 120; pairwise solutions: 210; full-solution reproduction vs Stage 4: max 0 m
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: strongest localisation correlation: reduced_chi2 vs direction_residual_along_motion_deg (south_africa) partial 0.493, Holm p 0.182, n 30 -> NOT_SUPPORTED
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: strongest geometry correlation: predicted_condition_number vs stage4_residual_3d_m (network) partial 0.717, Holm p 3.65e-06, n 60 -> GEOMETRY_CORRELATED
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: strongest trajectory correlation: stage5_nis vs position_residual_3d_m (network) partial -0.293, Holm p 0.143, n 60 -> NOT_SUPPORTED
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: anomalous epochs 0 of 60 (threshold 22.8 on position_mahalanobis_obs_cov); persistent intervals 0; most influential station madagascar
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: reference quality: precision_validation True; maximum evidence level 0 (HIGH); tags: NORMAL, GEOMETRY_CORRELATED
+2026-10-14T14:16:55Z INFO    tart_gnss.stage7: outputs: docs/examples/stage7/geometry/stage7/20261007/NORAD_40534
