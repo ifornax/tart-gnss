@@ -14,6 +14,7 @@ CANONICAL = {
     "tart-triangulate": "tart_gnss.stage4.cli:main",
     "tart-track": "tart_gnss.stage5.cli:main",
     "tart-validate": "tart_gnss.stage6.cli:main",
+    "tart-diagnose": "tart_gnss.stage7.cli:main",
 }
 LEGACY = ("common-gnss", "retrieve-tart", "update-tart-stations", "list-tart-stations")
 
