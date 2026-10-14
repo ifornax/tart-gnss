@@ -12,7 +12,8 @@ def test_clean_network_is_level_0(runs):  # 35.1
 
 def test_biased_station_is_identified(runs):  # 35.2
     r = runs("bias")
-    assert "STATION_SPECIFIC" in r.tags and r.level >= 2
+    assert "STATION_SPECIFIC" in r.tags and r.level == 2
+    assert "LOCALISATION_CORRELATED" not in r.tags  # the picked station explains its own pair inconsistency
     assert r.summary["station_test"]["station_specific"] == ["madagascar"]
     assert r.summary["most_influential_station"] == "madagascar"
     assert r.summary["station_test"]["picks"] == {"madagascar": 36}
@@ -116,6 +117,14 @@ def test_unexplained_requires_persistence_and_clean_diagnostics(runs, tmp_path):
 
     s = json.loads(next(out.glob("*/*/summary.json")).read_text())
     assert s["overall_evidence_level"] == 4 and "UNEXPLAINED" not in s["overall_diagnostic_tags"]
+
+
+def test_unknown_reference_uncertainty_blocks_level_5(runs):
+    # A single TLE: the anomaly statistic treats it as exact, so the TLE cannot be ruled out as the explanation.
+    r = runs("noensemble")
+    assert "REFERENCE_UNCERTAINTY_UNKNOWN" in r.summary["quality_flags"]
+    assert r.level == 4 and "UNEXPLAINED" not in r.tags and r.summary["overall_confidence"] != "HIGH"
+    assert runs("network").summary["anomaly_statistic"] == "position_mahalanobis_total_cov"
 
 
 def test_missing_calibration_metadata_is_not_evidence(runs):  # 33

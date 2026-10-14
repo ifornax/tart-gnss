@@ -540,10 +540,10 @@ tart-diagnose \
 | 2 | station-specific |
 | 3 | instrument, calibration, timing or localisation correlated |
 | 4 | network-consistent: no station subset removes it, and it is not geometry-, trajectory-model- or reference-limited |
-| 5 | unexplained: Level 4, strong and persistent on the epoch-by-epoch Stage-4 data, with complete diagnostics |
+| 5 | unexplained: Level 4, strong and persistent on the epoch-by-epoch Stage-4 data, with complete diagnostics and a known TLE reference uncertainty (ensemble) |
 
-A stale reference caps the level at 3, and missing calibration metadata caps
-it at 4. Confidence is a transparent LOW / MODERATE / HIGH from six
+A stale reference caps the level at 3. Missing calibration metadata, or a
+single TLE with unknown uncertainty, caps it at 4. Confidence is a transparent LOW / MODERATE / HIGH from six
 components, never a probability.
 
 **Exit status:** `0` means the diagnosis completed; `3` means fewer than 3
@@ -580,7 +580,7 @@ Method, rules, validation and the real-data run are in
 | Stage 5, 2026-06-25 PRN 26, real data ([details](docs/stage5_tracking.md#14-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage5_real)) | **The spec command exits 3** (`INSUFFICIENT_MEASUREMENTS`), because the default Stage-4 run has one valid epoch. On the two-station Stage-4 run (35 epochs over 340 s), the epoch-to-epoch scatter is consistent with the Stage-4 covariance (mean NIS 2.8, close to χ²₃). NIS cannot see a common offset, such as the ~3 000 km along-LOS offset found in Stage 4. The innovations are strongly autocorrelated (lag-1 0.69, `DYNAMICS_MISMATCH`), which shows slowly varying Stage-3 systematics, so the smoothed σ is optimistic. The only three-station epoch is gated (NIS 36). Two-body and constant velocity cannot be told apart at this noise level. No TLE comparison is made (that is Stage 6). |
 | Stage 6, synthetic ([example](docs/examples/stage6), [report](docs/examples/stage6/demo_report.txt)) | With a fresh reference TLE (0.11 d), injected RTN offsets of (+1000, +2000, −500) m and Δv of (+0.10, −0.05, +0.02) m/s are recovered exactly, and the conditional D² equals its analytic value (18.92). End to end through `tart-track`, a 2 s time shift (7.818 km along track) is recovered as +7.789 km (σ 51 m), 1.992 s. With the TLE equal to the truth, the conditional position D² has mean 2.82 and median 2.33 over 100 Monte Carlo runs (χ²₃: 3, 2.37). |
 | Stage 6, 2026-06-25 PRN 26, real data ([details](docs/stage6_validation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage6_real)) | **Not a precision validation (exit 3).** The only local TLE (the Stage-1 set, epoch 2026-10-06) is propagated 103 days backwards: `TLE_STALE`, `TLE_BACKPROPAGATED`, `precision_validation: false`. The descriptive residuals (observed − TLE) are R +2765 km, T +370 km, N −627 km (median), about 1.4° geocentric. They are not interpreted as accuracy. A contemporaneous TLE (e.g. from Space-Track) is needed. |
-| Stage 7, synthetic ([example](docs/examples/stage7), [report](docs/examples/stage7/demo_report.txt)) | **9 of 9 scenarios match their expected diagnosis**, each built through the real Stage 4–6 chain. A clean network gives Level 0 NORMAL. A 0.036° bias at one station is identified (`STATION_SPECIFIC`, Madagascar, 36/36 epochs). A calibration-gated bias gives `CALIBRATION_CORRELATED`, and a late station gives `TIMING_CORRELATED`. Alternating geometry gives `GEOMETRY_CORRELATED` (Level 0), unmodelled acceleration gives `TRAJECTORY_MODEL_CORRELATED`, and a stale TLE gives `REFERENCE_LIMITED` (capped). A network-wide 10 s offset is Level 5 `NETWORK_CONSISTENT` + `UNEXPLAINED`, and Level 4 without Stage-2 metadata. Of 20 clean networks with random-walk metadata, none gives a spurious correlation tag. |
+| Stage 7, synthetic ([example](docs/examples/stage7), [report](docs/examples/stage7/demo_report.txt)) | **10 of 10 scenarios match their expected diagnosis**, each built through the real Stage 4–6 chain. A clean network gives Level 0 NORMAL. A 0.036° bias at one station is identified as Level 2 `STATION_SPECIFIC` (Madagascar, 36/36 epochs). A calibration-gated bias gives `CALIBRATION_CORRELATED`, and a late station gives `TIMING_CORRELATED`. Alternating geometry gives `GEOMETRY_CORRELATED` (Level 0), unmodelled acceleration gives `TRAJECTORY_MODEL_CORRELATED`, and a stale TLE gives `REFERENCE_LIMITED` (capped). A network-wide 10 s offset is Level 5 `NETWORK_CONSISTENT` + `UNEXPLAINED` with a TLE ensemble, and Level 4 with a single TLE or without Stage-2 metadata. Of 20 clean networks with random-walk metadata, none gives a spurious correlation tag. |
 | Stage 7, 2026-06-25 PRN 26, real data ([details](docs/stage7_diagnosis.md#10-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage7_real)) | The whole chain to the Stage-2 manifest verifies, and re-triangulation reproduces Stage 4 to 0 m. The result is **Level 3, `REFERENCE_LIMITED`** (stale TLE), with `LOCALISATION_CORRELATED` (11 of 37 station pairs inconsistent) and `TRAJECTORY_MODEL_CORRELATED` (Stage-5 `DYNAMICS_MISMATCH`). Only one three-station epoch exists, so the influential station is undetermined. None of 130 correlation tests is supported. Madagascar's single direction is 1.4° off the network trajectory. |
 | Stage 3, synthetic end-to-end ([example](docs/examples/stage3)) | Sources injected 3.0–3.7° from the real PRN 26 TLE track are recovered to a median of 0.11–0.17° (σ ≈ 0.15°) and stay 3.0–3.7° from the TLE (measurement-driven). The visibility–image disagreement is about 0.3°. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
@@ -720,14 +720,14 @@ tart-gnss/
 │       ├── quality.py          # input policy, data-quality flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-diagnose
-└── tests/                           # 554 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 63, CLI names: 3
+└── tests/                           # 555 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 554 tests, ~90 s, no network needed
+pytest                       # 555 tests, ~90 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow

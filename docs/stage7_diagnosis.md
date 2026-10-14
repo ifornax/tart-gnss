@@ -253,12 +253,15 @@ levels, not cause labels.
 | 0 | no statistical anomaly |
 | 1 | statistical anomaly |
 | 2 | + the station is picked by the station test, and the station is `STATION_SPECIFIC` |
-| 3 | + calibration / timing / localisation evidence |
+| 3 | + calibration / timing / localisation evidence. A picked station's own pair inconsistency and Stage-4 line-residual flags are not counted again as localisation evidence, so a plain station bias stays at Level 2 |
 | 4 | `NETWORK_CONSISTENT`: ≥ 3 stations; every LOO shift within χ²_dof(0.9973), so no subset removes the anomaly; no inconsistent pair; no station picked; no instrument, geometry or trajectory-model tag; reference not limited |
-| 5 | `UNEXPLAINED`: Level 4 **and** strong **and** persistent **and** calibration metadata available |
+| 5 | `UNEXPLAINED`: Level 4 **and** strong **and** persistent **and** calibration metadata available **and** the TLE reference uncertainty known (an empirical ensemble of ≥ 3 TLEs, so the anomaly statistic is `position_mahalanobis_total_cov`) |
 
-Two caps apply. `REFERENCE_LIMITED` caps the level at 3. Missing calibration
-metadata caps it at 4, because missing evidence must not count as clean.
+Three caps apply. `REFERENCE_LIMITED` caps the level at 3. Missing
+calibration metadata caps it at 4, and so does an unknown reference
+uncertainty (`REFERENCE_UNCERTAINTY_UNKNOWN`: with a single TLE the
+statistic treats the TLE as exact, so the TLE cannot be ruled out as the
+explanation). Missing evidence must not count as clean.
 
 An epoch with fewer than 3 stations cannot have the subset test
 (`SUBSET_TEST_UNAVAILABLE`), so it cannot reach Level 4.
@@ -270,7 +273,8 @@ boolean components:
 - effect size;
 - persistence;
 - cross-method agreement;
-- reference quality;
+- reference quality (precision validation **and** a known reference
+  uncertainty);
 - data completeness.
 
 `HIGH` needs all six. `MODERATE` needs ≥ 4, with reference quality and data
@@ -342,24 +346,28 @@ with genuine provenance and hashes:
    with metadata columns.
 3. A matching synthetic Stage-2 manifest with per-file calibration.
 4. `tart-triangulate` → `tart-track` → `tart-validate` against a fresh TLE
-   (0.35 d) → `tart-diagnose`.
+   (0.35 d) plus a 5-member ensemble of nearby element sets (epoch shifts of
+   −1 to +1 d carried forward with SGP4's secular rates; empirical dispersion
+   below the Stage-5 σ) → `tart-diagnose`.
 
-`tests/stage7/` has 63 tests. The demo is `scripts/stage7_synthetic_demo.py`;
+`tests/stage7/` has 64 tests. The demo is `scripts/stage7_synthetic_demo.py`;
 outputs are in [`examples/stage7`](examples/stage7), with the report in
-[`demo_report.txt`](examples/stage7/demo_report.txt). **9 of 9 scenarios
-match their expectation.**
+[`demo_report.txt`](examples/stage7/demo_report.txt). **10 of 10 scenarios
+match their expectation.** In a clean network, "most influential station"
+reflects geometric leverage, not a fault.
 
 | Scenario (spec) | Injected | Recovered tags | Level (confidence) | Station test / LOO |
 |---|---|---|---|---|
 | clean (35.1) | nothing | `NORMAL` | 0 (HIGH) | no picks |
-| biased station (35.2, 36) | 0.036° bias at Madagascar | `STATISTICAL_ANOMALY`, `STATION_SPECIFIC`, `LOCALISATION_CORRELATED` | 3 (MODERATE) | Madagascar picked at 36/36 epochs; most influential: Madagascar. Removing Madagascar cuts the error vs truth below 0.3×; removing a healthy station does not |
+| biased station (35.2, 36) | 0.036° bias at Madagascar | `STATISTICAL_ANOMALY`, `STATION_SPECIFIC` | 2 (MODERATE) | Madagascar picked at 36/36 epochs; most influential: Madagascar. Removing Madagascar cuts the error vs truth below 0.3×; removing a healthy station does not |
 | calibration (35.3) | the same bias only where the flagged fraction is high (40 % of epochs) | … `CALIBRATION_CORRELATED` (Madagascar `flagged_fraction` vs line residual, r = +0.83) … | 3 (MODERATE) | Madagascar picked at 12 epochs (below the run threshold) |
 | timing (35.4) | Mauritius samples 1–5 s late (recorded), matched without interpolation | … `TIMING_CORRELATED` (largest time offset vs Stage-4 − TLE, r = +0.78) … | 3 (MODERATE) | Mauritius picked at 11 epochs |
 | poor geometry (35.5) | blocks of 4-station and narrow 2-station (2.8°) epochs, no bias | `NORMAL`, `GEOMETRY_CORRELATED` (r = +0.72) | 0 (HIGH) | not network-consistent |
 | dynamics (35.6) | unmodelled 0.5 m/s² acceleration | `STATISTICAL_ANOMALY`, `TRAJECTORY_MODEL_CORRELATED` (Stage 5: `HIGH_NIS`, `DYNAMICS_MISMATCH`) | 1 (HIGH) | — |
-| stale TLE (35.7) | 10 s offset against a 20-day-old TLE | `STATISTICAL_ANOMALY`, `REFERENCE_LIMITED` | 1, capped (MODERATE) | — |
-| network offset (35.8/35.9) | 10 s network-wide time shift (39 km along-track) | `STATISTICAL_ANOMALY`, `NETWORK_CONSISTENT`, `UNEXPLAINED` | **5 (HIGH)** | no picks; LOO D² median < 5 |
-| missing Stage 2 (§33) | same, no calibration metadata | `STATISTICAL_ANOMALY`, `NETWORK_CONSISTENT` + `CALIBRATION_METADATA_MISSING` | 4, Level 5 blocked (MODERATE) | — |
+| stale TLE (35.7) | 10 s offset against a 20-day-old single TLE | `STATISTICAL_ANOMALY`, `REFERENCE_LIMITED` | 1, capped (MODERATE) | — |
+| network offset (35.8/35.9) | 10 s network-wide time shift (39 km along-track), with a TLE ensemble | `STATISTICAL_ANOMALY`, `NETWORK_CONSISTENT`, `UNEXPLAINED` | **5 (HIGH)** | no picks; LOO D² median < 5 |
+| network, single TLE | same, without an ensemble | `STATISTICAL_ANOMALY`, `NETWORK_CONSISTENT` + `REFERENCE_UNCERTAINTY_UNKNOWN` | 4, Level 5 blocked (MODERATE) | — |
+| missing Stage 2 (§33) | same as the network offset, no calibration metadata | `STATISTICAL_ANOMALY`, `NETWORK_CONSISTENT` + `CALIBRATION_METADATA_MISSING` | 4, Level 5 blocked (MODERATE) | — |
 
 Further checks in the tests:
 
@@ -389,6 +397,12 @@ treated as clean:
 
 - **No Stage-2 manifest:** `CALIBRATION_METADATA_MISSING`, confidence
   lowered, Level 5 blocked.
+- **No TLE ensemble:** `REFERENCE_UNCERTAINTY_UNKNOWN`, confidence lowered,
+  Level 5 blocked.
+- **Stage-2 cross-station timing statistics** (pairwise dump offsets) are
+  run-level constants. They cannot be correlated within one pass, so they
+  are copied to `summary.json` (`stage2_timing`) for context; per-epoch
+  timing uses the Stage-4 `station_time_offset_s`.
 - **No Stage-3 row** for a contributing station: `STAGE3_LINK_MISSING`, and
   that station is not re-triangulated.
 - **Fewer than 3 stations:** `SUBSET_TEST_UNAVAILABLE`.
@@ -409,7 +423,7 @@ whose hash matches. The full re-triangulation reproduces Stage 4 to 0 m.
 | anomalous | 36 (threshold 21.7, conditional statistic) |
 | evidence level | **3, `REFERENCE_LIMITED` (MODERATE)**: 26 epochs at Level 3, 10 at Level 1 |
 | tags | `STATISTICAL_ANOMALY`, `LOCALISATION_CORRELATED` (11 of 37 station pairs have `pair_separation_z > 4`; Stage-4 `HIGH_CHI2`), `TRAJECTORY_MODEL_CORRELATED` (Stage 5 `DYNAMICS_MISMATCH`), `REFERENCE_LIMITED` (103-day back-propagated TLE) |
-| leave-one-out | only **1** epoch has three stations, so the most influential station is **undetermined** and the station test cannot run |
+| leave-one-out | only **1** epoch has three stations. The station test ran there and picked no station; `STATION_SPECIFIC` would need ≥ 3 epochs, and the most influential station is **undetermined** |
 | correlations | 130 tests, **none supported**: 59 lack samples, 30 lack variation, 39 are not supported, 2 are expected. The strongest localisation candidate is Mauritius visibility–image separation vs along-motion residual (raw 0.83, partial 0.58), but with n_eff ≈ 17 its Holm p is 0.27, so it is not supported |
 
 Station summaries (diagnosed epochs):
@@ -428,6 +442,8 @@ slowly by 0.1–0.6° (see `station_direction_residuals.png`).
 **Default Stage-6 run: exit 3.** There are no diagnosable epochs (no valid
 Stage-5 rows), and no diagnosis is manufactured.
 
+The single-TLE reference also raises `REFERENCE_UNCERTAINTY_UNKNOWN`.
+
 **Interpretation.** The real result is *limited*, not anomalous in any strong
 sense:
 
@@ -440,8 +456,9 @@ None of this supports a station-specific or network-level attribution.
 
 Two things would strengthen it:
 
-- a contemporaneous TLE, so that `REFERENCE_LIMITED` lifts and the reference
-  method of the station test becomes available;
+- a contemporaneous TLE with an ensemble of its neighbours, so that
+  `REFERENCE_LIMITED` lifts and the reference method of the station test
+  becomes available;
 - more three-station epochs, i.e. a cleaner MG-Tana track.
 
 ## 11. Limitations

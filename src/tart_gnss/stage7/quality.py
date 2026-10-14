@@ -11,6 +11,8 @@ Stage-6 row is not ``valid``, and provenance hash mismatches are tolerated
 Quality flags (never evidence tags; missing evidence is not evidence of absence):
 
 ``CALIBRATION_METADATA_MISSING`` no Stage-2 per-file calibration: lowers confidence, blocks Level 5
+``REFERENCE_UNCERTAINTY_UNKNOWN`` no empirical TLE ensemble: the anomaly statistic treats the TLE as exact;
+                                 lowers confidence, blocks Level 5
 ``STAGE3_LINK_MISSING``          no Stage-3 row for a contributing station (no re-triangulation for it)
 ``PROVENANCE_UNVERIFIED``        an upstream link without a recorded hash, or (permissive) a mismatch
 ``SUBSET_TEST_UNAVAILABLE``      fewer than 3 stations: no leave-one-out/station test at this epoch
@@ -21,6 +23,7 @@ from __future__ import annotations
 
 POLICIES = ("strict", "permissive")
 CALIBRATION_METADATA_MISSING = "CALIBRATION_METADATA_MISSING"
+REFERENCE_UNCERTAINTY_UNKNOWN = "REFERENCE_UNCERTAINTY_UNKNOWN"
 STAGE3_LINK_MISSING = "STAGE3_LINK_MISSING"
 PROVENANCE_UNVERIFIED = "PROVENANCE_UNVERIFIED"
 SUBSET_TEST_UNAVAILABLE = "SUBSET_TEST_UNAVAILABLE"

@@ -20,6 +20,9 @@ Injectable effects (all optional):
 ``subsets``            ``{station: bool array}`` epochs at which the station observes
 ``random_metadata``    random-walk ``flagged_fraction``/``snr`` unrelated to the data
 ``tle_epoch_shift_d``  validate against an element set re-epoched by this many days
+``ensemble``           also pass a 5-member ensemble of nearby element sets (epoch shifts of
+                       -1 .. +1 d carried forward with SGP4's secular rates) so Stage 6 has an
+                       empirical reference covariance
 """
 
 from __future__ import annotations
@@ -63,6 +66,7 @@ class Scenario:
     random_metadata: bool = False
     tle_epoch_shift_d: float = 0.0
     with_stage2: bool = True
+    ensemble: bool = True
     min_stations: int = 3
     time_match_tolerance_s: float = 0.75
     stations: Dict[str, Tuple[float, float, float]] = field(default_factory=lambda: dict(EXAMPLE_STATIONS))
@@ -182,7 +186,11 @@ def build_chain(sc: Scenario, work: Path) -> Dict[str, object]:
     tle_sets = [(L1, L2)] if sc.tle_epoch_shift_d == 0 else [syn6.perturbed_tle(L1, L2,
                                                                                d_epoch_days=sc.tle_epoch_shift_d)]
     tle = syn6.write_tle_file(work / "reference.tle", tle_sets)
+    extra = []
+    if sc.ensemble:
+        sets = [(L1, L2)] + [syn6.perturbed_tle(L1, L2, d_epoch_days=e) for e in (-1.0, -0.5, 0.5, 1.0)]
+        extra = ["--tle-ensemble-files", str(syn6.write_tle_file(work / "ensemble.tle", sets))]
     c6 = cli6.main(["--stage5-manifest", str(m5), "--output-dir", str(work / "stage6"), "--no-plots",
-                    "--tle-file", str(tle)])
+                    "--tle-file", str(tle), *extra])
     m6 = next((work / "stage6").glob("*/NORAD_*/stage6_manifest.json"))
     return {"stage3": m3, "stage4": m4, "stage5": m5, "stage6": m6, "codes": (c4, c5, c6)}

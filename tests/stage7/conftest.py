@@ -27,10 +27,11 @@ def scenarios():
         "geometry": Scenario("geometry", n_epochs=60, seed=2, subsets={"south_africa": _BLOCKS, "namibia": _BLOCKS},
                              min_stations=2, stations={**EXAMPLE_STATIONS, "namibia": NAMIBIA}),
         "dynamics": Scenario("dynamics", accel_m_s2=(0.35, 0.35, 0.0)),
-        "stale": Scenario("stale", tau_s=10.0, tle_epoch_shift_d=20.0),
+        "stale": Scenario("stale", tau_s=10.0, tle_epoch_shift_d=20.0, ensemble=False),
         "network": Scenario("network", tau_s=10.0),
         "nostage2": Scenario("nostage2", tau_s=10.0, with_stage2=False),
         "random": Scenario("random", random_metadata=True, seed=5),
+        "noensemble": Scenario("noensemble", tau_s=10.0, ensemble=False),
     }
 
 

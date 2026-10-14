@@ -325,6 +325,8 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
     qflags_run = []
     if not inp.calibration_metadata_available:
         qflags_run.append(q.CALIBRATION_METADATA_MISSING)
+    if not info["reference_uncertainty_known"]:
+        qflags_run.append(q.REFERENCE_UNCERTAINTY_UNKNOWN)
     if any(lk.status not in ("verified", "input") for lk in inp.links):
         qflags_run.append(q.PROVENANCE_UNVERIFIED)
     qf = []
@@ -441,6 +443,11 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                               "stage6_run_flags": inp.summary6.get("run_flags")},
         "precision_validation": precision,
         "stage5_dynamics": {"run_flags": s5_flags, "n_resets": s5_resets},
+        "stage2_timing": {
+            "station_pair_time_offset_statistics": ((inp.stage2 or {}).get("synchronisation") or {}).get(
+                "station_pair_time_offset_statistics"),
+            "note": "run-level constants from Stage 2; they cannot be correlated within one pass and are reported "
+                    "for context (per-epoch timing uses the Stage-4 station_time_offset_s)"},
         "full_solution_reproduction_max_m": repro,
         "quality_flags": qflags_run,
     }

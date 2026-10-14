@@ -8,7 +8,8 @@ Six boolean components are evaluated per epoch:
 ``cross_method_agreement``  the station test's pairwise and reference methods agree, or (network
                             consistency) both the leave-one-out and the pairwise tests are clean;
                             normal: true
-``reference_quality``       Stage-6 ``precision_validation`` is true
+``reference_quality``       Stage-6 ``precision_validation`` is true and the reference uncertainty is
+                            known (empirical TLE ensemble)
 ``data_completeness``       Stages 2-5 linked, calibration metadata present, all links verified
 
 ``HIGH`` needs all six; ``MODERATE`` needs at least four with ``reference_quality``

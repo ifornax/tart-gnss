@@ -54,9 +54,14 @@ Evidence level (per anomalous epoch; 0 for a normal one)
        inconsistent, no station picked, no instrument / geometry /
        trajectory-model tag, reference not limited
     5  ``UNEXPLAINED``: Level 4, strong and persistent, calibration metadata
-       available
-    ``REFERENCE_LIMITED`` caps the level at 3; missing calibration metadata
-    caps it at 4. Level 5 is an evidence level, never a physical cause.
+       available, and the TLE reference uncertainty known (an empirical
+       ensemble of >= 3 TLEs, so the anomaly statistic includes it)
+    ``REFERENCE_LIMITED`` caps the level at 3; missing calibration metadata or
+    an unknown reference uncertainty caps it at 4 (missing evidence is never
+    clean evidence). Level 5 is an evidence level, never a physical cause.
+    When the station test picks a station, its pair inconsistency and Stage-4
+    line-residual flags are not counted again as localisation evidence, so a
+    plain station bias is Level 2.
 """
 
 from __future__ import annotations
@@ -156,7 +161,8 @@ def station_pick(pairs_ep, loo_ep, reference_ok: bool, rules: EvidenceRules):
 
 def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str, List[Dict[str, object]]],
                     stage5_run_flags: List[str], stage5_resets: int, precision_validation: bool,
-                    calibration_available: bool, data_complete: bool, rules: EvidenceRules):
+                    calibration_available: bool, data_complete: bool, rules: EvidenceRules,
+                    reference_uncertainty_known: Optional[bool] = None):
     """Assign diagnostic tags and evidence level per epoch; return ``(rows, run_info)``."""
     used = epochs["diagnosed"].to_numpy(bool)
     n_used = int(used.sum())
@@ -164,6 +170,8 @@ def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str,
     stat_col = "position_mahalanobis_total_cov" if epochs["position_mahalanobis_total_cov"].notna().any() \
         else "position_mahalanobis_obs_cov"
     stat = epochs[stat_col].to_numpy(float)
+    if reference_uncertainty_known is None:
+        reference_uncertainty_known = stat_col == "position_mahalanobis_total_cov"
     anomalous = used & np.isfinite(stat) & (stat > thr)
     strong = anomalous & (epochs["stage4_d2_tle"].to_numpy(float) > rules.stage4_threshold)
     t_s = epochs["time_s"].to_numpy(float)
@@ -234,7 +242,9 @@ def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str,
                 rows = stations_tbl[stations_tbl["epoch_index"] == ei]
                 if rows["time_mismatch"].any():
                     ins.add("TIMING_CORRELATED")
-            if set(ep["stage4_flags"]) & {"HIGH_LINE_RESIDUAL", "HIGH_CHI2"} or pair_bad:
+            # A station picked by the station test explains its own pair inconsistency and line residuals: that
+            # evidence is not counted a second time as a localisation correlation.
+            if pick[0] not in specific and (set(ep["stage4_flags"]) & {"HIGH_LINE_RESIDUAL", "HIGH_CHI2"} or pair_bad):
                 ins.add("LOCALISATION_CORRELATED")
             tags += sorted(ins)
             if ins:
@@ -252,12 +262,12 @@ def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str,
                     and not reference_limited):
                 tags.append("NETWORK_CONSISTENT")
                 level = 4
-                if strong[ei] and persistent[ei] and calibration_available:
+                if strong[ei] and persistent[ei] and calibration_available and reference_uncertainty_known:
                     tags.append("UNEXPLAINED")
                     level = 5
             if reference_limited:
                 level = min(level, 3)
-            if not calibration_available:
+            if not calibration_available or not reference_uncertainty_known:
                 level = min(level, 4)
             comp = {
                 "effect_size": bool(stat[ei] >= 2 * thr), "persistence": bool(persistent[ei]),
@@ -267,7 +277,8 @@ def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str,
             tags.append("NORMAL")
             comp = {"effect_size": bool(np.isfinite(stat[ei]) and stat[ei] <= thr / 2), "persistence": True,
                     "cross_method_agreement": True}
-        comp.update({"sample_support": n_used >= rules.min_samples, "reference_quality": bool(precision_validation),
+        comp.update({"sample_support": n_used >= rules.min_samples,
+                     "reference_quality": bool(precision_validation) and bool(reference_uncertainty_known),
                      "data_completeness": bool(data_complete)})
         rec.update({"diagnostic_tags": ordered(tags), "evidence_level": level,
                     "diagnostic_confidence": confidence(comp), "confidence_components": comp})
@@ -286,5 +297,6 @@ def assign_evidence(epochs, stations_tbl, influence, pairs, corr_tags: Dict[str,
         "longest_anomaly_run": longest,
         "station_picks": counts, "n_epochs_with_station_test": n3, "station_specific": sorted(specific),
         "trajectory_model_run_level": traj_run, "geometry_run_level": geometry_run,
+        "reference_uncertainty_known": bool(reference_uncertainty_known),
     }
     return out, info

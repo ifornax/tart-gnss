@@ -39,8 +39,8 @@ def scenarios():
          "Level 0, NORMAL"),
         ("biased_station", Scenario("bias", bias_deg={"madagascar": (0.03, 0.02)}),
          "fixed 0.036 deg direction bias at madagascar",
-         lambda s: "STATION_SPECIFIC" in s["overall_diagnostic_tags"] and s["overall_evidence_level"] >= 2
-         and s["station_test"]["station_specific"] == ["madagascar"], "STATION_SPECIFIC (madagascar), Level >= 2"),
+         lambda s: "STATION_SPECIFIC" in s["overall_diagnostic_tags"] and s["overall_evidence_level"] == 2
+         and s["station_test"]["station_specific"] == ["madagascar"], "STATION_SPECIFIC (madagascar), Level 2"),
         ("calibration", Scenario("calibration", calibration_bias=("madagascar", (0.03, 0.02))),
          "0.036 deg bias at madagascar only on epochs with a high flagged fraction",
          lambda s: "CALIBRATION_CORRELATED" in s["overall_diagnostic_tags"] and s["overall_evidence_level"] >= 3,
@@ -58,14 +58,18 @@ def scenarios():
          "unmodelled 0.5 m/s^2 acceleration of the truth",
          lambda s: "TRAJECTORY_MODEL_CORRELATED" in s["overall_diagnostic_tags"] and s["overall_evidence_level"] < 4,
          "TRAJECTORY_MODEL_CORRELATED, Level < 4"),
-        ("stale_reference", Scenario("stale", tau_s=10.0, tle_epoch_shift_d=20.0),
+        ("stale_reference", Scenario("stale", tau_s=10.0, tle_epoch_shift_d=20.0, ensemble=False),
          "10 s along-track offset validated against a 20-day-old TLE",
          lambda s: "REFERENCE_LIMITED" in s["overall_diagnostic_tags"] and s["overall_evidence_level"] <= 3,
          "REFERENCE_LIMITED, Level <= 3"),
         ("network_unexplained", Scenario("network", tau_s=10.0),
-         "10 s network-wide time shift of the truth (39 km along-track), clean instruments",
+         "10 s network-wide time shift of the truth (39 km along-track), clean instruments, 5-TLE ensemble",
          lambda s: s["overall_evidence_level"] == 5 and {"NETWORK_CONSISTENT", "UNEXPLAINED"}
          <= set(s["overall_diagnostic_tags"]), "NETWORK_CONSISTENT + UNEXPLAINED, Level 5"),
+        ("network_single_tle", Scenario("noensemble", tau_s=10.0, ensemble=False),
+         "as network_unexplained, but a single TLE (reference uncertainty unknown)",
+         lambda s: s["overall_evidence_level"] == 4 and "REFERENCE_UNCERTAINTY_UNKNOWN" in s["quality_flags"],
+         "Level 4 (Level 5 blocked), REFERENCE_UNCERTAINTY_UNKNOWN"),
         ("missing_stage2", Scenario("nostage2", tau_s=10.0, with_stage2=False),
          "as network_unexplained, but no Stage-2 calibration metadata",
          lambda s: s["overall_evidence_level"] == 4 and "CALIBRATION_METADATA_MISSING" in s["quality_flags"],
@@ -111,7 +115,8 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     lines = ["Stage-7 synthetic demonstration (scripts/stage7_synthetic_demo.py)",
              "Chain per scenario: synthetic Stage-3 directions (+ Stage-2 calibration manifest) -> tart-triangulate -> "
-             "tart-track -> tart-validate (fresh TLE unless stated) -> tart-diagnose", ""]
+             "tart-track -> tart-validate (fresh TLE and a 5-member TLE ensemble unless stated) -> tart-diagnose",
+             "Note: in a clean network 'most influential station' reflects geometric leverage, not a fault.", ""]
     table = []
     for name, sc, injected, check, expected in scenarios():
         code, s, inf = run_one(sc, out / name, plots=name in PLOTTED)
