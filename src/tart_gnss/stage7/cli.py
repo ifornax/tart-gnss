@@ -161,7 +161,11 @@ def predicted_geometry(ep, rows, stations):
 
 
 def station_summaries(inp, stations_tbl, influence_df, picks_info, corr_tags) -> Dict[str, Dict[str, object]]:
-    """One descriptive summary per station (no combined health score)."""
+    """One descriptive summary per station over the diagnosed epochs (no combined health score).
+
+    ``usable_fraction`` is the fraction of the station's contributions with a
+    direction residual against the Stage-5 trajectory.
+    """
     out = {}
     m3 = inp.manifests.get(3) or {}
     bias = station_bias(stations_tbl)
@@ -356,17 +360,20 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                     "diagnostic_confidence"]
     overall_conf = at.mode().iloc[0] if len(at) else "LOW"
     infl_station = ""
-    if len(infl_df):
+    n_loo_epochs = int(infl_df["epoch_index"].nunique()) if len(infl_df) else 0
+    if n_loo_epochs >= rules.station_min_epochs:  # never named from one or two epochs
         med = infl_df.groupby("station_id")["loo_mahalanobis"].median()
         if med.notna().any():
             infl_station = str(med.idxmax())
         else:
             infl_station = str(infl_df.groupby("station_id")["loo_shift_3d_m"].median().idxmax())
-    summaries = station_summaries(inp, st, infl_df, info, corr_tags)
+    st_diag = st[st["epoch_index"].isin(np.flatnonzero(epochs["diagnosed"].to_numpy(bool)))] if len(st) else st
+    summaries = station_summaries(inp, st_diag, infl_df, info, corr_tags)
     logger.info("anomalous epochs %d of %d (threshold %.3g on %s); persistent intervals %d; most influential station "
                 "%s", info["n_anomalous"], n_used, info["anomaly_threshold"], info["anomaly_statistic"],
                 sum(1 for r in info["anomaly_intervals"] if r["n_epochs"] >= args.min_persistent_epochs),
-                infl_station or "undetermined (no leave-one-out epochs)")
+                infl_station or f"undetermined ({n_loo_epochs} leave-one-out epoch(s); "
+                                f"{rules.station_min_epochs} needed)")
     logger.info("reference quality: precision_validation %s; maximum evidence level %d (%s); tags: %s", precision,
                 overall_level, overall_conf, ", ".join(ordered(overall_tags)) or "none")
 
@@ -418,6 +425,7 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                                          if r["n_epochs"] >= args.min_persistent_epochs],
         "unexplained_intervals": info["unexplained_intervals"],
         "most_influential_station": infl_station or None,
+        "n_leave_one_out_epochs": n_loo_epochs,
         "station_test": {"picks": info["station_picks"], "n_epochs_with_station_test": info["n_epochs_with_station_test"],
                          "station_specific": info["station_specific"]},
         "station_summaries": summaries,
