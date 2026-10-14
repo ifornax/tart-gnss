@@ -1,0 +1,33 @@
+Stage-6 synthetic demonstration (scripts/stage6_synthetic_demo.py)
+Reference TLE (NORAD 40534): 1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991 / 2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063
+Residual convention: observed - TLE
+
+PART A: known injected residuals (observed built by an independent TEME -> GCRS route)
+  TLE epoch 2026-10-06T17:48:11.977045Z; median TLE age 0.110 d (forward); precision_validation True; exit codes 0 (single TLE), 0 (ensemble)
+  injected RTN position offset           (+1000.0, +2000.0, -500.0) m
+  recovered radial / along / cross       (+1000.000, +2000.001, -500.000) m
+  injected RTN velocity offset           (+0.100, -0.050, +0.020) m/s
+  recovered RTN velocity residual        (+0.1000, -0.0500, +0.0200) m/s
+  3-D residual norm                      2291.3 m (expected 2291.3 m)
+  geocentric angular residual            16.16 arcsec
+  equivalent along-track time offset     0.5116 s
+  Stage-5 sigma R/T/N                    (+300.0, +800.0, +400.0) m
+  conditional position D^2 (TLE fixed)   18.92  (= (1000/300)^2 + (2000/800)^2 + (500/400)^2 = 18.92)
+  conditional state D^2                  19.10
+  single TLE: total-covariance D^2 NaN: True; flags ['HIGH_CONDITIONAL_MAHALANOBIS', 'REFERENCE_UNCERTAINTY_UNKNOWN', 'RESIDUAL_AUTOCORRELATED']
+  ensemble: 5 sets (primary included: True); empirical reference dispersion R/T/N (+24.9, +2699.5, +51.9) m
+  reference-aware position D^2           13.31; state D^2 14.73
+
+PART B: end to end, Stage-4-like positions -> tart-track -> tart-validate
+  truth = TLE trajectory at t + 2 s; Stage-4 noise 3 km along the line of sight, 300 m across; 180 epochs over 30 min; exit codes tart-track 0, tart-validate 0
+  expected along-track residual |v| tau = 7.818 km; radial and cross-track ~0
+  recovered median R / T / N             (+0.080, +7.789, -0.017) km
+  median Stage-5 sigma R / T / N         (0.272, 0.051, 0.051) km
+  equivalent along-track time offset     median 1.992 s (injected 2 s)
+  median RTN velocity residual           (-1.177, -0.025, -0.057) m/s (gravity over tau: radial -GM/r^2 tau)
+  3-D residual median 7.789 km; angular median 61.04 arcsec; velocity residual median 1.178 m/s
+  conditional position D^2 median 66959.0 (the time shift is a real discrepancy, so D^2 >> 3 is expected)
+
+  Monte Carlo, tau = 0 (100 realisations x 5 epochs; 0 with a Stage-5 restart):
+    conditional position D^2: mean 2.82, median 2.33 (chi2_3: 3, 2.37); fraction <= 1/4/9: 0.170 / 0.750 / 0.992 (expected 0.199 / 0.739 / 0.971)
+

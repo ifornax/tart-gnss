@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "stage": 4,
+  "input_stage3_manifest": null,
+  "norad_id": 40534,
+  "coordinate_frame": "ITRS/ECEF",
+  "software": {
+    "git_commit": null
+  },
+  "provenance": {
+    "command_line": [
+      "synthetic"
+    ]
+  },
+  "outputs": {
+    "positions_csv": "docs/examples/stage6/part_b/stage4_input/positions.csv",
+    "positions_parquet": "docs/examples/stage6/part_b/stage4_input/positions.parquet",
+    "station_contributions_csv": "docs/examples/stage6/part_b/stage4_input/station_contributions.csv",
+    "station_contributions_parquet": "docs/examples/stage6/part_b/stage4_input/station_contributions.parquet"
+  }
+}

@@ -1,0 +1,10 @@
+2026-10-14T13:21:54Z INFO    tart_gnss.stage6: input Stage-5 manifest: docs/examples/stage5_real/default/20260625/NORAD_40534/stage5_manifest.json
+2026-10-14T13:21:54Z INFO    tart_gnss.stage6: NORAD 40534; Stage-5 rows 69 (table docs/examples/stage5_real/default/20260625/NORAD_40534/trajectory.parquet)
+2026-10-14T13:21:54Z INFO    tart_gnss.stage6: reference TLE: GPS BIIF-9  (PRN 26) (tle-file); epoch 2026-10-06T17:48:11.977Z; only element set for this NORAD ID in the file
+2026-10-14T13:21:54Z INFO    tart_gnss.stage6: Stage-5 rows compared under 'strict' policy: 0 of 69
+2026-10-14T13:21:55Z INFO    tart_gnss.stage6: precision validation: False (failed: tle_age_within_stale_limit, stage5_trajectory_valid, no_state_covariance_failure)
+2026-10-14T13:21:55Z INFO    tart_gnss.stage6: outputs: docs/examples/stage6_real/default/20260625/NORAD_40534
+2026-10-14T13:21:55Z INFO    tart_gnss.stage6:   residuals_csv: docs/examples/stage6_real/default/20260625/NORAD_40534/residuals.csv
+2026-10-14T13:21:55Z INFO    tart_gnss.stage6:   residuals_parquet: docs/examples/stage6_real/default/20260625/NORAD_40534/residuals.parquet
+2026-10-14T13:21:55Z INFO    tart_gnss.stage6:   tle_trajectory_parquet: docs/examples/stage6_real/default/20260625/NORAD_40534/tle_trajectory.parquet
+2026-10-14T13:21:55Z WARNING tart_gnss.stage6: comparison completed but not valid for precision analysis
