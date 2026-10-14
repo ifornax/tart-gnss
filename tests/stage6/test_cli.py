@@ -31,7 +31,7 @@ def test_fresh_reference_exit_0(tmp_path):
     assert "sgp4" in man["tle_reference"]["sgp4_implementation"] and man["frames"]["sgp4_source_frame"].startswith("TEME")
     assert man["stage5_inputs_unchanged"] is True
     # Single TLE: no reference covariance pretended.
-    assert res["position_mahalanobis_total_cov"].isna().all()
+    assert res["position_mahalanobis_total_cov"].isna().all() and res["cov_tle_dispersion_x_x"].isna().all()
     assert all("REFERENCE_UNCERTAINTY_UNKNOWN" in f for f in res["quality_flags"])
     # No residual thresholds given -> no HIGH_*_RESIDUAL flags.
     assert not any(f.startswith("HIGH_POSITION") for fl in res["quality_flags"] for f in fl)

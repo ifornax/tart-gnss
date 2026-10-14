@@ -20,8 +20,10 @@ there are two kinds of statistic:
 
 Stage 6 never fits, shifts or adjusts the TLE. It never subtracts a time
 offset or an RTN bias, never rescales the Stage-5 covariance, and never
-writes to the Stage-5 run. The last point is checked: the manifest records
-the input hashes before and after (`stage5_inputs_unchanged`). Attribution
+writes to the Stage-5 run. The last point is checked: the Stage-5 manifest
+and trajectory are re-hashed after the run, and the result is recorded as
+`stage5_inputs_unchanged`. A test hashes every file of the Stage-5 directory
+before and after. Attribution
 of a residual belongs to Stage 7.
 
 Specification: [`tart_gnss_stage6_implementation.md`](../tart_gnss_stage6_implementation.md).
@@ -162,10 +164,13 @@ error.
 | `state_mahalanobis_obs_cov` | D² = Δxᵀ P⁻¹ Δx (6-D) |
 | `position_/state_mahalanobis_total_cov` | the same with C_obs + C_TLE,empirical. NaN unless an ensemble of ≥ 3 TLEs is available |
 
-The distances are *squared* Mahalanobis distances. They are computed by
-Cholesky decomposition. If a covariance is not finite, not positive definite,
-or has a condition number above 10¹⁴, the distance is NaN and the row is
-flagged `INVALID_STAGE5_COVARIANCE`.
+The distances are *squared* Mahalanobis distances, computed by Cholesky
+decomposition. A distance is NaN when its covariance is not finite, not
+positive definite, or has a condition number above 10¹⁴. The flag
+`INVALID_STAGE5_COVARIANCE` and the precision-validation condition depend on
+the 3×3 *position* block. If only the 6×6 matrix is too ill-conditioned (for
+example because of r–v correlations close to 1 in a smoothed orbit), the
+state D² alone is NaN. The run log notes this, and no flag is raised.
 
 Stage-5 epochs are strongly correlated, so distances are reported per epoch
 and summarised by medians. They are never summed into a χ² or p-value over
@@ -190,7 +195,12 @@ give the empirical reference dispersion.
 - Without a usable ensemble, `REFERENCE_UNCERTAINTY_UNKNOWN` is raised.
 - `TLE_REFERENCE_DISPERSION_HIGH` marks rows where the ensemble's position
   dispersion exceeds the Stage-5 position σ.
-- The primary TLE stays the reference. The ensemble mean never replaces it.
+- The primary TLE stays the reference. The ensemble mean never replaces it;
+  the median |primary − mean| in position and velocity is reported
+  (`summary.json` → `ensemble.primary_minus_ensemble_mean`).
+- The full per-epoch 6×6 dispersion is stored in the residual table as
+  `cov_tle_dispersion_<a>_<b>` (21 upper-triangle terms, GCRS). These are the
+  position and velocity dispersion covariances, with their cross terms.
 
 ## 8. Summary statistics, trend and autocorrelation (`summary.json`)
 
@@ -344,7 +354,7 @@ then `tart-validate`, and both exit 0.
 | recovered median R / T / N | (+0.080, +7.789, −0.017) km |
 | median Stage-5 σ R / T / N | (0.272, 0.051, 0.051) km |
 | equivalent along-track time offset | 1.992 s (injected 2 s) |
-| velocity residual (median) | 1.178 m/s, mostly radial, which matches the expected GM/r²·τ = 1.13 m/s |
+| velocity residual (median) | 1.178 m/s, of which dv_R = −1.177 m/s, matching −GM/r²·τ = −1.13 m/s |
 | conditional position D² | median 6.7×10⁴: the time shift is a real discrepancy |
 
 **Monte Carlo with τ = 0** (100 realisations × 5 epochs; no Stage-5
@@ -356,7 +366,8 @@ should follow χ²₃.
 | mean / median | 2.82 / 2.33 | 3 / 2.37 |
 | fraction ≤ 1 / 4 / 9 | 0.170 / 0.750 / 0.992 | 0.199 / 0.739 / 0.971 |
 
-Stage 5's uncertainties therefore carry through Stage 6 calibrated.
+On white-noise synthetic data, Stage 5's uncertainties therefore carry
+through Stage 6 calibrated. On the real data they do not (§12).
 
 ## 12. Real-data run (2026-06-25, GPS PRN 26, NORAD 40534)
 

@@ -144,6 +144,9 @@ def part_b(out: Path, n_mc: int, lines: list) -> None:
         f"  median Stage-5 sigma R / T / N         ({st['radial']['median_sigma_obs_m'] / 1e3:.3f}, "
         f"{st['along_track']['median_sigma_obs_m'] / 1e3:.3f}, {st['cross_track']['median_sigma_obs_m'] / 1e3:.3f}) km",
         f"  equivalent along-track time offset     median {st['along_track_time_s']['median']:.3f} s (injected {TAU_S:g} s)",
+        f"  median RTN velocity residual           ({st['velocity_radial']['median']:+.3f}, "
+        f"{st['velocity_along_track']['median']:+.3f}, {st['velocity_cross_track']['median']:+.3f}) m/s "
+        "(gravity over tau: radial -GM/r^2 tau)",
         f"  3-D residual median {st['position_3d']['median'] / 1e3:.3f} km; angular median "
         f"{st['angular_deg']['median'] * 3600:.2f} arcsec; velocity residual median {st['velocity_3d']['median']:.3f} m/s",
         f"  conditional position D^2 median {st['position_mahalanobis_obs_cov']['median']:.1f} (the time shift is "

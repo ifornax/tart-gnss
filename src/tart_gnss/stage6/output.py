@@ -5,7 +5,11 @@ epoch. All residuals are ``observed - TLE``; Cartesian components are GCRS.
 ``position_/state_mahalanobis_*`` are *squared* Mahalanobis distances
 (``D^2``): ``*_obs_cov`` with the Stage-5 covariance only (conditional on the
 TLE being fixed), ``*_total_cov`` with the empirical TLE reference dispersion
-added (NaN without an ensemble of >= 3 TLEs). Rows not compared (Stage-5
+added (NaN without an ensemble of >= 3 TLEs). ``cov_tle_dispersion_<a>_<b>``
+are the 21 upper-triangle terms of the per-epoch 6x6 empirical TLE dispersion
+(position and velocity blocks and their cross terms; GCRS; NaN without an
+ensemble); rebuild with ``tart_gnss.stage5.output.state_covariance(row,
+"tle_dispersion")``. Rows not compared (Stage-5
 policy) keep their time and flags with NaN residuals.
 
 ``tle_trajectory``: the TLE-predicted state at the same epochs (GCRS position
@@ -19,6 +23,7 @@ from pathlib import Path
 from typing import Dict, Optional, Sequence
 
 from tart_gnss.stage4.output import write_manifest  # noqa: F401  (same JSON conventions)
+from tart_gnss.stage5.output import covariance_columns
 
 STAGE6_SCHEMA_VERSION = 1
 
@@ -41,6 +46,7 @@ RESIDUAL_COLUMNS = [
     "n_tle_ensemble", "stage5_state_source", "stage5_valid", "stage5_rejection_reason", "precision_validation",
     "valid",
     "quality_flags", "stage5_quality_flags",
+    *covariance_columns("tle_dispersion"),
 ]
 
 TLE_TRAJECTORY_COLUMNS = [

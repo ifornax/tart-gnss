@@ -94,3 +94,10 @@ def test_ensemble_dispersion_and_total_covariance(tmp_path):  # 34.8
     assert (res["sigma_along_track_ref_m"] > res["sigma_radial_ref_m"]).all()
     assert not any("REFERENCE_UNCERTAINTY_UNKNOWN" in f for f in res["quality_flags"])
     assert summ["ensemble"]["n_tle_ensemble"] == 5
+    assert summ["ensemble"]["primary_minus_ensemble_mean"]["median_position_m"] > 0
+    from tart_gnss.stage5.output import state_covariance
+
+    p = state_covariance(res.iloc[0], "tle_dispersion")
+    assert np.allclose(p, p.T) and np.sqrt(np.trace(p[:3, :3])) == pytest.approx(
+        np.sqrt(res["sigma_radial_ref_m"].iloc[0] ** 2 + res["sigma_along_track_ref_m"].iloc[0] ** 2
+                + res["sigma_cross_track_ref_m"].iloc[0] ** 2), rel=1e-6)

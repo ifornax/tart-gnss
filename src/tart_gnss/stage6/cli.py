@@ -48,6 +48,7 @@ from tart_gnss.stage6.errors import (
 )
 from tart_gnss.stage6.frames import FRAMES
 from tart_gnss.stage6.loader import load_stage5_trajectory, row_state
+from tart_gnss.stage5.output import covariance_fields
 from tart_gnss.stage6.output import STAGE6_SCHEMA_VERSION, read_table, write_manifest, write_tables
 from tart_gnss.stage6.propagation import propagate_tle
 from tart_gnss.stage6.reference_uncertainty import LABEL, MIN_ENSEMBLE, empirical_tle_covariance
@@ -224,6 +225,11 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
             try:
                 ref_cov = empirical_tle_covariance(members, s5.times_s[idx])
                 ens_info.update(ref_cov.summary())
+                d = tle_traj.state_gcrs[idx] - ref_cov.mean_state
+                ens_info["primary_minus_ensemble_mean"] = {
+                    "median_position_m": float(np.median(np.linalg.norm(d[:, :3], axis=1))),
+                    "median_velocity_m_s": float(np.median(np.linalg.norm(d[:, 3:], axis=1))),
+                    "note": "the primary TLE remains the reference; the ensemble mean is not used in its place"}
             except ReferenceCovarianceError as exc:
                 logger.warning("ensemble unusable: %s", exc)
         else:
@@ -324,6 +330,7 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
                 cref = covariance_to_rtn(res.bases[j], ref_cov.covariance[j][:3, :3])
                 for i, c in enumerate(RTN):
                     rec[f"sigma_{c}_ref_m"] = float(np.sqrt(max(cref[i, i], 0.0)))
+                rec.update(covariance_fields(ref_cov.covariance[j], "tle_dispersion"))
                 if ref_cov.position_dispersion_m[j] > np.sqrt(np.trace(covs[k][:3, :3])):
                     flags.append(q.TLE_REFERENCE_DISPERSION_HIGH)
             if not res.covariance_ok[j]:
@@ -415,7 +422,8 @@ def run(args: argparse.Namespace, command_line: Sequence[str], log_path_holder: 
 
     from tart_gnss.stage4.loader import sha256_file
 
-    unchanged = sha256_file(s5.trajectory_path) == s5.trajectory_sha256
+    unchanged = (sha256_file(s5.trajectory_path) == s5.trajectory_sha256
+                 and sha256_file(s5.manifest_path) == s5.sha256)
     if not unchanged:
         logger.error("the Stage-5 trajectory changed during the run")
     import sgp4
