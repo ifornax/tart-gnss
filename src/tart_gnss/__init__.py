@@ -1,4 +1,4 @@
-"""tart_gnss: the TART GNSS satellite-localisation pipeline (Stages 1-5).
+"""tart_gnss: the TART GNSS satellite-localisation pipeline (Stages 1-6).
 
 Stage 1 predicts GNSS satellite positions from TLEs (SGP4 via Skyfield) and
 identifies the time windows during which a satellite is simultaneously above a
@@ -12,12 +12,14 @@ independently from the complex visibilities. Stage 4
 the 3-D (ITRS/ECEF) position with its covariance. Stage 5
 (:mod:`tart_gnss.stage5`) turns those positions into a continuous
 position/velocity trajectory (GCRS, full 6x6 covariance) with an extended
-Kalman filter and RTS smoother, independently of any TLE. TLE comparison
-(Stage 6) is not implemented here.
+Kalman filter and RTS smoother, independently of any TLE. Stage 6
+(:mod:`tart_gnss.stage6`) is the first stage where a TLE enters: it
+propagates a selected element set with SGP4 to the Stage-5 epochs and reports
+``observed - TLE`` residuals (Cartesian, RTN) against the Stage-5 uncertainty.
 
 Every public command is named ``tart-*`` (see ``tests/test_cli_names.py``).
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = ["__version__"]
