@@ -1,0 +1,1 @@
+time_utc,innovation_x_m,innovation_y_m,innovation_z_m,innovation_cov_xx,innovation_cov_xy,innovation_cov_xz,innovation_cov_yy,innovation_cov_yz,innovation_cov_zz,whitened_x,whitened_y,whitened_z,nis,nis_first_pass,gate_threshold,accepted,attempted,inflation,stage4_quality_flags,stage5_quality_flags

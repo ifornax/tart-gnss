@@ -7,7 +7,8 @@ those windows. Stage 3 measures the satellite's direction at each station
 from the complex visibilities. Stage 4 intersects those measured lines of
 sight to give the satellite's 3-D position with its covariance. Stage 5
 turns those positions into a continuous position/velocity trajectory with a
-full covariance, without using any TLE.**
+full covariance, without using any TLE. Stage 6 then compares that trajectory
+with a TLE prediction, as observed − TLE residuals.**
 
 | Stage | Command | What it does |
 |---|---|---|
@@ -16,8 +17,9 @@ full covariance, without using any TLE.**
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
 | 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
 | 5 | `tart-track` | Reads the Stage-4 positions and full 3×3 covariances, rotates them ITRS/ECEF → GCRS (Skyfield), initialises a position/velocity state from the first Stage-4 measurements only, and runs an extended Kalman filter (two-body by default; constant-velocity and J2 available) with χ²₃ innovation gating, followed by an RTS smoother. Writes the filtered and smoothed GCRS state, the ECEF position, the full 6×6 covariances, innovations, NIS/whiteness diagnostics, quality flags, `stage5_manifest.json` and seven plots. TLEs are never used. |
+| 6 | `tart-validate` | Propagates exactly one selected TLE (`--tle-file`, or `--tle-source stage1`/`download`) with SGP4 at the exact Stage-5 epochs and transforms it TEME → GCRS. Reports **observed − TLE** residuals: Cartesian, radial/along-track/cross-track (RTN), angular, range and an along-track time equivalent. Also gives the Stage-5 covariance rotated into RTN, measurement-conditional Mahalanobis distances (and reference-aware ones with an ensemble of ≥ 3 TLEs), TLE age, and a precision-validation status. Writes `residuals`, `tle_trajectory`, `summary.json`, `stage6_manifest.json` and eight plots. The TLE is never fitted, and the Stage-5 run is never modified. |
 
-> **Status:** Stages 1–5 complete, with dynamic TART station-registry integration (v0.5.0). The repository is private and under active development.
+> **Status:** Stages 1–6 complete, with dynamic TART station-registry integration (v0.6.0). The repository is private and under active development.
 
 ---
 
@@ -31,6 +33,7 @@ full covariance, without using any TLE.**
 - [Stage 3: direction estimation (`tart-localise`)](#stage-3-direction-estimation-tart-localise)
 - [Stage 4: 3-D localisation (`tart-triangulate`)](#stage-4-3-d-localisation-tart-triangulate)
 - [Stage 5: trajectory tracking (`tart-track`)](#stage-5-trajectory-tracking-tart-track)
+- [Stage 6: TLE validation (`tart-validate`)](#stage-6-tle-validation-tart-validate)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -56,7 +59,7 @@ same satellite at the same time give three lines of sight, so the satellite's
 | **3** | **Measure the satellite direction at each station from the visibilities (with image-domain cross-check)** | **✅ `tart-localise` — implemented** |
 | **4** | **Multi-station 3-D localisation from the measured lines of sight** | **✅ `tart-triangulate` — implemented** |
 | **5** | **TLE-independent Bayesian trajectory (position, velocity, 6×6 covariance) from the Stage-4 positions** | **✅ `tart-track` — implemented** |
-| 6 | Compare with the TLE-predicted position | planned |
+| **6** | **Compare the measured trajectory with the TLE prediction (observed − TLE, Cartesian and RTN, with uncertainty context)** | **✅ `tart-validate` — implemented** |
 
 Three conditions are kept strictly separate: **geometric visibility**
 (Stage 1), **data availability** (Stage 2) and **radio detection** (Stage 3).
@@ -69,11 +72,13 @@ conventions in [`docs/stage3_direction_estimation.md`](docs/stage3_direction_est
 [`tart_gnss_stage4_implementation.md`](tart_gnss_stage4_implementation.md) (Stage 4; method in
 [`docs/stage4_triangulation.md`](docs/stage4_triangulation.md)) and
 [`tart_gnss_stage5_implementation.md`](tart_gnss_stage5_implementation.md) (Stage 5; method in
-[`docs/stage5_tracking.md`](docs/stage5_tracking.md)).
+[`docs/stage5_tracking.md`](docs/stage5_tracking.md)) and
+[`tart_gnss_stage6_implementation.md`](tart_gnss_stage6_implementation.md) (Stage 6; method in
+[`docs/stage6_validation.md`](docs/stage6_validation.md)).
 
 **Command names.** Every public command starts with `tart-` (`tart-stations-update`,
 `tart-stations-list`, `tart-common-gnss`, `tart-retrieve`, `tart-localise`,
-`tart-triangulate`, `tart-track`). This is a stable public API, and future stages must follow it;
+`tart-triangulate`, `tart-track`, `tart-validate`). This is a stable public API, and future stages must follow it;
 `tests/test_cli_names.py` enforces it.
 
 ## Installation
@@ -451,6 +456,54 @@ On synthetic orbits the predicted state σ matches the Monte Carlo error to
 within about 2%, and the coverage is close to χ²₃. Method, flags and validation
 are in [`docs/stage5_tracking.md`](docs/stage5_tracking.md).
 
+## Stage 6: TLE validation (`tart-validate`)
+
+```bash
+pip install -e ".[stage6]"      # pandas, pyarrow, matplotlib (SGP4 via skyfield/sgp4)
+tart-validate \
+    --stage5-manifest results/stage5/20260625/NORAD_40534/stage5_manifest.json \
+    --tle-file data/tle/gnss_20260625.tle \
+    --output-dir results/stage6
+```
+
+| Option | Meaning | Default |
+|---|---|---|
+| `--stage5-manifest` | `stage5_manifest.json` from `tart-track` | required |
+| `--tle-file` / `--tle-source` | exactly one primary reference: a TLE file (nearest epoch if it holds several sets for the NORAD ID), `stage1` (the exact Stage-1 set, from the run provenance) or `download` (explicit CelesTrak download, archived; current elements only) | required |
+| `--tle-ensemble-files`, `--tle-ensemble-dir`, `--tle-ensemble-window-days` | nearby sets for the *empirical reference dispersion* (≥ 3 needed) | none, 7 d |
+| `--tle-age-warning-days`, `--tle-age-stale-days` | TLE-age thresholds (pipeline quality limits, not SGP4 accuracy) | 3, 14 |
+| `--quality-policy` | `strict`: valid Stage-5 rows; `permissive`: any row with a finite state | `strict` |
+| `--position-residual-warning-km`, `--velocity-residual-warning-m-s` | optional residual flags (no built-in thresholds) | off |
+| `--allow-stale-reference` | exit 0 for a descriptive comparison when TLE age is the only failed condition | off |
+| `--no-plots`, `--verbose` | skip figures; debug logging | off |
+
+**Exit status:** `0` means precision validation passed; `3` means the
+comparison completed but is not valid for precision analysis (for example a
+stale TLE); `2` means invalid input, including `TLE_NOT_FOUND` and
+`TLE_NORAD_MISMATCH`; `1` means a failure, including `TLE_FRAME_FAILURE`.
+
+**Output:** `results/stage6/<date>/NORAD_<id>/` contains:
+
+- `residuals.{parquet,csv}`: observed and TLE states, Δr and Δv (GCRS and
+  RTN), RTN σ of the observation (and of the reference with an ensemble),
+  the angular and range residual, the along-track time equivalent, squared
+  Mahalanobis distances, TLE age and flags;
+- `tle_trajectory.parquet`: the TLE states and RTN basis vectors, so Stage 7
+  need not re-propagate;
+- `summary.json`: mean/median/RMS/MAD/percentiles, trends, autocorrelation
+  and the precision-validation conditions;
+- `stage6_manifest.json`;
+- eight plots;
+- `logs/stage6.log`.
+
+The TLE has no formal covariance. `*_obs_cov` distances are therefore
+conditional on the TLE being fixed, and reference-aware distances need an
+ensemble of nearby TLEs (labelled empirical dispersion).
+
+The frame chain (SGP4 TEME → Skyfield → GCRS) agrees with an independent
+route (raw SGP4 → GMST82 → the Stage-5 rotation) to 2.5 cm. Method, flags and
+validation are in [`docs/stage6_validation.md`](docs/stage6_validation.md).
+
 ## TLEs and reproducibility
 
 - Without `--tle-file`, current GNSS TLEs are downloaded from CelesTrak and
@@ -476,6 +529,8 @@ are in [`docs/stage5_tracking.md`](docs/stage5_tracking.md).
 | Stage 4, 2026-06-25 PRN 26, real data, 10 s UTC-aligned Stage-3 bins ([details](docs/stage4_triangulation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage4_real)) | **The spec command exits 0 with 1 valid three-station epoch** (09:23:54.9). Stations now match within 0.57 s; MG-Tana's 2 usable rows are the limit. With two stations allowed there are 35 epochs: crossing angles 4–8°, condition number about 240, σ ≈ (266, 163, 453) km. The solutions lie about 3 000 km too far out along the line of sight (height about 23 300 km), with reduced χ² ≈ 11, which matches the 1–2° Stage-3 direction systematics. This is not a TLE comparison. |
 | Stage 5, synthetic ([example](docs/examples/stage5), [report](docs/examples/stage5/demo_report.txt)) | Circular GNSS-like orbit (analytic Kepler truth, no TLE). From 156 Stage-4-like positions (30 km along the line of sight, 3 km across, with a 240 s gap and a 150 km outlier), the smoothed trajectory has a position RMSE of 5.2 km and a velocity RMSE of 1.1 m/s, and the outlier is gated. Over 200 Monte Carlo runs, the predicted σ matches the empirical error (3.45 vs 3.53 km; 3.61 vs 3.62 m/s), with coverage close to χ²₃. Two-body beats constant velocity on the innovation diagnostics. End to end through `tart-triangulate`, a 39 km single-epoch error becomes a 6.9 km trajectory error. |
 | Stage 5, 2026-06-25 PRN 26, real data ([details](docs/stage5_tracking.md#14-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage5_real)) | **The spec command exits 3** (`INSUFFICIENT_MEASUREMENTS`), because the default Stage-4 run has one valid epoch. On the two-station Stage-4 run (35 epochs over 340 s), the epoch-to-epoch scatter is consistent with the Stage-4 covariance (mean NIS 2.8, close to χ²₃). NIS cannot see a common offset, such as the ~3 000 km along-LOS offset found in Stage 4. The innovations are strongly autocorrelated (lag-1 0.69, `DYNAMICS_MISMATCH`), which shows slowly varying Stage-3 systematics, so the smoothed σ is optimistic. The only three-station epoch is gated (NIS 36). Two-body and constant velocity cannot be told apart at this noise level. No TLE comparison is made (that is Stage 6). |
+| Stage 6, synthetic ([example](docs/examples/stage6), [report](docs/examples/stage6/demo_report.txt)) | With a fresh reference TLE (0.11 d), injected RTN offsets of (+1000, +2000, −500) m and Δv of (+0.10, −0.05, +0.02) m/s are recovered exactly, and the conditional D² equals its analytic value (18.92). End to end through `tart-track`, a 2 s time shift (7.818 km along track) is recovered as +7.789 km (σ 51 m), 1.992 s. With the TLE equal to the truth, the conditional position D² has mean 2.82 and median 2.33 over 100 Monte Carlo runs (χ²₃: 3, 2.37). |
+| Stage 6, 2026-06-25 PRN 26, real data ([details](docs/stage6_validation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage6_real)) | **Not a precision validation (exit 3).** The only local TLE (the Stage-1 set, epoch 2026-10-06) is propagated 103 days backwards: `TLE_STALE`, `TLE_BACKPROPAGATED`, `precision_validation: false`. The descriptive residuals (observed − TLE) are R +2765 km, T +370 km, N −627 km (median), about 1.4° geocentric. They are not interpreted as accuracy. A contemporaneous TLE (e.g. from Space-Track) is needed. |
 | Stage 3, synthetic end-to-end ([example](docs/examples/stage3)) | Sources injected 3.0–3.7° from the real PRN 26 TLE track are recovered to a median of 0.11–0.17° (σ ≈ 0.15°) and stay 3.0–3.7° from the TLE (measurement-driven). The visibility–image disagreement is about 0.3°. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
@@ -492,7 +547,8 @@ manifests). They are kept unchanged as provenance records.
   check `signal_relevance` in Stage 2.
 - The 2026-06-25 example used TLEs propagated about 103 days backwards.
   Window times may be off by up to about a minute, which the padding absorbs.
-  Stage-6 comparisons need contemporaneous TLEs.
+  Stage-6 comparisons need contemporaneous TLEs; with the current one,
+  `tart-validate` exits 3 (`TLE_STALE`, not precision validation).
 - Elevations are geometric (no refraction). Skyfield's ITRS neglects polar motion (~10 m).
 - Stage-1 excursions shorter than `--step` cannot be detected. Windows at the
   search-interval edge are flagged as clipped.
@@ -516,6 +572,7 @@ tart-gnss/
 ├── tart_gnss_stage3_implementation.md   # Stage-3 specification
 ├── tart_gnss_stage4_implementation.md   # Stage-4 specification
 ├── tart_gnss_stage5_implementation.md   # Stage-5 specification
+├── tart_gnss_stage6_implementation.md   # Stage-6 specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
@@ -530,11 +587,15 @@ tart-gnss/
 ├── docs/examples/stage5/            # synthetic Stage-5 demo (Stage-4-like input, two-body/CV runs, end-to-end chain, report)
 ├── docs/examples/stage5_real/       # real 2026-06-25 Stage-5 runs (spec command, two-station diagnostic, CV)
 ├── docs/stage4_triangulation.md     # Stage-4 method, uncertainty validation, outputs
+├── docs/examples/stage6/            # synthetic Stage-6 demo (known injections, ensemble, end-to-end via tart-track, report)
+├── docs/examples/stage6_real/       # real 2026-06-25 Stage-6 runs (stale TLE: not precision validation)
 ├── docs/stage5_tracking.md          # Stage-5 method, validation, real-data results
+├── docs/stage6_validation.md        # Stage-6 frames, RTN, residuals, statistics, validation, real-data results
 ├── scripts/make_report_figures.py
 ├── scripts/stage3_synthetic_demo.py
 ├── scripts/stage4_synthetic_demo.py
 ├── scripts/stage5_synthetic_demo.py
+├── scripts/stage6_synthetic_demo.py
 ├── src/tart_gnss/
 │   ├── cli.py  stations.py  tle.py  propagation.py  visibility.py
 │   ├── windows.py  search.py  output.py  provenance.py      # Stage 1
@@ -580,14 +641,26 @@ tart-gnss/
 │       ├── quality.py          # Stage-4 policy, covariance integrity, Stage-5 flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-track
-└── tests/                           # 429 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, CLI names: 3
+│   └── stage6/
+│       ├── loader.py           # Stage-5 manifest/trajectory, full 6x6 covariance
+│       ├── tle_reference.py    # --tle-file / stage1 / download selection, ensemble, provenance
+│       ├── propagation.py      # SGP4 at the exact Stage-5 epochs, TLE age
+│       ├── frames.py           # TEME -> GCRS chain (Skyfield), frame documentation
+│       ├── rtn.py              # RTN (= RIC) basis, covariance rotation
+│       ├── residuals.py        # observed - TLE residuals, Mahalanobis distances
+│       ├── reference_uncertainty.py  # empirical TLE reference dispersion
+│       ├── statistics.py       # summaries, trends, autocorrelation
+│       ├── quality.py          # Stage-5 policy, Stage-6 flags, precision validation
+│       ├── output.py  plotting.py  synthetic.py  errors.py
+│       └── cli.py              # tart-validate
+└── tests/                           # 491 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 429 tests, ~60 s, no network needed
+pytest                       # 491 tests, ~70 s, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
@@ -603,7 +676,13 @@ only numpy and pandas. The Stage-5 tests build Stage-4 tables from analytic
 Kepler orbits. They check the frame rotation against Skyfield, the integrator
 and STM against the analytic solution, and each of the specification's §32
 scenarios. They also cover Monte Carlo NEES and coverage, the filter
-lock-out, and a no-TLE run in which every TLE loader raises.
+lock-out, and a no-TLE run in which every TLE loader raises. The Stage-6
+tests compare the TEME → GCRS chain with an independent route, and check the
+RTN algebra and each of the specification's §34 cases: zero residual,
+Cartesian, RTN and velocity injections, covariance rotation, TLE age, single
+TLE and ensemble. They also cover TLE selection and provenance (the download
+uses an injected fetcher, so no network is needed) and that the Stage-5 run
+is left unmodified.
 
 ## Technical report
 

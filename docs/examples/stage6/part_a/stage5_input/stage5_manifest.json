@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "stage": 5,
+  "norad_id": 40534,
+  "state_frame": "GCRS",
+  "measurement_frame": "ITRS/ECEF",
+  "input_stage4_manifest": null,
+  "tle_used": false,
+  "software": {
+    "git_commit": null
+  },
+  "provenance": {
+    "command_line": [
+      "synthetic"
+    ]
+  },
+  "outputs": {
+    "trajectory_csv": "docs/examples/stage6/part_a/stage5_input/trajectory.csv",
+    "trajectory_parquet": "docs/examples/stage6/part_a/stage5_input/trajectory.parquet",
+    "innovations_csv": "docs/examples/stage6/part_a/stage5_input/innovations.csv",
+    "innovations_parquet": "docs/examples/stage6/part_a/stage5_input/innovations.parquet"
+  }
+}
