@@ -76,12 +76,13 @@ def independent_gcrs_states(line1: str, line2: str, times_s) -> np.ndarray:
 
 def perturbed_tle(line1: str, line2: str, d_epoch_days: float = 0.0, d_mean_anomaly_deg: float = 0.0,
                   d_raan_deg: float = 0.0, d_inclination_deg: float = 0.0, d_mean_motion_frac: float = 0.0,
-                  d_ecc: float = 0.0) -> Tuple[str, str]:
+                  d_ecc: float = 0.0, satnum: Optional[int] = None) -> Tuple[str, str]:
     """A nearby element set (valid lines with checksums), via ``sgp4init`` and ``sgp4.exporter``.
 
     A shifted epoch carries mean anomaly, argument of perigee and RAAN forward
     with SGP4's own secular rates, so an epoch-shifted set describes nearly
     the same trajectory; the ``d_*`` terms then add deliberate differences.
+    ``satnum`` relabels the set with another catalogue number (synthetic satellites).
     """
     from sgp4 import exporter
     from sgp4.api import WGS72, Satrec
@@ -90,7 +91,7 @@ def perturbed_tle(line1: str, line2: str, d_epoch_days: float = 0.0, d_mean_anom
     n = Satrec()
     epoch = s.jdsatepoch + s.jdsatepochF - 2433281.5 + d_epoch_days
     dt_min = d_epoch_days * 1440.0  # carry the elements to the new epoch with SGP4's secular rates
-    n.sgp4init(WGS72, "i", s.satnum, epoch, s.bstar, s.ndot, s.nddot, s.ecco + d_ecc,
+    n.sgp4init(WGS72, "i", s.satnum if satnum is None else int(satnum), epoch, s.bstar, s.ndot, s.nddot, s.ecco + d_ecc,
                s.argpo + s.argpdot * dt_min, s.inclo + np.radians(d_inclination_deg),
                np.mod(s.mo + s.mdot * dt_min + np.radians(d_mean_anomaly_deg), 2 * np.pi),
                s.no_kozai * (1 + d_mean_motion_frac), np.mod(s.nodeo + s.nodedot * dt_min + np.radians(d_raan_deg),

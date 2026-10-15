@@ -19,11 +19,13 @@ propagates a selected element set with SGP4 to the Stage-5 epochs and reports
 Stage 7 (:mod:`tart_gnss.stage7`) traces the run back through Stages 2-6 and
 reports evidence about where a discrepancy comes from (station, instrument,
 timing, geometry, trajectory model, reference) with transparent rules, never
-asserting a physical cause.
+asserting a physical cause. The campaign layer (:mod:`tart_gnss.campaign`,
+``tart-campaign``) aggregates many completed Stage-7 runs into population
+statistics, with runs as the independent units.
 
 Every public command is named ``tart-*`` (see ``tests/test_cli_names.py``).
 """
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 __all__ = ["__version__"]

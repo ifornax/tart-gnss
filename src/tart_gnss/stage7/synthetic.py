@@ -20,6 +20,12 @@ Injectable effects (all optional):
 ``subsets``            ``{station: bool array}`` epochs at which the station observes
 ``random_metadata``    random-walk ``flagged_fraction``/``snr`` unrelated to the data
 ``tle_epoch_shift_d``  validate against an element set re-epoched by this many days
+``tle``                the satellite's element set (default: the PRN-26 example); its catalogue
+                       number is the NORAD ID used throughout the chain
+``satellite_name``, ``constellation``  recorded in the Stage-3 manifest (structured metadata)
+``snr``                Stage-3 SNR written for every row
+``t0_offset_s``        observation start relative to :data:`T0` (e.g. whole sidereal days
+                       for repeated passes over the same ground track)
 ``ensemble``           also pass a 5-member ensemble of nearby element sets (epoch shifts of
                        -1 .. +1 d carried forward with SGP4's secular rates) so Stage 6 has an
                        empirical reference covariance
@@ -67,22 +73,42 @@ class Scenario:
     tle_epoch_shift_d: float = 0.0
     with_stage2: bool = True
     ensemble: bool = True
+    tle: Optional[Tuple[str, str]] = None
+    satellite_name: str = "SYNTHETIC"
+    constellation: str = "GPS"
+    snr: float = 20.0
+    t0_offset_s: float = 0.0
     min_stations: int = 3
     time_match_tolerance_s: float = 0.75
     stations: Dict[str, Tuple[float, float, float]] = field(default_factory=lambda: dict(EXAMPLE_STATIONS))
 
 
+#: One sidereal day (s): GNSS ground tracks repeat after ~1 (GPS: 2 orbits) sidereal day.
+SIDEREAL_DAY_S = 86164.0905
+
+
+def tle_of(sc: Scenario) -> Tuple[str, str]:
+    """The scenario's element set."""
+    return sc.tle if sc.tle is not None else (L1, L2)
+
+
+def norad_of(sc: Scenario) -> int:
+    """The scenario's NORAD catalogue number."""
+    return int(tle_of(sc)[0][2:7])
+
+
 def epochs(sc: Scenario) -> np.ndarray:
     """Reference epochs (Unix s)."""
-    return T0 + sc.cadence_s * np.arange(sc.n_epochs)
+    return T0 + sc.t0_offset_s + sc.cadence_s * np.arange(sc.n_epochs)
 
 
 def truth_gcrs(sc: Scenario, t) -> np.ndarray:
     """True GCRS position at ``t``."""
     t = np.atleast_1d(np.asarray(t, dtype=float))
-    x = syn6.independent_gcrs_states(L1, L2, t + sc.tau_s)[:, :3]
+    a, b = tle_of(sc)
+    x = syn6.independent_gcrs_states(a, b, t + sc.tau_s)[:, :3]
     if sc.accel_m_s2 is not None:
-        x = x + 0.5 * np.outer((t - T0) ** 2, np.asarray(sc.accel_m_s2, float))
+        x = x + 0.5 * np.outer((t - T0 - sc.t0_offset_s) ** 2, np.asarray(sc.accel_m_s2, float))
     return x
 
 
@@ -126,11 +152,11 @@ def stage3_rows(sc: Scenario, rng) -> list:
                     flagged = 0.6
             if rw_flag is not None:
                 flagged = float(rw_flag[k])
-            row = direction_row(sid, float(t), float(l), float(m), cov)
+            row = direction_row(sid, float(t), float(l), float(m), cov, norad_id=norad_of(sc))
             row.update({
                 "flagged_fraction": flagged, "reduced_chi2": 1.0 + 0.1 * rng.random(),
                 "vis_image_separation_deg": abs(rng.normal(0.0, 0.05)), "n_baselines_used": 250,
-                "n_baselines_total": 276, "snr": float(rw_snr[k]) if rw_snr is not None else 20.0,
+                "n_baselines_total": 276, "snr": float(rw_snr[k]) if rw_snr is not None else float(sc.snr),
             })
             rows.append(row)
     return rows
@@ -171,24 +197,26 @@ def build_chain(sc: Scenario, work: Path) -> Dict[str, object]:
     work = Path(work)
     rng = np.random.default_rng(sc.seed)
     rows = stage3_rows(sc, rng)
-    m3 = write_stage3_run(work / "stage3", rows, stations=sc.stations)
+    m3 = write_stage3_run(work / "stage3", rows, stations=sc.stations, norad_id=norad_of(sc))
+    doc = json.loads(m3.read_text())
+    doc["satellite"] = {"satellite_name": sc.satellite_name, "constellation": sc.constellation,
+                        "tle_line1": tle_of(sc)[0], "tle_line2": tle_of(sc)[1]}
     if sc.with_stage2:
         m2 = stage2_manifest(sc, work / "stage2" / "manifest.json")
-        doc = json.loads(m3.read_text())
         doc["input_manifest"] = str(m2)
         doc["input_manifest_sha256"] = hashlib.sha256(m2.read_bytes()).hexdigest()
-        m3.write_text(json.dumps(doc, indent=2), encoding="utf-8")
+    m3.write_text(json.dumps(doc, indent=2), encoding="utf-8")
     c4 = cli4.main(["--stage3-manifest", str(m3), "--output-dir", str(work / "stage4"), "--no-plots",
                     "--min-stations", str(sc.min_stations), "--time-match-tolerance", str(sc.time_match_tolerance_s)])
     m4 = next((work / "stage4").glob("*/NORAD_*/stage4_manifest.json"))
     c5 = cli5.main(["--stage4-manifest", str(m4), "--output-dir", str(work / "stage5"), "--no-plots"])
     m5 = next((work / "stage5").glob("*/NORAD_*/stage5_manifest.json"))
-    tle_sets = [(L1, L2)] if sc.tle_epoch_shift_d == 0 else [syn6.perturbed_tle(L1, L2,
-                                                                               d_epoch_days=sc.tle_epoch_shift_d)]
+    a, b = tle_of(sc)
+    tle_sets = [(a, b)] if sc.tle_epoch_shift_d == 0 else [syn6.perturbed_tle(a, b, d_epoch_days=sc.tle_epoch_shift_d)]
     tle = syn6.write_tle_file(work / "reference.tle", tle_sets)
     extra = []
     if sc.ensemble:
-        sets = [(L1, L2)] + [syn6.perturbed_tle(L1, L2, d_epoch_days=e) for e in (-1.0, -0.5, 0.5, 1.0)]
+        sets = [(a, b)] + [syn6.perturbed_tle(a, b, d_epoch_days=e) for e in (-1.0, -0.5, 0.5, 1.0)]
         extra = ["--tle-ensemble-files", str(syn6.write_tle_file(work / "ensemble.tle", sets))]
     c6 = cli6.main(["--stage5-manifest", str(m5), "--output-dir", str(work / "stage6"), "--no-plots",
                     "--tle-file", str(tle), *extra])
