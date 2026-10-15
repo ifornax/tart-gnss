@@ -1,7 +1,0 @@
-bin,bin_low,bin_high,n_rows,n_runs,median_sigma_theta_deg_median,median_sigma_theta_deg_rms,median_sigma_theta_deg_mad,median_sigma_theta_deg_p16,median_sigma_theta_deg_p84,median_direction_residual_deg_median,median_direction_residual_deg_rms,median_direction_residual_deg_mad,median_direction_residual_deg_p16,median_direction_residual_deg_p84,median_line_residual_m_median,median_line_residual_m_rms,median_line_residual_m_mad,median_line_residual_m_p16,median_line_residual_m_p84
-20-30 deg,20,30,0,0,,,,,,,,,,,,,,,
-30-40 deg,30,40,0,0,,,,,,,,,,,,,,,
-40-50 deg,40,50,2,1,0.1544052802,0.1544053071,0.0001351042247,0.1543433141,0.1544672462,0.866166772,1.027980024,0.820800959,0.4897033617,1.242630182,279342.3413,318303.1232,226234.9208,175578.8541,383105.8285
-50-60 deg,50,60,0,0,,,,,,,,,,,,,,,
-60-70 deg,60,70,1,1,0.1292663839,0.1292663839,0,0.1292663839,0.1292663839,0.2677668337,0.2677668337,0,0.2677668337,0.2677668337,117127.5757,117127.5757,0,117127.5757,117127.5757
-70-90 deg,70,90,0,0,,,,,,,,,,,,,,,

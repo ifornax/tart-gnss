@@ -1,7 +1,0 @@
-bin,bin_low,bin_high,n_rows,n_runs,median_stage4_sigma_3d_m_median,median_stage4_sigma_3d_m_rms,median_stage4_sigma_3d_m_mad,median_stage4_sigma_3d_m_p16,median_stage4_sigma_3d_m_p84,median_sigma_major_m_median,median_sigma_major_m_rms,median_sigma_major_m_mad,median_sigma_major_m_p16,median_sigma_major_m_p84,median_leave_one_out_shift_m_median,median_leave_one_out_shift_m_rms,median_leave_one_out_shift_m_mad,median_leave_one_out_shift_m_p16,median_leave_one_out_shift_m_p84
-0-2 deg,0,2,0,0,,,,,,,,,,,,,,,
-2-4 deg,2,4,0,0,,,,,,,,,,,,,,,
-4-6 deg,4,6,0,0,,,,,,,,,,,,,,,
-6-10 deg,6,10,1,1,547373.5714,547373.5714,0,547373.5714,547373.5714,545890.3791,545890.3791,0,545890.3791,545890.3791,4967517.502,4967517.502,0,4967517.502,4967517.502
-10-20 deg,10,20,0,0,,,,,,,,,,,,,,,
-20-90 deg,20,90,0,0,,,,,,,,,,,,,,,

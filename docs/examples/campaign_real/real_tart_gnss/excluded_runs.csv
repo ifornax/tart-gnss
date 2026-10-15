@@ -1,2 +1,0 @@
-run_id,manifest_path,norad_id,reason,quality_flags,detail
-20260625_NORAD40534_091309,docs/examples/stage7_real/default/20260625/NORAD_40534/stage7_manifest.json,40534,INSUFFICIENT_EPOCHS,REFERENCE_UNCERTAINTY_UNKNOWN,
