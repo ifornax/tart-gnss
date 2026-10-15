@@ -1,0 +1,2 @@
+norad_id,satellite_name,constellation,n_runs,n_precision_runs,first_start_utc,last_start_utc,median_tle_relative_residual_3d_m,run_to_run_scatter_mad_m,run_to_run_scatter_std_m,median_stage4_sigma_3d_m,median_stage5_sigma_3d_m,evidence_levels,under_sampled
+40534,GPS BIIF-9  (PRN 26),GPS,1,0,2026-06-25 09:18:35.110735+00:00,2026-06-25 09:18:35.110735+00:00,,,,547373.5714,130229.9345,"{""0"": 0, ""1"": 0, ""2"": 0, ""3"": 1, ""4"": 0, ""5"": 0}",True

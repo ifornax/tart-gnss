@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "stage": 4,
+  "input_stage3_manifest": "docs/examples/campaign/runs/gps_aged_d12/stage3/stage3_manifest.json",
+  "input_sha256": "334da46a98d92876c2a1277269d45931f64a5f93b696e9167fbade752f9ca0d6",
+  "input_directions": "docs/examples/campaign/runs/gps_aged_d12/stage3/directions.parquet",
+  "input_directions_sha256": "15f324d2ab172fa38429bf7d01c9ea37ac31253df7871f2f6c8a0b3df8ce5169",
+  "norad_id": 40534,
+  "coordinate_frame": "ITRS/ECEF",
+  "units": {
+    "position": "m",
+    "covariance": "m^2",
+    "angles": "deg",
+    "time": "UTC"
+  },
+  "time_matching": {
+    "tolerance_s": 0.75,
+    "reference_station": "madagascar",
+    "reference_station_rule": "station with the most valid Stage-3 rows (ties: alphabetical)",
+    "reference_time": null,
+    "interpolation": "none (nearest valid estimate within tolerance; each estimate used at most once)",
+    "n_epochs": 24,
+    "n_epochs_min_stations": 24,
+    "median_abs_offset_s": 0.0,
+    "max_abs_offset_s": 0.0,
+    "angular_rate_source": "each station's own Stage-3 track (linear fit over a 120 s sliding window); never a TLE",
+    "light_time": "rho/c recorded (~70 ms for GNSS); not corrected (no retarded-time modelling)"
+  },
+  "triangulation": {
+    "method": "weighted",
+    "baseline_estimator": "argmin sum |P_i (x - r_i)|^2, closed form (sum P_i) x = sum P_i r_i",
+    "weighted_estimator": "iteratively reweighted: W_i = (rho_i^2 E_i^T Sigma_theta,i E_i)^-1, start from the unweighted solution, tol 1 mm, max 50 iterations",
+    "direction_input": "Stage-3 (l, m) and cov(l, m) (Az/El + cov_az_el only if (l, m) are missing)",
+    "solver": "numpy.linalg.solve; SVD lstsq if the condition number exceeds 1e12",
+    "n_epochs_numerical_fallback": 0,
+    "tle_used": false
+  },
+  "uncertainty": {
+    "linear_covariance": "Sigma_x = N^-1 (weighted) or A^-1 (sum P_i rho_i^2 Sigma_theta,i P_i) A^-1 (unweighted); first order in the angular errors, valid while they are small compared with the crossing angles",
+    "bootstrap": 0,
+    "bootstrap_model": "Gaussian redraw of each direction from its Stage-3 covariance (tangent plane)",
+    "random_seed": 20260625
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "always_rejected": [
+      "FIT_FAILED",
+      "INVALID_GEOMETRY",
+      "LOW_BASELINE_COUNT"
+    ],
+    "rejected_if_strict": [
+      "BOUNDARY_SOLUTION",
+      "LOW_SNR",
+      "TLE_UNASSOCIATED"
+    ],
+    "advisory": [
+      "HIGH_FLAGGED_FRACTION",
+      "HIGH_RESIDUAL",
+      "IMAGE_DISAGREEMENT",
+      "ZENITH_AZ_UNCERTAIN",
+      "CALIBRATION_WARNING"
+    ],
+    "n_stage3_rows": 72,
+    "n_kept": 72,
+    "rejected": {},
+    "rejected_fraction": 0.0
+  },
+  "quality_thresholds": {
+    "min_stations": 3,
+    "max_condition_number": 100000000.0,
+    "max_normalised_residual": 5.0,
+    "max_line_residual_m": 1000000.0,
+    "max_reduced_chi2": 5.0,
+    "time_mismatch_sigma": 1.0,
+    "bootstrap_max_failure_fraction": 0.1,
+    "bootstrap_max_sigma_ratio": 2.0,
+    "bootstrap_max_median_shift_sigma": 0.25
+  },
+  "blocking_flags": [
+    "COVARIANCE_SINGULAR",
+    "INSUFFICIENT_STATIONS",
+    "NEGATIVE_RANGE",
+    "POOR_GEOMETRY",
+    "TRIANGULATION_FAILED"
+  ],
+  "summary": {
+    "n_epochs": 24,
+    "n_valid": 24,
+    "n_with_min_stations": 24,
+    "flag_counts": {}
+  },
+  "stations": {
+    "mauritius": {
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "ecef_m": [
+        3193402.1359140202,
+        5063037.098932373,
+        -2194599.221947558
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/campaign/runs/gps_aged_d12/stage3/stage3_manifest.json: stations.mauritius (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/campaign/runs/gps_aged_d12/stage2/manifest.json (sha256 aab933d11f2520980a00b60b9403fd7deb7fcedeaf1bea9d1eaa52d3f6ef7a58)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 24,
+      "n_kept": 24,
+      "n_epochs_contributed": 24,
+      "median_line_residual_m": 1539.1595608620687,
+      "median_normalised_residual": 0.8051013702785973,
+      "median_abs_time_offset_s": 0.0
+    },
+    "madagascar": {
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "ecef_m": [
+        4074720.1061290107,
+        4455381.675076537,
+        -2052995.7643685571
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/campaign/runs/gps_aged_d12/stage3/stage3_manifest.json: stations.madagascar (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/campaign/runs/gps_aged_d12/stage2/manifest.json (sha256 aab933d11f2520980a00b60b9403fd7deb7fcedeaf1bea9d1eaa52d3f6ef7a58)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 24,
+      "n_kept": 24,
+      "n_epochs_contributed": 24,
+      "median_line_residual_m": 1858.95882541591,
+      "median_normalised_residual": 0.9787693924922849,
+      "median_abs_time_offset_s": 0.0
+    },
+    "south_africa": {
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "ecef_m": [
+        4774723.423104711,
+        2381389.274319161,
+        -3483967.6056532
+      ],
+      "datum": "WGS84",
+      "source": "docs/examples/campaign/runs/gps_aged_d12/stage3/stage3_manifest.json: stations.south_africa (frozen Stage-1/2 run provenance)",
+      "cross_check": "verified against Stage-2 manifest docs/examples/campaign/runs/gps_aged_d12/stage2/manifest.json (sha256 aab933d11f2520980a00b60b9403fd7deb7fcedeaf1bea9d1eaa52d3f6ef7a58)",
+      "calibration_warnings": [],
+      "n_stage3_rows": 24,
+      "n_kept": 24,
+      "n_epochs_contributed": 24,
+      "median_line_residual_m": 764.456548106924,
+      "median_normalised_residual": 0.4191905344971981,
+      "median_abs_time_offset_s": 0.0
+    }
+  },
+  "satellite_reference": {
+    "note": "copied from the Stage-3 manifest for later comparison (Stage 6); not used by Stage 4",
+    "satellite": {
+      "satellite_name": "GPS BIIF-9 (PRN 26)",
+      "constellation": "GPS",
+      "tle_line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+      "tle_line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063"
+    }
+  },
+  "software": {
+    "tart_gnss": "0.8.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "ebe8edb10424b27b44f689ff1c8231d77a6f1c53",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-triangulate",
+      "--stage3-manifest",
+      "docs/examples/campaign/runs/gps_aged_d12/stage3/stage3_manifest.json",
+      "--output-dir",
+      "docs/examples/campaign/runs/gps_aged_d12/stage4",
+      "--no-plots",
+      "--min-stations",
+      "3",
+      "--time-match-tolerance",
+      "0.75"
+    ],
+    "run_timestamp_utc": "2026-10-15T14:42:51.389Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss",
+    "stage3_run": {
+      "command_line": [
+        "synthetic"
+      ],
+      "git_commit": null
+    }
+  },
+  "outputs": {
+    "positions_csv": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/positions.csv",
+    "positions_parquet": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/positions.parquet",
+    "station_contributions_csv": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/station_contributions.csv",
+    "station_contributions_parquet": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/station_contributions.parquet",
+    "diagnostics": [],
+    "log": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/logs/stage4.log",
+    "manifest": "docs/examples/campaign/runs/gps_aged_d12/stage4/20261019/NORAD_40534/stage4_manifest.json"
+  }
+}

@@ -1,0 +1,9 @@
+2026-10-15T14:42:56Z INFO    tart_gnss.campaign: campaign synthetic; input roots ['docs/examples/campaign/runs']; explicit manifests 0
+2026-10-15T14:42:56Z INFO    tart_gnss.campaign: Stage-7 manifests discovered: 17
+2026-10-15T14:42:57Z INFO    tart_gnss.campaign: manifests loaded: 17 (0 unreadable or unsupported)
+2026-10-15T14:42:57Z INFO    tart_gnss.campaign: runs included 17, excluded 0; precision-validation runs 16; analysis cohort 16 (precision only)
+2026-10-15T14:42:57Z INFO    tart_gnss.campaign: satellites 3; constellations ['BeiDou', 'GPS', 'Galileo']; stations ['madagascar', 'mauritius', 'namibia', 'south_africa']; span 2026-10-07 02:12:11.977045+00:00 .. 2026-10-27 00:57:23.787045+00:00
+2026-10-15T14:42:57Z INFO    tart_gnss.campaign: bootstrap: 1000 run-level resamples, seed 20260625
+2026-10-15T14:43:47Z INFO    tart_gnss.campaign: median Stage-4 3-D uncertainty {'median': 16606.054170123214, 'ci95': [16555.896402757564, 20182.851498585966], 'n_runs': 17} m; median TLE-relative 3-D residual (analysis cohort) {'median': 13778.790942503525, 'ci95': [8125.364424080946, 18371.82066938262], 'n_runs': 16} m
+2026-10-15T14:43:47Z INFO    tart_gnss.campaign: campaign quality flags: DOMINATED_BY_ONE_SATELLITE, INSUFFICIENT_GROUP_SIZE; sample-size tier basic_inference
+2026-10-15T14:43:47Z INFO    tart_gnss.campaign: outputs: docs/examples/campaign/synthetic

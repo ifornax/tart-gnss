@@ -1,0 +1,7 @@
+bin,bin_low,bin_high,n_rows,n_runs,median_sigma_theta_deg_median,median_sigma_theta_deg_rms,median_sigma_theta_deg_mad,median_sigma_theta_deg_p16,median_sigma_theta_deg_p84,median_direction_residual_deg_median,median_direction_residual_deg_rms,median_direction_residual_deg_mad,median_direction_residual_deg_p16,median_direction_residual_deg_p84,median_line_residual_m_median,median_line_residual_m_rms,median_line_residual_m_mad,median_line_residual_m_p16,median_line_residual_m_p84
+20-30 deg,20,30,0,0,,,,,,,,,,,,,,,
+30-40 deg,30,40,0,0,,,,,,,,,,,,,,,
+40-50 deg,40,50,33,17,0.005000262319,0.005723692374,1.334557316e-07,0.005000169447,0.007760298225,0.006659458153,0.01170569533,0.002141139197,0.005245060495,0.01909953852,1944.629541,4188.207723,735.3334231,1544.561168,7122.678503
+50-60 deg,50,60,0,0,,,,,,,,,,,,,,,
+60-70 deg,60,70,16,16,0.005000115212,0.005744709019,3.928339451e-08,0.005000088034,0.007200214741,0.006588570629,0.007002433535,0.00206542825,0.005325310081,0.00846792639,1339.57469,1657.65519,881.8121275,769.5963108,2246.442582
+70-90 deg,70,90,0,0,,,,,,,,,,,,,,,

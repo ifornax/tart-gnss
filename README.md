@@ -10,7 +10,8 @@ turns those positions into a continuous position/velocity trajectory with a
 full covariance, without using any TLE. Stage 6 then compares that trajectory
 with a TLE prediction, as observed − TLE residuals. Stage 7 traces the whole
 chain back to Stage 2 and reports evidence about where a discrepancy comes
-from, without asserting a physical cause.**
+from, without asserting a physical cause. The campaign layer turns many
+completed runs into population statistics.**
 
 | Stage | Command | What it does |
 |---|---|---|
@@ -21,8 +22,9 @@ from, without asserting a physical cause.**
 | 5 | `tart-track` | Reads the Stage-4 positions and full 3×3 covariances, rotates them ITRS/ECEF → GCRS (Skyfield), initialises a position/velocity state from the first Stage-4 measurements only, and runs an extended Kalman filter (two-body by default; constant-velocity and J2 available) with χ²₃ innovation gating, followed by an RTS smoother. Writes the filtered and smoothed GCRS state, the ECEF position, the full 6×6 covariances, innovations, NIS/whiteness diagnostics, quality flags, `stage5_manifest.json` and seven plots. TLEs are never used. |
 | 6 | `tart-validate` | Propagates exactly one selected TLE (`--tle-file`, or `--tle-source stage1`/`download`) with SGP4 at the exact Stage-5 epochs and transforms it TEME → GCRS. Reports **observed − TLE** residuals: Cartesian, radial/along-track/cross-track (RTN), angular, range and an along-track time equivalent. Also gives the Stage-5 covariance rotated into RTN, measurement-conditional Mahalanobis distances (and reference-aware ones with an ensemble of ≥ 3 TLEs), TLE age, and a precision-validation status. Writes `residuals`, `tle_trajectory`, `summary.json`, `stage6_manifest.json` and eight plots. The TLE is never fitted, and the Stage-5 run is never modified. |
 | 7 | `tart-diagnose` | Follows the recorded provenance from Stage 6 back to Stage 2, verifying the hashes, and aligns everything by time and station. Recomputes leave-one-station-out and pairwise solutions with the Stage-4 solver, compares every station direction with the Stage-5 trajectory, and tests calibration, localisation, timing, geometry and trajectory-model correlations (time-detrended, autocorrelation-aware, effect size plus Holm). Assigns non-exclusive evidence tags, rule-based evidence levels 0–5 and a descriptive confidence. Writes `diagnosis`, `station_influence`, `pairwise`, `correlations.csv`, `summary.json`, `stage7_manifest.json` and seven plots. No physical cause is asserted, and no upstream output is modified. |
+| campaign | `tart-campaign` | Aggregates many completed Stage-7 runs, reading only their recorded upstream products (re-hashed; nothing is rerun). Produces run, epoch and station population tables, and reports: measurement uncertainty (including the Stage-4 covariance principal axes); TLE-relative residuals (precision cohort); station stability; constellation, satellite and station-set comparisons (with effect sizes and minimum group sizes); geometry, elevation, SNR and TLE-age dependence; evidence-level and tag rates; and pass-to-pass repeatability. Confidence intervals come from a run-level bootstrap, and runs — never epochs — are the independent units. |
 
-> **Status:** Stages 1–7 complete, with dynamic TART station-registry integration (v0.7.0). The repository is private and under active development.
+> **Status:** Stages 1–7 and the campaign layer complete, with dynamic TART station-registry integration (v0.8.0). The repository is private and under active development.
 
 ---
 
@@ -38,6 +40,7 @@ from, without asserting a physical cause.**
 - [Stage 5: trajectory tracking (`tart-track`)](#stage-5-trajectory-tracking-tart-track)
 - [Stage 6: TLE validation (`tart-validate`)](#stage-6-tle-validation-tart-validate)
 - [Stage 7: network diagnosis (`tart-diagnose`)](#stage-7-network-diagnosis-tart-diagnose)
+- [Campaign analysis (`tart-campaign`)](#campaign-analysis-tart-campaign)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -65,6 +68,7 @@ same satellite at the same time give three lines of sight, so the satellite's
 | **5** | **TLE-independent Bayesian trajectory (position, velocity, 6×6 covariance) from the Stage-4 positions** | **✅ `tart-track` — implemented** |
 | **6** | **Compare the measured trajectory with the TLE prediction (observed − TLE, Cartesian and RTN, with uncertainty context)** | **✅ `tart-validate` — implemented** |
 | **7** | **Diagnose where a discrepancy comes from (station, instrument, timing, geometry, trajectory model, reference) as evidence levels** | **✅ `tart-diagnose` — implemented** |
+| **campaign** | **Population statistics across many completed runs** | **✅ `tart-campaign` — implemented** |
 
 Three conditions are kept strictly separate: **geometric visibility**
 (Stage 1), **data availability** (Stage 2) and **radio detection** (Stage 3).
@@ -81,11 +85,13 @@ conventions in [`docs/stage3_direction_estimation.md`](docs/stage3_direction_est
 [`tart_gnss_stage6_implementation.md`](tart_gnss_stage6_implementation.md) (Stage 6; method in
 [`docs/stage6_validation.md`](docs/stage6_validation.md)) and
 [`tart_gnss_stage7_implementation.md`](tart_gnss_stage7_implementation.md) (Stage 7; method in
-[`docs/stage7_diagnosis.md`](docs/stage7_diagnosis.md)).
+[`docs/stage7_diagnosis.md`](docs/stage7_diagnosis.md)) and
+[`tart_gnss_campaign_analysis_implementation.md`](tart_gnss_campaign_analysis_implementation.md) (campaign layer;
+method in [`docs/campaign_analysis.md`](docs/campaign_analysis.md)).
 
 **Command names.** Every public command starts with `tart-` (`tart-stations-update`,
 `tart-stations-list`, `tart-common-gnss`, `tart-retrieve`, `tart-localise`,
-`tart-triangulate`, `tart-track`, `tart-validate`, `tart-diagnose`). This is a stable public API, and future stages must follow it;
+`tart-triangulate`, `tart-track`, `tart-validate`, `tart-diagnose`, `tart-campaign`). This is a stable public API, and future stages must follow it;
 `tests/test_cli_names.py` enforces it.
 
 ## Installation
@@ -553,6 +559,41 @@ diagnosable epochs; `2` means invalid input or a broken provenance chain;
 Method, rules, validation and the real-data run are in
 [`docs/stage7_diagnosis.md`](docs/stage7_diagnosis.md).
 
+## Campaign analysis (`tart-campaign`)
+
+```bash
+pip install -e ".[campaign]"    # scipy, pandas, pyarrow, matplotlib
+tart-campaign \
+    --input-root results/stage7 \
+    --output-dir results/campaign \
+    --campaign-name gnss_validation_2026
+```
+
+| Option | Meaning | Default |
+|---|---|---|
+| `--input-root` / `--stage7-manifest` | recursive search for `stage7_manifest.json` and/or explicit manifests (repeatable; at least one required) | — |
+| `--quality-policy` | `strict`: runs with broken provenance are excluded; `permissive`: kept and flagged | `strict` |
+| `--precision-only` / `--no-precision-only` | TLE-relative summaries from the precision-validation cohort only | on |
+| `--precision-validation-only` | exclude non-precision runs from the campaign | off |
+| `--min-epochs-per-run`, `--min-runs-per-group` | run and group size requirements | 3, 3 |
+| `--group-by` | extra grouped tables: `constellation`, `norad_id`, `station_set`, `cohort`, `observation_date`, `tle_source` | `constellation` |
+| `--reference-frame` | residual components summarised: `rtn` or `gcrs` | `rtn` |
+| `--bootstrap N`, `--seed` | run-level bootstrap resamples and seed | 1000, 20260625 |
+| `--norad-id`, `--constellation`, `--station`, `--start`, `--end`, `--min-elevation`, `--max-tle-age-days`, `--max-evidence-level` | filters; every excluded run is listed with its reason | — |
+| `--publication-plots`, `--no-plots`, `--verbose` | larger fonts and vector PDFs; skip figures; debug logging | off |
+
+**Exit status:** `0` means the analysis completed; `3` means fewer than 3
+runs in the analysis cohort (descriptive outputs are still written,
+`INSUFFICIENT_CAMPAIGN_SIZE`); `2` means invalid input; `1` means a failure.
+
+**Output:** `results/campaign/<name>/` contains `campaign_runs`,
+`campaign_epochs` and `campaign_stations` (Parquet + CSV), `excluded_runs.csv`,
+`summary.json`, `campaign_manifest.json`, `tables/*.csv` and ten figures.
+
+Residuals are reported as **TLE-relative**, never as absolute accuracy, and
+no physical-cause rates are produced. Method, statistics and validation are
+in [`docs/campaign_analysis.md`](docs/campaign_analysis.md).
+
 ## TLEs and reproducibility
 
 - Without `--tle-file`, current GNSS TLEs are downloaded from CelesTrak and
@@ -582,6 +623,8 @@ Method, rules, validation and the real-data run are in
 | Stage 6, 2026-06-25 PRN 26, real data ([details](docs/stage6_validation.md#12-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage6_real)) | **Not a precision validation (exit 3).** The only local TLE (the Stage-1 set, epoch 2026-10-06) is propagated 103 days backwards: `TLE_STALE`, `TLE_BACKPROPAGATED`, `precision_validation: false`. The descriptive residuals (observed − TLE) are R +2765 km, T +370 km, N −627 km (median), about 1.4° geocentric. They are not interpreted as accuracy. A contemporaneous TLE (e.g. from Space-Track) is needed. |
 | Stage 7, synthetic ([example](docs/examples/stage7), [report](docs/examples/stage7/demo_report.txt)) | **10 of 10 scenarios match their expected diagnosis**, each built through the real Stage 4–6 chain. A clean network gives Level 0 NORMAL. A 0.036° bias at one station is identified as Level 2 `STATION_SPECIFIC` (Madagascar, 36/36 epochs). A calibration-gated bias gives `CALIBRATION_CORRELATED`, and a late station gives `TIMING_CORRELATED`. Alternating geometry gives `GEOMETRY_CORRELATED` (Level 0), unmodelled acceleration gives `TRAJECTORY_MODEL_CORRELATED`, and a stale TLE gives `REFERENCE_LIMITED` (capped). A network-wide 10 s offset is Level 5 `NETWORK_CONSISTENT` + `UNEXPLAINED` with a TLE ensemble, and Level 4 with a single TLE or without Stage-2 metadata. Of 20 clean networks with random-walk metadata, none gives a spurious correlation tag. |
 | Stage 7, 2026-06-25 PRN 26, real data ([details](docs/stage7_diagnosis.md#10-real-data-run-2026-06-25-gps-prn-26-norad-40534), [example](docs/examples/stage7_real)) | The whole chain to the Stage-2 manifest verifies, and re-triangulation reproduces Stage 4 to 0 m. The result is **Level 3, `REFERENCE_LIMITED`** (stale TLE), with `LOCALISATION_CORRELATED` (11 of 37 station pairs inconsistent) and `TRAJECTORY_MODEL_CORRELATED` (Stage-5 `DYNAMICS_MISMATCH`). Only one three-station epoch exists, so the influential station is undetermined. None of 130 correlation tests is supported. Madagascar's single direction is 1.4° off the network trajectory. |
+| Campaign, synthetic ([example](docs/examples/campaign), [report](docs/examples/campaign/demo_report.txt)) | 17 runs built through the real Stage 3–7 chain: 3 satellites in 3 constellations, repeated passes, 2–4 stations and TLE ages 0.35–20 d. Stage-4 σ is 16.6 km (major/minor axis 16.5/1.1 km); Stage-5 σ is 4.5 km; the TLE-relative residual is 13.8 km (95 % CI 8.1–18.4, with injected age drift). Every injected property is recovered: the unstable station (Madagascar, only one tagged `STATION_SPECIFIC`, 18 % of runs), the geometry effect (σ 22.9/16.6/12.2 km for 2/3/4 stations), TLE-age drift (+1.13 km/day against 1.55 injected), the Galileo–GPS SNR difference (p = 0.00016) and pass-to-pass scatter (3.58 against 3.87 km). |
+| Campaign, real ([example](docs/examples/campaign_real)) | **Exit 3, `INSUFFICIENT_CAMPAIGN_SIZE`.** 2 runs were discovered: 1 is included (descriptive only, stale TLE) and 1 is excluded (`INSUFFICIENT_EPOCHS`). No population result is claimed. |
 | Stage 3, synthetic end-to-end ([example](docs/examples/stage3)) | Sources injected 3.0–3.7° from the real PRN 26 TLE track are recovered to a median of 0.11–0.17° (σ ≈ 0.15°) and stay 3.0–3.7° from the TLE (measurement-driven). The visibility–image disagreement is about 0.3°. |
 | Stage 2, 2026-06-25, rank 8 GPS BIIF-9, 10-min subsection ([example](docs/examples/stage2/valid_20260625_NORAD_40534)) | **Valid** (exit 0). Three validated 24-antenna MSs (182 160 rows each). Real overlap 09:13:39–09:24:24 (645 s, 100 % of the retrieved interval). Station dumps are offset by 0.21–0.46 s. **9 of 24 Rhodes antennas had zero gains** (62 % flagged), and Mauritius and Madagascar each changed gain solution once. |
 
@@ -625,6 +668,7 @@ tart-gnss/
 ├── tart_gnss_stage5_implementation.md   # Stage-5 specification
 ├── tart_gnss_stage6_implementation.md   # Stage-6 specification
 ├── tart_gnss_stage7_implementation.md   # Stage-7 specification
+├── tart_gnss_campaign_analysis_implementation.md  # campaign-layer specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
@@ -645,13 +689,17 @@ tart-gnss/
 ├── docs/examples/stage7/            # synthetic Stage-7 scenarios (full Stage 3-7 chains) and demo report
 ├── docs/examples/stage7_real/       # real 2026-06-25 Stage-7 runs (two-station diagnostic, default)
 ├── docs/stage6_validation.md        # Stage-6 frames, RTN, residuals, statistics, validation, real-data results
+├── docs/examples/campaign/          # synthetic 17-run campaign (runs + campaign outputs + demo report)
+├── docs/examples/campaign_real/     # campaign over the real Stage-7 runs (descriptive only, exit 3)
 ├── docs/stage7_diagnosis.md         # Stage-7 provenance, influence, correlations, evidence rules, validation, real data
+├── docs/campaign_analysis.md        # campaign inputs, cohorts, statistics, outputs, synthetic validation, real run
 ├── scripts/make_report_figures.py
 ├── scripts/stage3_synthetic_demo.py
 ├── scripts/stage4_synthetic_demo.py
 ├── scripts/stage5_synthetic_demo.py
 ├── scripts/stage6_synthetic_demo.py
 ├── scripts/stage7_synthetic_demo.py
+├── scripts/campaign_synthetic_demo.py
 ├── src/tart_gnss/
 │   ├── cli.py  stations.py  tle.py  propagation.py  visibility.py
 │   ├── windows.py  search.py  output.py  provenance.py      # Stage 1
@@ -720,14 +768,21 @@ tart-gnss/
 │       ├── quality.py          # input policy, data-quality flags
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-diagnose
-└── tests/                           # 555 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, CLI names: 3
+│   └── campaign/
+│       ├── discovery.py  loader.py  schema.py  filters.py   # inputs, provenance, cohorts, exclusions
+│       ├── aggregation.py       # run / epoch / station tables from completed products
+│       ├── accuracy.py  station_metrics.py  constellation_metrics.py  anomaly_metrics.py  reproducibility.py
+│       ├── statistics.py  bootstrap.py   # run-level statistics, comparisons, cluster bootstrap
+│       ├── output.py  plotting.py  synthetic.py  errors.py
+│       └── cli.py              # tart-campaign
+└── tests/                           # 612 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, campaign: 57, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 555 tests, ~90 s, no network needed
+pytest                       # 612 tests, ~2.5 min, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
@@ -754,7 +809,12 @@ injected effects: a clean network, a biased station, a calibration-gated
 bias, a timing offset, poor geometry, unmodelled dynamics, a stale TLE, a
 network-wide offset and missing metadata. They check the evidence tags and
 levels, the leave-one-out error against truth, the provenance and hash
-handling, and false-positive control on random-walk metadata.
+handling, and false-positive control on random-walk metadata. The campaign
+tests build a 17-run synthetic campaign once, then check:
+- that each injected population property is recovered;
+- run-level bootstrap coverage and clustering;
+- cohorts, filters and exclusions;
+- that no pipeline stage is run during a campaign.
 
 ## Technical report
 

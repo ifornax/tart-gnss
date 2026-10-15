@@ -1,0 +1,14 @@
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/campaign/runs/gal_repeat_0/stage4/20261008/NORAD_90001/stage4_manifest.json
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: Stage-4 epochs: 24 (table docs/examples/campaign/runs/gal_repeat_0/stage4/20261008/NORAD_90001/positions.parquet); retained after 'strict' quality policy: 24 (rejected: none)
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: time span 2026-10-08T02:08:16.067545Z .. 2026-10-08T02:12:06.067545Z (230.0 s); median cadence 10.000 s; maximum gap 10.000 s
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: dynamics two-body; process acceleration sigma 0.0001 m/s^2 (model default)
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: initial position (GCRS) [  1407647.  16944848. -20750888.] m; initial velocity [-3847.   -820.7  -432.6] m/s; method linear_fit from 4 point(s)
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: innovation gate chi2_3(0.9973) = 14.156; rejected innovations 1 of 24 attempted; median NIS 1.996, mean NIS 2.837 (expected 2.37, 3)
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: lag-1 innovation autocorrelation -0.035 (limit 0.378); innovation RMS 36.64 km
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: filter success: True; smoother success: True
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered 14.25 km, smoothed 7.183 km
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5: outputs: docs/examples/campaign/runs/gal_repeat_0/stage5/20261008/NORAD_90001
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/campaign/runs/gal_repeat_0/stage5/20261008/NORAD_90001/trajectory.csv
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/campaign/runs/gal_repeat_0/stage5/20261008/NORAD_90001/trajectory.parquet
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/campaign/runs/gal_repeat_0/stage5/20261008/NORAD_90001/innovations.csv
+2026-10-15T14:42:54Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/campaign/runs/gal_repeat_0/stage5/20261008/NORAD_90001/innovations.parquet

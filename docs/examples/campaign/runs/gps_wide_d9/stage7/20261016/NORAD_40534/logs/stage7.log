@@ -1,0 +1,14 @@
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: input Stage-6 manifest: docs/examples/campaign/runs/gps_wide_d9/stage6/20261016/NORAD_40534/stage6_manifest.json
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: provenance Stage 6: docs/examples/campaign/runs/gps_wide_d9/stage6/20261016/NORAD_40534/stage6_manifest.json (input)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: provenance Stage 5: docs/examples/campaign/runs/gps_wide_d9/stage5/20261016/NORAD_40534/stage5_manifest.json (verified)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: provenance Stage 4: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534/stage4_manifest.json (verified)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: provenance Stage 3: docs/examples/campaign/runs/gps_wide_d9/stage3/stage3_manifest.json (verified)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: provenance Stage 2: docs/examples/campaign/runs/gps_wide_d9/stage2/manifest.json (verified)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: NORAD 40534; stations 4 (madagascar, mauritius, namibia, south_africa)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: epochs: 24 Stage-6 rows; 24 diagnosed under 'strict' policy (links: Stage 5 24, Stage 4 24)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage7: leave-one-out solutions: 96; pairwise solutions: 144; full-solution reproduction vs Stage 4: max 0 m
+2026-10-15T14:42:50Z INFO    tart_gnss.stage7: strongest localisation correlation: reduced_chi2 vs direction_residual_along_motion_deg (mauritius) partial -0.632, Holm p 0.0479, n 24 -> NOT_SUPPORTED
+2026-10-15T14:42:50Z INFO    tart_gnss.stage7: strongest trajectory correlation: stage5_nis vs position_residual_3d_m (network) partial -0.577, Holm p 0.0282, n 24 -> NOT_SUPPORTED
+2026-10-15T14:42:50Z INFO    tart_gnss.stage7: anomalous epochs 24 of 24 (threshold 20.9 on position_mahalanobis_obs_cov); persistent intervals 1; most influential station namibia
+2026-10-15T14:42:50Z INFO    tart_gnss.stage7: reference quality: precision_validation True; maximum evidence level 4 (MODERATE); tags: STATISTICAL_ANOMALY, NETWORK_CONSISTENT
+2026-10-15T14:42:50Z INFO    tart_gnss.stage7: outputs: docs/examples/campaign/runs/gps_wide_d9/stage7/20261016/NORAD_40534

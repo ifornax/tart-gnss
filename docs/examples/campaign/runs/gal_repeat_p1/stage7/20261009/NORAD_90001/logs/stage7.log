@@ -1,0 +1,14 @@
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: input Stage-6 manifest: docs/examples/campaign/runs/gal_repeat_p1/stage6/20261009/NORAD_90001/stage6_manifest.json
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: provenance Stage 6: docs/examples/campaign/runs/gal_repeat_p1/stage6/20261009/NORAD_90001/stage6_manifest.json (input)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: provenance Stage 5: docs/examples/campaign/runs/gal_repeat_p1/stage5/20261009/NORAD_90001/stage5_manifest.json (verified)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: provenance Stage 4: docs/examples/campaign/runs/gal_repeat_p1/stage4/20261009/NORAD_90001/stage4_manifest.json (verified)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: provenance Stage 3: docs/examples/campaign/runs/gal_repeat_p1/stage3/stage3_manifest.json (verified)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: provenance Stage 2: docs/examples/campaign/runs/gal_repeat_p1/stage2/manifest.json (verified)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: NORAD 90001; stations 3 (madagascar, mauritius, south_africa)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: epochs: 24 Stage-6 rows; 24 diagnosed under 'strict' policy (links: Stage 5 24, Stage 4 24)
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: leave-one-out solutions: 72; pairwise solutions: 72; full-solution reproduction vs Stage 4: max 0 m
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: strongest localisation correlation: vis_image_separation_deg vs loo_shift_3d_m (mauritius) partial -0.578, Holm p 0.0738, n 24 -> NOT_SUPPORTED
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: strongest trajectory correlation: stage5_nis vs stage4_residual_3d_m (network) partial 0.587, Holm p 0.0112, n 24 -> NOT_SUPPORTED
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: anomalous epochs 0 of 24 (threshold 20.9 on position_mahalanobis_total_cov); persistent intervals 0; most influential station south_africa
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: reference quality: precision_validation True; maximum evidence level 0 (MODERATE); tags: NORMAL
+2026-10-15T14:42:55Z INFO    tart_gnss.stage7: outputs: docs/examples/campaign/runs/gal_repeat_p1/stage7/20261009/NORAD_90001

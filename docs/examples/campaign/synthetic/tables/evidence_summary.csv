@@ -1,0 +1,43 @@
+unit,quantity,n,count,fraction,ci95_low,ci95_high,ci_note
+run,evidence_level_0,17,4,0.2352941176,0.09554889072,0.4726224589,"Wilson, runs independent"
+run,evidence_level_1,17,2,0.1176470588,0.03287908001,0.343368425,"Wilson, runs independent"
+run,evidence_level_2,17,3,0.1764705882,0.06191013713,0.4102992902,"Wilson, runs independent"
+run,evidence_level_3,17,2,0.1176470588,0.03287908001,0.343368425,"Wilson, runs independent"
+run,evidence_level_4,17,6,0.3529411765,0.1730948614,0.5870003328,"Wilson, runs independent"
+run,evidence_level_5,17,0,0,0,0.1843236604,"Wilson, runs independent"
+run,STATISTICAL_ANOMALY,17,13,0.7647058824,0.5273775411,0.9044511093,"Wilson, runs independent"
+run,STATION_SPECIFIC,17,3,0.1764705882,0.06191013713,0.4102992902,"Wilson, runs independent"
+run,CALIBRATION_CORRELATED,17,0,0,0,0.1843236604,"Wilson, runs independent"
+run,TIMING_CORRELATED,17,0,0,0,0.1843236604,"Wilson, runs independent"
+run,GEOMETRY_CORRELATED,17,0,0,0,0.1843236604,"Wilson, runs independent"
+run,LOCALISATION_CORRELATED,17,2,0.1176470588,0.03287908001,0.343368425,"Wilson, runs independent"
+run,TRAJECTORY_MODEL_CORRELATED,17,1,0.05882352941,0.01046013065,0.269825452,"Wilson, runs independent"
+run,REFERENCE_LIMITED,17,1,0.05882352941,0.01046013065,0.269825452,"Wilson, runs independent"
+run,NETWORK_CONSISTENT,17,6,0.3529411765,0.1730948614,0.5870003328,"Wilson, runs independent"
+run,UNEXPLAINED,17,0,0,0,0.1843236604,"Wilson, runs independent"
+epoch,evidence_level_0,408,125,0.306372549,,,no CI: rows within a run are correlated
+epoch,evidence_level_1,408,99,0.2426470588,,,no CI: rows within a run are correlated
+epoch,evidence_level_2,408,72,0.1764705882,,,no CI: rows within a run are correlated
+epoch,evidence_level_3,408,2,0.004901960784,,,no CI: rows within a run are correlated
+epoch,evidence_level_4,408,110,0.2696078431,,,no CI: rows within a run are correlated
+epoch,evidence_level_5,408,0,0,,,no CI: rows within a run are correlated
+epoch,STATISTICAL_ANOMALY,408,283,0.693627451,,,no CI: rows within a run are correlated
+epoch,STATION_SPECIFIC,408,72,0.1764705882,,,no CI: rows within a run are correlated
+epoch,CALIBRATION_CORRELATED,408,0,0,,,no CI: rows within a run are correlated
+epoch,TIMING_CORRELATED,408,0,0,,,no CI: rows within a run are correlated
+epoch,GEOMETRY_CORRELATED,408,0,0,,,no CI: rows within a run are correlated
+epoch,LOCALISATION_CORRELATED,408,2,0.004901960784,,,no CI: rows within a run are correlated
+epoch,TRAJECTORY_MODEL_CORRELATED,408,1,0.002450980392,,,no CI: rows within a run are correlated
+epoch,REFERENCE_LIMITED,408,24,0.05882352941,,,no CI: rows within a run are correlated
+epoch,NETWORK_CONSISTENT,408,110,0.2696078431,,,no CI: rows within a run are correlated
+epoch,UNEXPLAINED,408,0,0,,,no CI: rows within a run are correlated
+station,evidence_level_0,52,12,0.2307692308,,,no CI: rows within a run are correlated
+station,evidence_level_1,52,6,0.1153846154,,,no CI: rows within a run are correlated
+station,evidence_level_2,52,9,0.1730769231,,,no CI: rows within a run are correlated
+station,evidence_level_3,52,6,0.1153846154,,,no CI: rows within a run are correlated
+station,evidence_level_4,52,19,0.3653846154,,,no CI: rows within a run are correlated
+station,evidence_level_5,52,0,0,,,no CI: rows within a run are correlated
+station,STATION_SPECIFIC,52,3,0.05769230769,,,no CI: rows within a run are correlated
+station,CALIBRATION_CORRELATED,52,0,0,,,no CI: rows within a run are correlated
+station,TIMING_CORRELATED,52,0,0,,,no CI: rows within a run are correlated
+station,LOCALISATION_CORRELATED,52,0,0,,,no CI: rows within a run are correlated

@@ -1,0 +1,173 @@
+{
+  "norad_id": 90002,
+  "overall_evidence_level": 0,
+  "overall_diagnostic_tags": [
+    "NORMAL"
+  ],
+  "overall_confidence": "HIGH",
+  "evidence_level_meaning": "evidence pattern only; no physical cause is asserted",
+  "n_epochs": 24,
+  "n_diagnosed": 24,
+  "n_anomalous_epochs": 0,
+  "anomaly_threshold": 20.861193859412282,
+  "anomaly_statistic": "position_mahalanobis_total_cov",
+  "anomaly_intervals": [],
+  "persistent_anomaly_intervals": [],
+  "unexplained_intervals": [],
+  "most_influential_station": "madagascar",
+  "n_leave_one_out_epochs": 24,
+  "station_test": {
+    "picks": {},
+    "n_epochs_with_station_test": 24,
+    "station_specific": []
+  },
+  "station_summaries": {
+    "madagascar": {
+      "station_id": "madagascar",
+      "n_epochs": 24,
+      "usable_fraction": 1.0,
+      "median_direction_residual_deg": 0.006262961823441529,
+      "median_line_residual_m": 2802.83633288541,
+      "median_leave_one_out_shift_m": 5956.755128310849,
+      "median_leave_one_out_mahalanobis": 2.3485789272456516,
+      "n_leave_one_out_epochs": 24,
+      "zero_gain_fraction": null,
+      "median_flagged_fraction": 0.1,
+      "calibration_change_count": 0,
+      "median_snr": 16.0,
+      "median_image_visibility_offset_deg": 0.04215417304928651,
+      "timing_offset_median_s": 0.0,
+      "timing_offset_mad_s": 0.0,
+      "direction_bias": {
+        "n": 24,
+        "median_direction_residual_az_deg": 0.0009140469847039867,
+        "mad_direction_residual_az_deg": 0.009066376578319775,
+        "median_direction_residual_el_deg": 0.0024279590766376202,
+        "mad_direction_residual_el_deg": 0.004676720608352007,
+        "median_direction_residual_angle_deg": 0.006262961823441529,
+        "mad_direction_residual_angle_deg": 0.002692788898860504,
+        "median_direction_residual_along_motion_deg": -0.0007710649949421108,
+        "mad_direction_residual_along_motion_deg": 0.006053934877562772,
+        "angle_slope_vs_time": -8.81145479782669e-06,
+        "angle_slope_vs_elevation": 0.01514221832021485
+      },
+      "station_test_picks": 0,
+      "evidence_tags": [],
+      "health_flags": []
+    },
+    "mauritius": {
+      "station_id": "mauritius",
+      "n_epochs": 24,
+      "usable_fraction": 1.0,
+      "median_direction_residual_deg": 0.0063766668204204655,
+      "median_line_residual_m": 1837.7500217807074,
+      "median_leave_one_out_shift_m": 16989.50316488071,
+      "median_leave_one_out_mahalanobis": 1.2555018537993121,
+      "n_leave_one_out_epochs": 24,
+      "zero_gain_fraction": null,
+      "median_flagged_fraction": 0.1,
+      "calibration_change_count": 0,
+      "median_snr": 16.0,
+      "median_image_visibility_offset_deg": 0.026226566887342352,
+      "timing_offset_median_s": 0.0,
+      "timing_offset_mad_s": 0.0,
+      "direction_bias": {
+        "n": 24,
+        "median_direction_residual_az_deg": -0.0002688004003346123,
+        "mad_direction_residual_az_deg": 0.008846313805509112,
+        "median_direction_residual_el_deg": -0.0008542242726257143,
+        "mad_direction_residual_el_deg": 0.006721660775140158,
+        "median_direction_residual_angle_deg": 0.0063766668204204655,
+        "mad_direction_residual_angle_deg": 0.0024148069240208805,
+        "median_direction_residual_along_motion_deg": 7.172019558704317e-05,
+        "mad_direction_residual_along_motion_deg": 0.007072328433923907,
+        "angle_slope_vs_time": 9.320095184645883e-06,
+        "angle_slope_vs_elevation": 0.006568985759853521
+      },
+      "station_test_picks": 0,
+      "evidence_tags": [],
+      "health_flags": []
+    },
+    "south_africa": {
+      "station_id": "south_africa",
+      "n_epochs": 24,
+      "usable_fraction": 1.0,
+      "median_direction_residual_deg": 0.008076043878343082,
+      "median_line_residual_m": 1493.1904738684582,
+      "median_leave_one_out_shift_m": 69444.53472396132,
+      "median_leave_one_out_mahalanobis": 1.873339793125494,
+      "n_leave_one_out_epochs": 24,
+      "zero_gain_fraction": null,
+      "median_flagged_fraction": 0.1,
+      "calibration_change_count": 0,
+      "median_snr": 16.0,
+      "median_image_visibility_offset_deg": 0.04682660080385474,
+      "timing_offset_median_s": 0.0,
+      "timing_offset_mad_s": 0.0,
+      "direction_bias": {
+        "n": 24,
+        "median_direction_residual_az_deg": -0.0038500996051027414,
+        "mad_direction_residual_az_deg": 0.015305007933015178,
+        "median_direction_residual_el_deg": -0.00047219856548963435,
+        "mad_direction_residual_el_deg": 0.007696547523227214,
+        "median_direction_residual_angle_deg": 0.008076043878343082,
+        "mad_direction_residual_angle_deg": 0.003456109275259665,
+        "median_direction_residual_along_motion_deg": 0.0009368850199025352,
+        "mad_direction_residual_along_motion_deg": 0.0073439373055204475,
+        "angle_slope_vs_time": -1.2137790568538115e-05,
+        "angle_slope_vs_elevation": 0.002199227831121144
+      },
+      "station_test_picks": 0,
+      "evidence_tags": [],
+      "health_flags": []
+    }
+  },
+  "strongest_calibration_correlation": null,
+  "strongest_timing_correlation": null,
+  "strongest_geometry_correlation": null,
+  "strongest_trajectory_model_correlation": {
+    "scope": "network",
+    "station_id": "",
+    "x_variable": "stage5_nis",
+    "y_variable": "max_loo_shift_m",
+    "coefficient": -0.35130434782608694,
+    "partial_coefficient": -0.36558248856760894,
+    "p_value_holm": 0.3242607803505367,
+    "n_samples": 24,
+    "n_effective": 23.70149998797411,
+    "interpretation_tag": "NOT_SUPPORTED"
+  },
+  "strongest_localisation_correlation": {
+    "scope": "station",
+    "station_id": "madagascar",
+    "x_variable": "vis_image_separation_deg",
+    "y_variable": "line_residual_m",
+    "coefficient": -0.48,
+    "partial_coefficient": -0.48430458970361295,
+    "p_value_holm": 0.7073488657409758,
+    "n_samples": 24,
+    "n_effective": 19.9406060701069,
+    "interpretation_tag": "NOT_SUPPORTED"
+  },
+  "supported_correlation_tags": [],
+  "n_correlation_tests": 130,
+  "reference_quality": {
+    "precision_validation": true,
+    "reference_limited": false,
+    "stage6_run_flags": [
+      "STRONG_RESIDUAL_TREND",
+      "RESIDUAL_AUTOCORRELATED"
+    ]
+  },
+  "precision_validation": true,
+  "stage5_dynamics": {
+    "run_flags": [],
+    "n_resets": 0
+  },
+  "stage2_timing": {
+    "station_pair_time_offset_statistics": {},
+    "note": "run-level constants from Stage 2; they cannot be correlated within one pass and are reported for context (per-epoch timing uses the Stage-4 station_time_offset_s)"
+  },
+  "full_solution_reproduction_max_m": 0.0,
+  "quality_flags": []
+}

@@ -1,0 +1,12 @@
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: input Stage-3 manifest: docs/examples/campaign/runs/gps_wide_d9/stage3/stage3_manifest.json
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: stations: 4 (mauritius, madagascar, south_africa, namibia); direction table docs/examples/campaign/runs/gps_wide_d9/stage3/directions.parquet
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: Stage-3 rows: 96, kept 96 under 'strict' policy (0.0% rejected: none)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: matched epochs: 24 (reference station madagascar, tolerance 0.750 s)
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: epochs with >= 3 stations: 24; triangulation success fraction 1.000; valid 3-D estimates: 24
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: median |time offset| 0.000 s; median min crossing angle 2.804 deg; median condition number 166
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: median line residual 1.7 km; median position sigma (x, y, z) = (5.41, 3.81, 10.3) km
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4: outputs: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4:   positions_csv: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534/positions.csv
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4:   positions_parquet: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534/positions.parquet
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4:   station_contributions_csv: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534/station_contributions.csv
+2026-10-15T14:42:49Z INFO    tart_gnss.stage4:   station_contributions_parquet: docs/examples/campaign/runs/gps_wide_d9/stage4/20261016/NORAD_40534/station_contributions.parquet
