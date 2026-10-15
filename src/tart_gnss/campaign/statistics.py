@@ -5,6 +5,13 @@ made on per-run aggregates (one value per run) or with a run-level
 (cluster) bootstrap; epochs are never treated as independent samples for a
 p-value. Group comparisons report effect sizes next to p-values and are only
 computed when every group has at least ``min_runs_per_group`` runs.
+
+P-values are permutation p-values, never large-sample approximations: with
+a handful of runs (and tied per-run values) asymptotic Mann-Whitney,
+Kruskal-Wallis or Spearman p-values can be orders of magnitude too small.
+The label (or pairing) permutations are enumerated exactly when there are
+at most :data:`EXACT_LIMIT` of them, otherwise :data:`MC_PERMUTATIONS`
+random permutations with a fixed seed are used; ``p_method`` says which.
 """
 
 from __future__ import annotations
@@ -15,6 +22,33 @@ import numpy as np
 
 MAD_TO_SIGMA = 1.4826
 SAMPLE_TIERS = ((3, "descriptive_only"), (10, "preliminary"), (30, "basic_inference"))
+EXACT_LIMIT = 100_000
+MC_PERMUTATIONS = 10_000
+PERMUTATION_SEED = 12345
+
+
+def _permutation_p(values: np.ndarray, sizes, statistic) -> tuple:
+    """Two-sided-by-construction permutation p of ``statistic(groups)`` (larger = more extreme)."""
+    from itertools import combinations
+    from math import comb
+
+    n = len(values)
+    obs = statistic(np.split(values, np.cumsum(sizes)[:-1]))
+    if len(sizes) == 2 and comb(n, sizes[0]) <= EXACT_LIMIT:
+        idx = np.arange(n)
+        count = total = 0
+        for c in combinations(range(n), sizes[0]):
+            mask = np.zeros(n, bool)
+            mask[list(c)] = True
+            total += 1
+            count += statistic([values[mask], values[idx[~mask]]]) >= obs - 1e-12
+        return count / total, "exact permutation"
+    rng = np.random.default_rng(PERMUTATION_SEED)
+    count = 0
+    for _ in range(MC_PERMUTATIONS):
+        perm = rng.permutation(values)
+        count += statistic(np.split(perm, np.cumsum(sizes)[:-1])) >= obs - 1e-12
+    return (count + 1) / (MC_PERMUTATIONS + 1), f"Monte Carlo permutation ({MC_PERMUTATIONS})"
 
 
 def describe(values) -> Dict[str, float]:
@@ -82,17 +116,26 @@ def compare_groups(groups: Dict[str, Sequence[float]], min_runs_per_group: int =
         out["test"] = "unavailable (fewer than two adequately sampled groups)" if len(ok) < 2 else "no variation"
         return out
     keys = sorted(ok)
+    values = np.concatenate([ok[k] for k in keys])
+    sizes = [len(ok[k]) for k in keys]
     if len(keys) == 2:
         a, b = ok[keys[0]], ok[keys[1]]
-        u, p = stats.mannwhitneyu(a, b, alternative="two-sided")
-        out.update({"test": "Mann-Whitney U", "statistic": float(u), "p_value": float(p),
+        u, _ = stats.mannwhitneyu(a, b, alternative="two-sided")
+        centre = len(a) * len(b) / 2.0
+
+        def stat(gs):
+            return abs(stats.mannwhitneyu(gs[0], gs[1], alternative="two-sided")[0] - centre)
+
+        p, how = _permutation_p(values, sizes, stat)
+        out.update({"test": "Mann-Whitney U", "statistic": float(u), "p_value": float(p), "p_method": how,
                     "effect_size": float(1 - 2 * u / (len(a) * len(b))),
                     "effect_size_name": f"rank-biserial, positive when {keys[1]} > {keys[0]}",
                     "median_difference": float(np.median(b) - np.median(a))})
     else:
-        h, p = stats.kruskal(*[ok[k] for k in keys])
-        n = sum(len(ok[k]) for k in keys)
-        out.update({"test": "Kruskal-Wallis", "statistic": float(h), "p_value": float(p),
+        h, _ = stats.kruskal(*[ok[k] for k in keys])
+        p, how = _permutation_p(values, sizes, lambda gs: stats.kruskal(*gs)[0])
+        n = sum(sizes)
+        out.update({"test": "Kruskal-Wallis", "statistic": float(h), "p_value": float(p), "p_method": how,
                     "effect_size": float(max(h - len(keys) + 1, 0) / (n - len(keys))) if n > len(keys) else None,
                     "effect_size_name": "epsilon-squared"})
     return out
@@ -106,16 +149,35 @@ def dependence(x, y) -> Dict[str, object]:
     y = np.asarray(y, float)
     ok = np.isfinite(x) & np.isfinite(y)
     x, y = x[ok], y[ok]
-    out = {"n_runs": int(ok.sum()), "spearman_r": None, "spearman_p": None, "theil_sen_slope": None,
-           "theil_sen_slope_low": None, "theil_sen_slope_high": None, "theil_sen_intercept": None}
+    out = {"n_runs": int(ok.sum()), "spearman_r": None, "spearman_p": None, "p_method": None,
+           "theil_sen_slope": None, "theil_sen_slope_low": None, "theil_sen_slope_high": None,
+           "theil_sen_intercept": None, "note": None}
     if len(x) < 3 or np.ptp(x) == 0 or np.ptp(y) == 0:
         return out
-    r, p = stats.spearmanr(x, y)
+    r = float(stats.spearmanr(x, y)[0])
+    p, how = spearman_permutation_p(x, y, r)
     slope, intercept, lo, hi = stats.theilslopes(y, x)
-    out.update({"spearman_r": float(r), "spearman_p": float(p), "theil_sen_slope": float(slope),
+    out.update({"spearman_r": r, "spearman_p": p, "p_method": how, "theil_sen_slope": float(slope),
                 "theil_sen_slope_low": float(lo), "theil_sen_slope_high": float(hi),
-                "theil_sen_intercept": float(intercept)})
+                "theil_sen_intercept": float(intercept),
+                "note": "fewer than 5 runs: the slope interval is not meaningful" if len(x) < 5 else None})
     return out
+
+
+def spearman_permutation_p(x, y, r_obs: float) -> tuple:
+    """Two-sided permutation p of a Spearman coefficient (exact for n <= 8)."""
+    from itertools import permutations
+
+    from scipy import stats
+
+    n = len(x)
+    if n <= 8:
+        rs = [stats.spearmanr(x, np.asarray(y)[list(perm)])[0] for perm in permutations(range(n))]
+        rs = np.asarray(rs, float)
+        return float(np.mean(np.abs(rs) >= abs(r_obs) - 1e-12)), "exact permutation"
+    rng = np.random.default_rng(PERMUTATION_SEED)
+    count = sum(abs(stats.spearmanr(x, rng.permutation(y))[0]) >= abs(r_obs) - 1e-12 for _ in range(MC_PERMUTATIONS))
+    return float((count + 1) / (MC_PERMUTATIONS + 1)), f"Monte Carlo permutation ({MC_PERMUTATIONS})"
 
 
 def wilson_interval(k: int, n: int, z: float = 1.96):

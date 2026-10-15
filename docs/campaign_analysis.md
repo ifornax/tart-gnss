@@ -132,6 +132,15 @@ replications (tested).
 correlation and the Theil-Sen slope with its 95 % interval, on per-run
 values. No machine learning is involved.
 
+**P-values are permutation p-values.** With a handful of runs and tied
+per-run values, large-sample approximations can be orders of magnitude too
+small. For 3 against 13 tied runs, asymptotic Mann-Whitney gives about 10⁻⁴;
+the exact value is 1/560. Group-label permutations, or pairings for Spearman,
+are therefore enumerated exactly when there are at most 10⁵ of them (Spearman:
+n ≤ 8). Otherwise 10⁴ seeded random permutations are used, and `p_method`
+records which. With fewer than 5 runs, a dependence is flagged because its
+Theil-Sen interval is not meaningful.
+
 **Fractions** of runs carry Wilson 95 % intervals. Epoch-level and
 station-level fractions get no interval, because their rows are correlated
 within a run.
