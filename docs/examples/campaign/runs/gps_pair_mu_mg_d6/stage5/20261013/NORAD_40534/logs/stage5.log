@@ -1,0 +1,15 @@
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: input Stage-4 manifest: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage4/20261013/NORAD_40534/stage4_manifest.json
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: Stage-4 epochs: 24 (table docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage4/20261013/NORAD_40534/positions.parquet); retained after 'strict' quality policy: 24 (rejected: none)
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: time span 2026-10-13T01:48:36.520045Z .. 2026-10-13T01:52:26.520045Z (230.0 s); median cadence 10.000 s; maximum gap 10.000 s
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: dynamics two-body; process acceleration sigma 0.0001 m/s^2 (model default)
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: initial position (GCRS) [  2099509.  16992558. -20516239.] m; initial velocity [-2618.3  3110.7 -6738. ] m/s; method linear_fit from 4 point(s) [INITIAL_VELOCITY_WEAK]
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: initialisation: velocity sigma 2.09e+03 m/s exceeds 1000 m/s
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: innovation gate chi2_3(0.9973) = 14.156; rejected innovations 0 of 24 attempted; median NIS 2.228, mean NIS 2.951 (expected 2.37, 3)
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: lag-1 innovation autocorrelation 0.173 (limit 0.378); innovation RMS 75.79 km
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: filter success: True; smoother success: True
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: median 3-D position sigma: filtered 29.08 km, smoothed 14.48 km
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5: outputs: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage5/20261013/NORAD_40534
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5:   trajectory_csv: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage5/20261013/NORAD_40534/trajectory.csv
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5:   trajectory_parquet: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage5/20261013/NORAD_40534/trajectory.parquet
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5:   innovations_csv: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage5/20261013/NORAD_40534/innovations.csv
+2026-10-15T14:53:03Z INFO    tart_gnss.stage5:   innovations_parquet: docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage5/20261013/NORAD_40534/innovations.parquet

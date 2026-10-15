@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "analysis": "campaign",
+  "campaign_name": "synthetic",
+  "input_manifests": [
+    "docs/examples/campaign/runs/bds_clean_d0/stage7/20261007/NORAD_90002/stage7_manifest.json",
+    "docs/examples/campaign/runs/gal_repeat_0/stage7/20261008/NORAD_90001/stage7_manifest.json",
+    "docs/examples/campaign/runs/gal_repeat_m1/stage7/20261007/NORAD_90001/stage7_manifest.json",
+    "docs/examples/campaign/runs/gal_repeat_p1/stage7/20261009/NORAD_90001/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_aged_d12/stage7/20261019/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_aged_d20/stage7/20261027/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_aged_d7/stage7/20261014/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_clean_d0/stage7/20261007/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_clean_d1/stage7/20261008/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_clean_d2/stage7/20261009/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_pair_mg_za_d8/stage7/20261015/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage7/20261013/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_pair_mu_za_d10/stage7/20261017/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_unstable_d4/stage7/20261011/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_unstable_d5/stage7/20261012/NORAD_40534/stage7_manifest.json",
+    "docs/examples/campaign/runs/gps_wide_d9/stage7/20261016/NORAD_40534/stage7_manifest.json"
+  ],
+  "input_hashes": {
+    "docs/examples/campaign/runs/bds_clean_d0/stage7/20261007/NORAD_90002/stage7_manifest.json": "e751f6eccd1d357543cb6325f26758ce455fccca18a45bba24d3b355e998e623",
+    "docs/examples/campaign/runs/gal_repeat_0/stage7/20261008/NORAD_90001/stage7_manifest.json": "a2f05baea32ba46723036a3f8ac19636d0151d2e567fff8f11011dc055bf6129",
+    "docs/examples/campaign/runs/gal_repeat_m1/stage7/20261007/NORAD_90001/stage7_manifest.json": "5c0eaa77aae99ab3958e276b4438b3a617660410ebbcb201bdda1927ef193483",
+    "docs/examples/campaign/runs/gal_repeat_p1/stage7/20261009/NORAD_90001/stage7_manifest.json": "2830ccff688ff5a85dba92f3b5d24889fbfff4042800cde4595905bc794bae84",
+    "docs/examples/campaign/runs/gps_aged_d12/stage7/20261019/NORAD_40534/stage7_manifest.json": "cff12481c66736f08a76b7fa6de721ff527a057bf4a0afae5629339086af1499",
+    "docs/examples/campaign/runs/gps_aged_d20/stage7/20261027/NORAD_40534/stage7_manifest.json": "66df26167967b83174543f18b1afc39214cc18d62780507f271a945c7f830505",
+    "docs/examples/campaign/runs/gps_aged_d7/stage7/20261014/NORAD_40534/stage7_manifest.json": "286cc717b302179802b685ac345e7fa3b7291102db8610b64d5724be184103d8",
+    "docs/examples/campaign/runs/gps_clean_d0/stage7/20261007/NORAD_40534/stage7_manifest.json": "f3c7917e5f475f215e1173111d79c1eb38bce7ee4e2db1c3124d43d9bdeff54f",
+    "docs/examples/campaign/runs/gps_clean_d1/stage7/20261008/NORAD_40534/stage7_manifest.json": "9de7d7e3ab60ba13402201351f2bc160a536ec1ba6705b6f8b4d2d0a5295294c",
+    "docs/examples/campaign/runs/gps_clean_d2/stage7/20261009/NORAD_40534/stage7_manifest.json": "272c0052ffc5f161360460b726a8f1218fc02c90abd52d6f5a1d93ffb38e23f8",
+    "docs/examples/campaign/runs/gps_pair_mg_za_d8/stage7/20261015/NORAD_40534/stage7_manifest.json": "718036855cd9704b5a53ef5a0abb9f90a6f727cc6c016d463b4d0e79693e498e",
+    "docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage7/20261013/NORAD_40534/stage7_manifest.json": "f31153ec14f18c0bd9b923d3b75d75d58efcdfee43e05c6724519c3753d16d17",
+    "docs/examples/campaign/runs/gps_pair_mu_za_d10/stage7/20261017/NORAD_40534/stage7_manifest.json": "79ccb8080b5a61607a6f1f67746a6e6ce7fcc33f789410a17ed9029e80d7fd77",
+    "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/stage7_manifest.json": "abd9a7ba8d399a580f1e17582621964ea4cded5a67f5a99bc9b5ae81f68f86cc",
+    "docs/examples/campaign/runs/gps_unstable_d4/stage7/20261011/NORAD_40534/stage7_manifest.json": "790716ff38c762f62cae62a3b5716ebfdb1d01bcc0aff139a6dc5a985237716f",
+    "docs/examples/campaign/runs/gps_unstable_d5/stage7/20261012/NORAD_40534/stage7_manifest.json": "532055840bb7e892fe0defa0acadeb5b5ffa8f42d55cc4d43f841af2168dd092",
+    "docs/examples/campaign/runs/gps_wide_d9/stage7/20261016/NORAD_40534/stage7_manifest.json": "a929d2588613df3f197b787c35b85454c2330b8d6caec22423149e30d82ce498"
+  },
+  "included_runs": [
+    {
+      "run_id": "20261007_NORAD90002_021211",
+      "manifest_path": "docs/examples/campaign/runs/bds_clean_d0/stage7/20261007/NORAD_90002/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261008_NORAD90001_020816",
+      "manifest_path": "docs/examples/campaign/runs/gal_repeat_0/stage7/20261008/NORAD_90001/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261007_NORAD90001_021211",
+      "manifest_path": "docs/examples/campaign/runs/gal_repeat_m1/stage7/20261007/NORAD_90001/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261009_NORAD90001_020420",
+      "manifest_path": "docs/examples/campaign/runs/gal_repeat_p1/stage7/20261009/NORAD_90001/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261019_NORAD40534_012501",
+      "manifest_path": "docs/examples/campaign/runs/gps_aged_d12/stage7/20261019/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261027_NORAD40534_005333",
+      "manifest_path": "docs/examples/campaign/runs/gps_aged_d20/stage7/20261027/NORAD_40534/stage7_manifest.json",
+      "cohort": "descriptive_only"
+    },
+    {
+      "run_id": "20261014_NORAD40534_014440",
+      "manifest_path": "docs/examples/campaign/runs/gps_aged_d7/stage7/20261014/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261007_NORAD40534_021211",
+      "manifest_path": "docs/examples/campaign/runs/gps_clean_d0/stage7/20261007/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261008_NORAD40534_020816",
+      "manifest_path": "docs/examples/campaign/runs/gps_clean_d1/stage7/20261008/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261009_NORAD40534_020420",
+      "manifest_path": "docs/examples/campaign/runs/gps_clean_d2/stage7/20261009/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261015_NORAD40534_014044",
+      "manifest_path": "docs/examples/campaign/runs/gps_pair_mg_za_d8/stage7/20261015/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261013_NORAD40534_014836",
+      "manifest_path": "docs/examples/campaign/runs/gps_pair_mu_mg_d6/stage7/20261013/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261017_NORAD40534_013252",
+      "manifest_path": "docs/examples/campaign/runs/gps_pair_mu_za_d10/stage7/20261017/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261010_NORAD40534_020024",
+      "manifest_path": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261011_NORAD40534_015628",
+      "manifest_path": "docs/examples/campaign/runs/gps_unstable_d4/stage7/20261011/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261012_NORAD40534_015232",
+      "manifest_path": "docs/examples/campaign/runs/gps_unstable_d5/stage7/20261012/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    },
+    {
+      "run_id": "20261016_NORAD40534_013648",
+      "manifest_path": "docs/examples/campaign/runs/gps_wide_d9/stage7/20261016/NORAD_40534/stage7_manifest.json",
+      "cohort": "precision_validation"
+    }
+  ],
+  "excluded_runs": [],
+  "filters": {
+    "norad_ids": [],
+    "constellations": [],
+    "stations": [],
+    "start": null,
+    "end": null,
+    "min_elevation_deg": null,
+    "max_tle_age_days": null,
+    "max_evidence_level": null,
+    "precision_validation_only": false,
+    "min_epochs_per_run": 3
+  },
+  "grouping": {
+    "group_by": [
+      "constellation",
+      "station_set"
+    ],
+    "min_runs_per_group": 3,
+    "reference_frame": "rtn"
+  },
+  "bootstrap": {
+    "n": 1000,
+    "seed": 20260625,
+    "unit": "run",
+    "interval": "percentile, 95 %"
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "precision_only": true,
+    "precision_validation_only": false
+  },
+  "no_reprocessing": "completed Stage-7 runs and their recorded upstream products are read; no stage is run",
+  "software": {
+    "tart_gnss": "0.8.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "scipy": "1.15.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "a91c0047389e07a69c5955361ea48a811a56803c",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-campaign",
+      "--input-root",
+      "docs/examples/campaign/runs",
+      "--output-dir",
+      "docs/examples/campaign",
+      "--campaign-name",
+      "synthetic",
+      "--bootstrap",
+      "1000",
+      "--group-by",
+      "constellation",
+      "station_set"
+    ],
+    "run_timestamp_utc": "2026-10-15T14:53:12.841Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss"
+  },
+  "outputs": {
+    "campaign_runs_parquet": "docs/examples/campaign/synthetic/campaign_runs.parquet",
+    "campaign_runs_csv": "docs/examples/campaign/synthetic/campaign_runs.csv",
+    "campaign_epochs_parquet": "docs/examples/campaign/synthetic/campaign_epochs.parquet",
+    "campaign_epochs_csv": "docs/examples/campaign/synthetic/campaign_epochs.csv",
+    "campaign_stations_parquet": "docs/examples/campaign/synthetic/campaign_stations.parquet",
+    "campaign_stations_csv": "docs/examples/campaign/synthetic/campaign_stations.csv",
+    "excluded_runs_csv": "docs/examples/campaign/synthetic/excluded_runs.csv",
+    "station_summary_csv": "docs/examples/campaign/synthetic/tables/station_summary.csv",
+    "constellation_summary_csv": "docs/examples/campaign/synthetic/tables/constellation_summary.csv",
+    "satellite_summary_csv": "docs/examples/campaign/synthetic/tables/satellite_summary.csv",
+    "evidence_summary_csv": "docs/examples/campaign/synthetic/tables/evidence_summary.csv",
+    "tle_age_summary_csv": "docs/examples/campaign/synthetic/tables/tle_age_summary.csv",
+    "geometry_summary_csv": "docs/examples/campaign/synthetic/tables/geometry_summary.csv",
+    "elevation_summary_csv": "docs/examples/campaign/synthetic/tables/elevation_summary.csv",
+    "snr_summary_csv": "docs/examples/campaign/synthetic/tables/snr_summary.csv",
+    "station_set_summary_csv": "docs/examples/campaign/synthetic/tables/station_set_summary.csv",
+    "anomaly_rates_csv": "docs/examples/campaign/synthetic/tables/anomaly_rates.csv",
+    "grouped_by_constellation_csv": "docs/examples/campaign/synthetic/tables/grouped_by_constellation.csv",
+    "grouped_by_station_set_csv": "docs/examples/campaign/synthetic/tables/grouped_by_station_set.csv",
+    "summary": "docs/examples/campaign/synthetic/summary.json",
+    "diagnostics": [
+      "docs/examples/campaign/synthetic/diagnostics/residual_distribution.png",
+      "docs/examples/campaign/synthetic/diagnostics/rtn_distribution.png",
+      "docs/examples/campaign/synthetic/diagnostics/residual_vs_elevation.png",
+      "docs/examples/campaign/synthetic/diagnostics/residual_vs_snr.png",
+      "docs/examples/campaign/synthetic/diagnostics/uncertainty_vs_crossing_angle.png",
+      "docs/examples/campaign/synthetic/diagnostics/station_stability.png",
+      "docs/examples/campaign/synthetic/diagnostics/constellation_comparison.png",
+      "docs/examples/campaign/synthetic/diagnostics/evidence_level_distribution.png",
+      "docs/examples/campaign/synthetic/diagnostics/tle_age_dependence.png",
+      "docs/examples/campaign/synthetic/diagnostics/repeatability.png"
+    ],
+    "log": "docs/examples/campaign/synthetic/logs/campaign.log",
+    "manifest": "docs/examples/campaign/synthetic/campaign_manifest.json"
+  }
+}

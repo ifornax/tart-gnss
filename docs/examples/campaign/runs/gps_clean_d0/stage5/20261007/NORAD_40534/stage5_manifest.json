@@ -1,0 +1,258 @@
+{
+  "schema_version": 1,
+  "stage": 5,
+  "input_stage4_manifest": "docs/examples/campaign/runs/gps_clean_d0/stage4/20261007/NORAD_40534/stage4_manifest.json",
+  "input_sha256": "b227f3370fafc02f86d0b8ddd26f230df1885a20c34e25d6cfb90695a1ed0954",
+  "input_positions": "docs/examples/campaign/runs/gps_clean_d0/stage4/20261007/NORAD_40534/positions.parquet",
+  "input_positions_sha256": "1316cc55ff428c3b4d210148e9aeda643de38ba24f5499cc8e49f6f80b75af15",
+  "norad_id": 40534,
+  "state_frame": "GCRS",
+  "measurement_frame": "ITRS/ECEF",
+  "frame_transformation": "GCRS axes via Skyfield itrs.rotation_at(t) (IAU 2000A/2006 precession-nutation, GAST from UT1; polar motion zero: builtin timescale has no polar-motion table); r_GCRS = R(t)^T r_ITRS, C_GCRS = R(t)^T C_ITRS R(t)",
+  "units": {
+    "position": "m",
+    "velocity": "m/s",
+    "covariance": "SI (m^2, m^2/s, m^2/s^2)",
+    "time": "UTC"
+  },
+  "tle_used": false,
+  "state_model": {
+    "dynamics": "two-body",
+    "state": [
+      "x",
+      "y",
+      "z",
+      "vx",
+      "vy",
+      "vz"
+    ],
+    "gm_earth_m3_s2": 398600441800000.0,
+    "j2": null,
+    "earth_radius_m": null,
+    "constants_source": "IERS Conventions (2010) Table 1.1 (GM equals WGS84, NIMA TR8350.2)",
+    "integrator": "scipy.integrate.solve_ivp DOP853",
+    "rtol": 1e-10,
+    "atol": 1e-06,
+    "state_transition": "variational equations integrated with the state",
+    "j2_pole_gcrs": null
+  },
+  "filter": {
+    "type": "extended Kalman filter, Joseph-form update, Cholesky solves",
+    "measurement_model": "H = [I3 0]; R = full Stage-4 covariance rotated to GCRS",
+    "initialisation": {
+      "method": "linear_fit",
+      "n_points": 4,
+      "window_s": 30.0,
+      "reference_time_unix_s": 1791339131.977045,
+      "position_gcrs_m": [
+        2325244.328918324,
+        17116968.809359133,
+        -20559044.89955975
+      ],
+      "velocity_gcrs_m_s": [
+        -3745.498436013338,
+        -754.7367265093042,
+        -638.8405748776026
+      ],
+      "fit_sigma_position_m": [
+        1873.235511159056,
+        7474.665730852615,
+        11610.003299975559
+      ],
+      "fit_sigma_velocity_m_s": [
+        99.03157846476893,
+        399.130270735598,
+        620.5819631402965
+      ],
+      "weak": false,
+      "notes": [],
+      "hierarchy": "GLS fit with full covariances (>=3 points) -> finite difference (2) -> zero velocity with 10000 m/s sigma (1, flagged)",
+      "prior_inflation": 10000.0,
+      "prior": "P0 = prior_inflation x fit covariance (window data are assimilated again by the filter; the inflation keeps the reused information below 1/prior_inflation)",
+      "weak_velocity_sigma_m_s": 1000.0,
+      "tle_used": false
+    },
+    "success": true,
+    "error": null,
+    "divergence_recovery": "re-initialise after 3 consecutive gated measurements (rows flagged FILTER_DIVERGENCE; the smoother does not cross the restart)",
+    "n_resets": 0,
+    "reset_times_utc": [],
+    "reinitialisations": [],
+    "n_steps": 24,
+    "n_assimilated": 24,
+    "min_measurements": 3,
+    "max_gap_s": 120.0,
+    "robust_update": "none"
+  },
+  "smoother": {
+    "type": "Rauch-Tung-Striebel (nonlinear predictions, flow Jacobians from the filter)",
+    "enabled": true,
+    "success": true,
+    "error": null
+  },
+  "process_noise": {
+    "model": "white acceleration, Q = sigma_a^2 [[dt^4/4 I, dt^3/2 I], [dt^3/2 I, dt^2 I]]",
+    "process_accel_sigma_m_s2": 0.0001,
+    "source": "model default (physics: size of the unmodelled accelerations; not tuned against TLEs)",
+    "defaults_m_s2": {
+      "constant-velocity": 1.0,
+      "two-body": 0.0001,
+      "j2": 1e-05
+    }
+  },
+  "innovation_gate": {
+    "probability": 0.9973,
+    "chi2_dof": 3,
+    "threshold": 14.1562525005409,
+    "gated_measurements": "kept in innovations/trajectory with INNOVATION_OUTLIER; not assimilated",
+    "statistics_burn_in": 2
+  },
+  "innovation_statistics": {
+    "n_attempted": 24,
+    "n_accepted": 24,
+    "n_outliers": 0,
+    "n_outliers_first_pass": 0,
+    "n_resets": 0,
+    "accepted_fraction": 1.0,
+    "burn_in": 2,
+    "n_statistics": 22,
+    "mean_nis": 3.0793906987169932,
+    "median_nis": 2.500745802869302,
+    "expected_mean_nis": 3.0,
+    "expected_median_nis": 2.3659738843753377,
+    "mean_nis_limit": 4.6574142200910575,
+    "mean_nis_inside_gate": 3.0793906987169932,
+    "mean_nis_inside_gate_limit": 4.6574142200910575,
+    "n_above_gate": 0,
+    "n_above_gate_limit": 1,
+    "fraction_above_gate": 0.0,
+    "gate_threshold": 14.1562525005409,
+    "innovation_rms_m": 21770.335660189172,
+    "innovation_rms_xyz_m": [
+      2264.0641540057595,
+      11438.8393454641,
+      18384.0823184763
+    ],
+    "autocorrelation": {
+      "1": 0.17180180110965318,
+      "2": 0.13777628338820394,
+      "3": 0.024739765493882335
+    },
+    "autocorrelation_limit_lag1": 0.3779644730092272,
+    "flags": []
+  },
+  "dynamics_diagnostics": {
+    "innovation_rms_m": 21770.335660189172,
+    "mean_nis": 3.0793906987169932,
+    "median_nis": 2.500745802869302,
+    "accepted_fraction": 1.0,
+    "lag1_autocorrelation": 0.17180180110965318
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "always_rejected": [
+      "COVARIANCE_SINGULAR",
+      "INSUFFICIENT_STATIONS",
+      "NEGATIVE_RANGE",
+      "TRIANGULATION_FAILED",
+      "fit_success false",
+      "non-finite position",
+      "invalid covariance",
+      "duplicate timestamp"
+    ],
+    "rejected_if_strict": [
+      "POOR_GEOMETRY",
+      "STAGE3_QUALITY_WARNING"
+    ],
+    "advisory": [
+      "BOOTSTRAP_UNSTABLE",
+      "CALIBRATION_WARNING",
+      "HIGH_CHI2",
+      "HIGH_LINE_RESIDUAL",
+      "INPUT_DIRECTION_WARNING",
+      "TIME_MISMATCH"
+    ],
+    "covariance_checks": {
+      "asymmetry_tol": 1e-06,
+      "max_condition_number": 1000000000000.0
+    },
+    "n_stage4_epochs": 24,
+    "n_used": 24,
+    "rejected": {},
+    "input_time_ordered": true
+  },
+  "blocking_flags": [
+    "COVARIANCE_INVALID",
+    "INSUFFICIENT_MEASUREMENTS",
+    "NOT_INITIALISED",
+    "SMOOTHER_FAILED"
+  ],
+  "summary": {
+    "n_rows": 24,
+    "n_valid": 24,
+    "n_assimilated": 24,
+    "run_flags": [],
+    "flag_counts": {
+      "GOOD": 24
+    },
+    "time_span_s": 230.0,
+    "median_cadence_s": 10.0,
+    "max_gap_s": 10.0,
+    "median_position_sigma_filtered_m": 8826.85706341995,
+    "median_position_sigma_smoothed_m": 4460.213629333917
+  },
+  "stage4_reference": {
+    "note": "Stage-4 provenance; the satellite/TLE block of the Stage-4 manifest is not read by Stage 5",
+    "command_line": [
+      "tart-triangulate",
+      "--stage3-manifest",
+      "docs/examples/campaign/runs/gps_clean_d0/stage3/stage3_manifest.json",
+      "--output-dir",
+      "docs/examples/campaign/runs/gps_clean_d0/stage4",
+      "--no-plots",
+      "--min-stations",
+      "3",
+      "--time-match-tolerance",
+      "0.75"
+    ],
+    "git_commit": "a91c0047389e07a69c5955361ea48a811a56803c",
+    "input_stage3_manifest": "docs/examples/campaign/runs/gps_clean_d0/stage3/stage3_manifest.json"
+  },
+  "software": {
+    "tart_gnss": "0.8.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "scipy": "1.15.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "a91c0047389e07a69c5955361ea48a811a56803c",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-track",
+      "--stage4-manifest",
+      "docs/examples/campaign/runs/gps_clean_d0/stage4/20261007/NORAD_40534/stage4_manifest.json",
+      "--output-dir",
+      "docs/examples/campaign/runs/gps_clean_d0/stage5",
+      "--no-plots"
+    ],
+    "run_timestamp_utc": "2026-10-15T14:52:57.629Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss"
+  },
+  "outputs": {
+    "trajectory_csv": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/trajectory.csv",
+    "trajectory_parquet": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/trajectory.parquet",
+    "innovations_csv": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/innovations.csv",
+    "innovations_parquet": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/innovations.parquet",
+    "diagnostics": [],
+    "log": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/logs/stage5.log",
+    "manifest": "docs/examples/campaign/runs/gps_clean_d0/stage5/20261007/NORAD_40534/stage5_manifest.json"
+  }
+}

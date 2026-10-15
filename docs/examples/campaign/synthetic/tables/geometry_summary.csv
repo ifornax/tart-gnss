@@ -1,0 +1,7 @@
+bin,bin_low,bin_high,n_rows,n_runs,median_stage4_sigma_3d_m_median,median_stage4_sigma_3d_m_rms,median_stage4_sigma_3d_m_mad,median_stage4_sigma_3d_m_p16,median_stage4_sigma_3d_m_p84,median_sigma_major_m_median,median_sigma_major_m_rms,median_sigma_major_m_mad,median_sigma_major_m_p16,median_sigma_major_m_p84,median_leave_one_out_shift_m_median,median_leave_one_out_shift_m_rms,median_leave_one_out_shift_m_mad,median_leave_one_out_shift_m_p16,median_leave_one_out_shift_m_p84,tle_relative_residual_3d_m_median,n_precision_runs
+0-2 deg,0,2,0,0,,,,,,,,,,,,,,,,,0
+2-4 deg,2,4,15,15,16601.73735,23300.92644,130.4271715,16518.72293,26304.40562,16530.51044,23232.04289,130.8107294,16447.29385,26189.54676,12822.95924,48497.84639,4409.784948,9752.752724,94323.06871,12125.60317,14
+4-6 deg,4,6,0,0,,,,,,,,,,,,,,,,,0
+6-10 deg,6,10,2,2,20302.88041,20467.63333,3842.498072,18540.50439,22065.25643,20215.64643,20382.56708,3859.512922,18445.46648,21985.82637,,,,,,16007.713,2
+10-20 deg,10,20,0,0,,,,,,,,,,,,,,,,,0
+20-90 deg,20,90,0,0,,,,,,,,,,,,,,,,,0

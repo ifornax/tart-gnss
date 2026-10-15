@@ -1,0 +1,10 @@
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: campaign real_tart_gnss; input roots ['docs/examples/stage7_real']; explicit manifests 0
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: Stage-7 manifests discovered: 2
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: manifests loaded: 2 (0 unreadable or unsupported)
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: runs included 1, excluded 1; precision-validation runs 0; analysis cohort 0 (precision only)
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: satellites 1; constellations ['GPS']; stations ['madagascar', 'mauritius', 'south_africa']; span 2026-06-25 09:18:35.110735+00:00 .. 2026-06-25 09:24:22.073156+00:00
+2026-10-15T14:52:54Z INFO    tart_gnss.campaign: bootstrap: 1000 run-level resamples, seed 20260625
+2026-10-15T14:52:56Z INFO    tart_gnss.campaign: median Stage-4 3-D uncertainty {'median': 547373.5714254314, 'ci95': [nan, nan], 'n_runs': 1} m; median TLE-relative 3-D residual (analysis cohort) None m
+2026-10-15T14:52:56Z INFO    tart_gnss.campaign: campaign quality flags: INSUFFICIENT_CAMPAIGN_SIZE, INSUFFICIENT_GROUP_SIZE, LOW_PRECISION_VALIDATION_FRACTION; sample-size tier descriptive_only
+2026-10-15T14:52:56Z INFO    tart_gnss.campaign: outputs: docs/examples/campaign_real/real_tart_gnss
+2026-10-15T14:52:56Z WARNING tart_gnss.campaign: INSUFFICIENT_CAMPAIGN_SIZE: 0 run(s) in the analysis cohort; outputs are descriptive only

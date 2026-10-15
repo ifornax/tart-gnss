@@ -1,0 +1,279 @@
+{
+  "residual_definition": "observed_minus_tle",
+  "n_epochs": 24,
+  "n_compared": 24,
+  "n_valid": 24,
+  "time_span_utc": [
+    "2026-10-13T01:48:36.520045Z",
+    "2026-10-13T01:52:26.520045Z"
+  ],
+  "time_span_s": 230.0,
+  "selected_tle": {
+    "norad_id": 40534,
+    "name": "GPS BIIF-9  (PRN 26)",
+    "line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+    "line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063",
+    "epoch_utc": "2026-10-06T17:48:11.977045Z",
+    "source_kind": "tle-file",
+    "file": "docs/examples/campaign/runs/gps_pair_mu_mg_d6/reference.tle",
+    "sha256": "f04037f96948e41257e79fd7109c29a40aafa06b889a4eaa9618a519fa109853",
+    "source": "local file docs/examples/campaign/runs/gps_pair_mu_mg_d6/reference.tle",
+    "selection_rule": "only element set for this NORAD ID in the file",
+    "provenance": {
+      "candidates": [
+        "2026-10-06T17:48:11.977045Z"
+      ]
+    }
+  },
+  "tle_epoch_utc": "2026-10-06T17:48:11.977045Z",
+  "median_tle_age_days": 6.334948414351653,
+  "max_abs_tle_age_days": 6.336279432870172,
+  "precision_validation": true,
+  "precision_validation_conditions": {
+    "tle_found_and_norad_matches": true,
+    "tle_age_within_stale_limit": true,
+    "stage5_trajectory_valid": true,
+    "frame_transformation_ok": true,
+    "no_state_covariance_failure": true
+  },
+  "statistics": {
+    "radial": {
+      "n": 24,
+      "mean": 15632.335708540384,
+      "median": 15631.003724150987,
+      "rms": 16412.358070381382,
+      "mad_sigma": 6424.723697671633,
+      "p16": 9984.654723796972,
+      "p84": 21280.763936892374,
+      "min": 7328.946593742519,
+      "max": 23940.44978687405,
+      "trend": {
+        "intercept": 7325.978834691885,
+        "slope": 72.22544888865478,
+        "slope_sigma_formal": 50.096095185382275,
+        "span_s": 230.0,
+        "change_over_span": 16611.8532443906,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.8750041281464116,
+      "effective_sample_size": 1.5999436371650866,
+      "median_sigma_obs_m": 14282.42764873392
+    },
+    "velocity_radial": {
+      "n": 24,
+      "mean": 70.91293371983784,
+      "median": 70.90951431550639,
+      "rms": 70.91295238632655,
+      "mad_sigma": 0.06510888546486938,
+      "p16": 70.85583619119848,
+      "p84": 70.97187106729405,
+      "min": 70.83347210361575,
+      "max": 71.00432810688642
+    },
+    "along_track": {
+      "n": 24,
+      "mean": 9174.367778286643,
+      "median": 9223.582664776037,
+      "rms": 9174.90832407792,
+      "mad_sigma": 57.32872149216936,
+      "p16": 9059.625333645401,
+      "p84": 9259.538160367016,
+      "min": 8938.954527806605,
+      "max": 9264.041479422009,
+      "trend": {
+        "intercept": 9329.870140082314,
+        "slope": -1.2156674819492672,
+        "slope_sigma_formal": 1.9856431122501055,
+        "span_s": 230.0,
+        "change_over_span": -279.60352084833147,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.8586084892787942,
+      "effective_sample_size": 1.8257724942522442,
+      "median_sigma_obs_m": 569.9964876959905
+    },
+    "velocity_along_track": {
+      "n": 24,
+      "mean": 0.9349003142437106,
+      "median": 0.9351565557488053,
+      "rms": 1.1763718292021739,
+      "mad_sigma": 0.9175459377471533,
+      "p16": 0.1281995275734008,
+      "p84": 1.7414527911083757,
+      "min": -0.25173846473849437,
+      "max": 2.1206231937124205
+    },
+    "cross_track": {
+      "n": 24,
+      "mean": -2843.438266306824,
+      "median": -2843.4617662706105,
+      "rms": 2926.1345475721882,
+      "mad_sigma": 887.6697983777532,
+      "p16": -3623.767762629784,
+      "p84": -2063.0961745297577,
+      "min": -3990.922996196121,
+      "max": -1695.8686769984301,
+      "trend": {
+        "intercept": -1695.897490098753,
+        "slope": -9.978681973010397,
+        "slope_sigma_formal": 8.194207654258582,
+        "span_s": 230.0,
+        "change_over_span": -2295.0968537923914,
+        "weighted": true
+      },
+      "lag1_autocorrelation": 0.8750036765953919,
+      "effective_sample_size": 1.5999498023160126,
+      "median_sigma_obs_m": 2335.8805878894364
+    },
+    "velocity_cross_track": {
+      "n": 24,
+      "mean": -9.969352092914168,
+      "median": -9.969791236170233,
+      "rms": 9.969352130224728,
+      "mad_sigma": 0.0004371068537324234,
+      "p16": -9.97007936796167,
+      "p84": -9.968369992616406,
+      "min": -9.970087967262405,
+      "max": -9.967267285771015
+    },
+    "position_3d": {
+      "n": 24,
+      "mean": 18549.479989219253,
+      "median": 18371.82066938262,
+      "rms": 19029.10149156136,
+      "mad_sigma": 5475.534526731173,
+      "p16": 13775.870498206588,
+      "p84": 23411.538659989135,
+      "min": 11911.609909245515,
+      "max": 25864.599560201954
+    },
+    "velocity_3d": {
+      "n": 24,
+      "mean": 71.61994760482328,
+      "median": 71.6130829170734,
+      "rms": 71.61995984865095,
+      "mad_sigma": 0.05139513750663756,
+      "p16": 71.57504554389683,
+      "p84": 71.6686377581199,
+      "min": 71.56308470950557,
+      "max": 71.70093722756357
+    },
+    "angular_deg": {
+      "n": 24,
+      "mean": 0.020559595303807826,
+      "median": 0.020607862672208866,
+      "rms": 0.02056119183846728,
+      "mad_sigma": 0.0003031106616492287,
+      "p16": 0.020261416015553552,
+      "p84": 0.02083028013456336,
+      "min": 0.020052644693442923,
+      "max": 0.020896783489345556
+    },
+    "range_m": {
+      "n": 24,
+      "mean": 15634.063661948467,
+      "median": 15632.739527637139,
+      "rms": 16414.01687834288,
+      "mad_sigma": 6424.779676057909,
+      "p16": 9986.332418467402,
+      "p84": 21282.53765980214,
+      "min": 7330.589780118316,
+      "max": 23942.234970699996
+    },
+    "along_track_time_s": {
+      "n": 24,
+      "mean": 2.3915656779947576,
+      "median": 2.4043947116143607,
+      "rms": 2.3917080155209867,
+      "mad_sigma": 0.015102205740088172,
+      "p16": 2.3614888726263406,
+      "p84": 2.4139210408204996,
+      "min": 2.3299568143345892,
+      "max": 2.415079921727474
+    },
+    "position_mahalanobis_obs_cov": {
+      "n": 24,
+      "mean": 700.6810698955236,
+      "median": 702.3916919647261,
+      "rms": 747.8037601245924,
+      "mad_sigma": 373.4409583827338,
+      "p16": 395.763391167184,
+      "p84": 1011.402860501526,
+      "min": 299.6069425056207,
+      "max": 1061.7613467499648
+    },
+    "state_mahalanobis_obs_cov": {
+      "n": 24,
+      "mean": 1228.2092392518016,
+      "median": 1228.220165224962,
+      "rms": 1228.2092558480076,
+      "mad_sigma": 0.2566043017596006,
+      "p16": 1227.9787179996442,
+      "p84": 1228.4337752035274,
+      "min": 1227.8535556437432,
+      "max": 1228.5254819088457
+    },
+    "position_mahalanobis_total_cov": {
+      "n": 24,
+      "mean": 218.74977281760098,
+      "median": 226.40814883452703,
+      "rms": 221.10456409000912,
+      "mad_sigma": 37.46933481761717,
+      "p16": 179.31856310636144,
+      "p84": 252.79361415800466,
+      "min": 153.64579946764312,
+      "max": 256.26074906538787
+    },
+    "state_mahalanobis_total_cov": {
+      "n": 24,
+      "mean": 262.6733398856464,
+      "median": 262.675560915475,
+      "rms": 262.6733437760803,
+      "mad_sigma": 0.057442022654834175,
+      "p16": 262.6217404620675,
+      "p84": 262.72367339694324,
+      "min": 262.59417474810283,
+      "max": 262.74459268746284
+    },
+    "fraction_position_d2_above_14.16": 1.0
+  },
+  "mahalanobis_note": "squared distances per epoch; *_obs_cov conditional on the TLE being fixed; epochs are correlated, so no chi-square over epochs is formed",
+  "ensemble": {
+    "requested": true,
+    "files": [
+      "docs/examples/campaign/runs/gps_pair_mu_mg_d6/ensemble.tle"
+    ],
+    "n_sets_for_norad": 5,
+    "n_distinct_in_window": 4,
+    "n_outside_window": 1,
+    "window_days": 7.0,
+    "deduplication": "by exact line content",
+    "primary_in_ensemble": true,
+    "label": "empirical reference dispersion",
+    "n_tle_ensemble": 4,
+    "member_epochs_utc": [
+      "2026-10-06T05:48:11.977045Z",
+      "2026-10-06T17:48:11.977045Z",
+      "2026-10-07T05:48:11.977045Z",
+      "2026-10-07T17:48:11.977045Z"
+    ],
+    "position_dispersion_rms_m_median": 530.370891149201,
+    "velocity_dispersion_rms_m_s_median": 0.08444765718248068,
+    "primary_minus_ensemble_mean": {
+      "median_position_m": 200.7535079711584,
+      "median_velocity_m_s": 0.03206962953021279,
+      "note": "the primary TLE remains the reference; the ensemble mean is not used in its place"
+    },
+    "min_members_for_total_covariance": 3
+  },
+  "run_flags": [
+    "RESIDUAL_AUTOCORRELATED"
+  ],
+  "flag_counts": {
+    "TLE_AGE_WARNING": 24,
+    "HIGH_CONDITIONAL_MAHALANOBIS": 24,
+    "RESIDUAL_AUTOCORRELATED": 24,
+    "STAGE5_QUALITY_WARNING": 5
+  },
+  "light_time_note": "Stages 4-5 do not correct light time: a measured position refers to about t - 70 ms for GNSS, so an along-track residual of about -0.27 km (-0.07 s equivalent) is expected from that alone"
+}

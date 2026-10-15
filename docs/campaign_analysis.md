@@ -246,7 +246,7 @@ Stage 3–7 chain, with known population properties:
 - **Repeatability:** three SYN-GAL passes offset by −1, 0 and +1 s along
   track, a known between-pass standard deviation of |v| × 1 s = 3.87 km.
 
-`tests/campaign/` has 57 tests: one per module, plus §47.1–47.6 on this
+`tests/campaign/` has 58 tests: one per module, plus §47.1–47.6 on this
 campaign. The demonstration is `scripts/campaign_synthetic_demo.py`; outputs
 are in [`examples/campaign`](examples/campaign), with the report in
 [`demo_report.txt`](examples/campaign/demo_report.txt). It has 17 runs, 3
@@ -279,9 +279,9 @@ These include the injected age drift; nothing here is an absolute accuracy.
 |---|---|
 | 47.1 clean | clean runs at Level 0; a fresh-TLE GPS pass has a residual within a few Stage-5 σ |
 | 47.2 unstable station | Madagascar is the only station tagged `STATION_SPECIFIC` (18 % of runs), the most frequently flagged, with the largest run-to-run std (0.0076°) and 84th percentile (0.019°) of its direction residual. Its LOO influence is *not* higher: with three stations, removing any station moves a biased solution (see the Stage-7 doc) |
-| 47.3 geometry | Stage-4 σ is 22.9 / 16.6 / 12.2 km for 2 / 3 / 4 stations. Among two-station runs, σ falls with crossing angle (Spearman −1, Theil-Sen −0.085 dex/deg) |
-| 47.4 TLE age | Spearman +0.59 (p 0.012); Theil-Sen slope +1.13 km/day (95 % 0.12–1.53), against ~1.55 km/day injected and diluted by the drift-free runs |
-| 47.5 constellation | Galileo SNR is below GPS: Mann-Whitney p = 0.00016, rank-biserial −1.00. BeiDou (1 run) is `under_sampled` |
+| 47.3 geometry | Stage-4 σ is 22.9 / 16.6 / 12.2 km for 2 / 3 / 4 stations. Among two-station runs, σ falls with crossing angle (Spearman −1, Theil-Sen −0.085 dex/deg). With only 3 runs the exact p is 1/3, so this is suggestive only, and the dependence is flagged |
+| 47.4 TLE age | Spearman +0.59 (permutation p 0.014); Theil-Sen slope +1.13 km/day (95 % 0.12–1.53), against ~1.55 km/day injected and diluted by the drift-free runs |
+| 47.5 constellation | Galileo SNR is below GPS: Mann-Whitney exact permutation p = 0.0018 (= 1/560; asymptotic would give 0.00016), rank-biserial −1.00. BeiDou (1 run) is `under_sampled` |
 | 47.6 repeatability | SYN-GAL between-pass along-track std is 3.58 km, against 3.87 km known (7 % low with 3 passes), and 7.5× its within-pass σ (0.48 km) |
 
 The run-level evidence fractions are:

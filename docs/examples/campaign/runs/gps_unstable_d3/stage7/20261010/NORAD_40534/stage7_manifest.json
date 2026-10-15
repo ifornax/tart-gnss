@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "stage": 7,
+  "input_stage6_manifest": "docs/examples/campaign/runs/gps_unstable_d3/stage6/20261010/NORAD_40534/stage6_manifest.json",
+  "input_hashes": {
+    "stage6_manifest": "a337ea7d55e82a13fa0c34360e29dace9a26efd4c5ab3a2ba7b1b874b9b21f86",
+    "stage5_manifest": "9842d60bcd193c802dd990c7fc0e51bdc7bef52876cca4402f508a793f25b41f",
+    "stage4_manifest": "e58eafb7b0d47efc84feff71ffde3d17f7051b9c413d03fdefd5bb7c2e8417ed",
+    "stage3_manifest": "e4ba6ffb500c42b305aa5c1a7f7800d8a998f0e23d9301540ee35241db69bb8c",
+    "stage2_manifest": "24b3df25f5860acb4926a6a37575bf96ef20dce7d836c962659b96c1c121a8cf",
+    "stage6_residuals": "554746cba5fd31af34d7dc5a11827286adafe0269d4d403a5e030ab98142b735",
+    "stage6_tle_trajectory": "8b978cccaf95276c53b7bcb7803a777084244cd582b6ebc86171237f143db034"
+  },
+  "provenance_chain": [
+    {
+      "stage": 6,
+      "recorded": "docs/examples/campaign/runs/gps_unstable_d3/stage6/20261010/NORAD_40534/stage6_manifest.json",
+      "path": "docs/examples/campaign/runs/gps_unstable_d3/stage6/20261010/NORAD_40534/stage6_manifest.json",
+      "sha256": "a337ea7d55e82a13fa0c34360e29dace9a26efd4c5ab3a2ba7b1b874b9b21f86",
+      "expected_sha256": null,
+      "status": "input"
+    },
+    {
+      "stage": 5,
+      "recorded": "docs/examples/campaign/runs/gps_unstable_d3/stage5/20261010/NORAD_40534/stage5_manifest.json",
+      "path": "docs/examples/campaign/runs/gps_unstable_d3/stage5/20261010/NORAD_40534/stage5_manifest.json",
+      "sha256": "9842d60bcd193c802dd990c7fc0e51bdc7bef52876cca4402f508a793f25b41f",
+      "expected_sha256": "9842d60bcd193c802dd990c7fc0e51bdc7bef52876cca4402f508a793f25b41f",
+      "status": "verified"
+    },
+    {
+      "stage": 4,
+      "recorded": "docs/examples/campaign/runs/gps_unstable_d3/stage4/20261010/NORAD_40534/stage4_manifest.json",
+      "path": "docs/examples/campaign/runs/gps_unstable_d3/stage4/20261010/NORAD_40534/stage4_manifest.json",
+      "sha256": "e58eafb7b0d47efc84feff71ffde3d17f7051b9c413d03fdefd5bb7c2e8417ed",
+      "expected_sha256": "e58eafb7b0d47efc84feff71ffde3d17f7051b9c413d03fdefd5bb7c2e8417ed",
+      "status": "verified"
+    },
+    {
+      "stage": 3,
+      "recorded": "docs/examples/campaign/runs/gps_unstable_d3/stage3/stage3_manifest.json",
+      "path": "docs/examples/campaign/runs/gps_unstable_d3/stage3/stage3_manifest.json",
+      "sha256": "e4ba6ffb500c42b305aa5c1a7f7800d8a998f0e23d9301540ee35241db69bb8c",
+      "expected_sha256": "e4ba6ffb500c42b305aa5c1a7f7800d8a998f0e23d9301540ee35241db69bb8c",
+      "status": "verified"
+    },
+    {
+      "stage": 2,
+      "recorded": "docs/examples/campaign/runs/gps_unstable_d3/stage2/manifest.json",
+      "path": "docs/examples/campaign/runs/gps_unstable_d3/stage2/manifest.json",
+      "sha256": "24b3df25f5860acb4926a6a37575bf96ef20dce7d836c962659b96c1c121a8cf",
+      "expected_sha256": "24b3df25f5860acb4926a6a37575bf96ef20dce7d836c962659b96c1c121a8cf",
+      "status": "verified"
+    }
+  ],
+  "alignment": {
+    "keys": [
+      "time_utc",
+      "station_id",
+      "norad_id"
+    ],
+    "tolerance_s": 0.01,
+    "n_epochs": 24,
+    "n_linked_stage5": 24,
+    "n_linked_stage4": 24,
+    "n_station_rows": 72,
+    "n_station_rows_linked_stage3": 72,
+    "n_station_rows_linked_stage2": 72,
+    "row_number_joins": false
+  },
+  "leave_one_out": {
+    "enabled": true,
+    "n_solutions": 72,
+    "solver": "tart_gnss.stage4.triangulation.triangulate_weighted (reused)",
+    "normalised_influence": "shift^T (C_loo - C_full)^-1 shift (nested estimates); NaN -> physical shift only",
+    "degraded_geometry": "fewer than 3 stations remaining or condition number > 1e+08",
+    "full_solution_reproduction_max_m": 0.0
+  },
+  "pairwise": {
+    "enabled": true,
+    "n_solutions": 72,
+    "separation_z": "closest-approach separation / sqrt(n^T (rho1^2 C1 + rho2^2 C2) n)"
+  },
+  "correlation_analysis": {
+    "method": "spearman",
+    "min_samples": 8,
+    "min_correlation": 0.5,
+    "alpha": 0.01,
+    "decision_coefficient": "rank correlation after removing a linear time trend",
+    "p_value": "effective sample size n(1-r_x r_y)/(1+r_x r_y); Holm over all tests",
+    "n_tests": 130,
+    "supported_tags": []
+  },
+  "evidence_rules": {
+    "anomaly_threshold": null,
+    "anomaly_tail_probability": 0.0027,
+    "stage4_threshold": 14.156,
+    "pair_z": 4.0,
+    "min_persistent_epochs": 5,
+    "min_samples": 8,
+    "min_correlation": 0.5,
+    "alpha": 0.01,
+    "station_min_epochs": 3,
+    "station_min_fraction": 0.5,
+    "anomaly_threshold_used": 20.861193859412282,
+    "anomaly_threshold_rule": "chi2_3 quantile at 1 - 0.0027 / n_epochs (Bonferroni)"
+  },
+  "quality_policy": {
+    "policy": "strict",
+    "n_diagnosed": 24,
+    "missing_evidence": "recorded as quality flags; never treated as evidence of absence"
+  },
+  "software": {
+    "tart_gnss": "0.8.0",
+    "python": "3.13.15",
+    "python_implementation": "CPython",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.39",
+    "skyfield": "1.55",
+    "sgp4": "2.27",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "scipy": "1.15.3",
+    "pandas": "3.0.5",
+    "pyarrow": "26.0.0",
+    "matplotlib": "3.10.0",
+    "git_commit": "a91c0047389e07a69c5955361ea48a811a56803c",
+    "git_dirty": false
+  },
+  "provenance": {
+    "command_line": [
+      "tart-diagnose",
+      "--stage6-manifest",
+      "docs/examples/campaign/runs/gps_unstable_d3/stage6/20261010/NORAD_40534/stage6_manifest.json",
+      "--output-dir",
+      "docs/examples/campaign/runs/gps_unstable_d3/stage7",
+      "--no-plots"
+    ],
+    "run_timestamp_utc": "2026-10-15T14:53:00.828Z",
+    "working_directory": "/home/nadeem/GitHub/TART/tart-gnss"
+  },
+  "outputs": {
+    "diagnosis_csv": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/diagnosis.csv",
+    "diagnosis_parquet": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/diagnosis.parquet",
+    "station_influence_csv": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/station_influence.csv",
+    "station_influence_parquet": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/station_influence.parquet",
+    "pairwise_csv": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/pairwise.csv",
+    "pairwise_parquet": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/pairwise.parquet",
+    "correlations_csv": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/correlations.csv",
+    "summary": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/summary.json",
+    "diagnostics": [],
+    "log": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/logs/stage7.log",
+    "manifest": "docs/examples/campaign/runs/gps_unstable_d3/stage7/20261010/NORAD_40534/stage7_manifest.json"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "stage": 3,
+  "input_manifest": "docs/examples/campaign/runs/gps_wide_d9/stage2/manifest.json",
+  "norad_id": 40534,
+  "satellite": {
+    "satellite_name": "GPS BIIF-9 (PRN 26)",
+    "constellation": "GPS",
+    "tle_line1": "1 40534U 15013A   26279.74180529 -.00000040  00000+0  00000+0 0  9991",
+    "tle_line2": "2 40534  53.1528 199.5676 0114192  41.6722 319.1990  2.00569358 84063"
+  },
+  "stations": {
+    "mauritius": {
+      "station_id": "mauritius",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "madagascar": {
+      "station_id": "madagascar",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "south_africa": {
+      "station_id": "south_africa",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "calibration": {
+        "warnings": []
+      }
+    },
+    "namibia": {
+      "station_id": "namibia",
+      "latitude_deg": -22.612053,
+      "longitude_deg": 17.856784,
+      "altitude_m": 1655.0,
+      "calibration": {
+        "warnings": []
+      }
+    }
+  },
+  "software": {
+    "git_commit": null
+  },
+  "provenance": {
+    "command_line": [
+      "synthetic"
+    ]
+  },
+  "outputs": {
+    "directions_csv": "docs/examples/campaign/runs/gps_wide_d9/stage3/directions.csv",
+    "directions_parquet": "docs/examples/campaign/runs/gps_wide_d9/stage3/directions.parquet"
+  },
+  "input_manifest_sha256": "480ffaeb1e64a2fb5b4a4c31b6381673dc086a64bf789cd90d550a61af44ae3b"
+}

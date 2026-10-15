@@ -1,0 +1,6 @@
+bin,bin_low,bin_high,n_rows,n_runs,median_position_residual_3d_m_median,median_position_residual_3d_m_rms,median_position_residual_3d_m_mad,median_position_residual_3d_m_p16,median_position_residual_3d_m_p84,median_along_track_m_median,median_along_track_m_rms,median_along_track_m_mad,median_along_track_m_p16,median_along_track_m_p84,median_radial_m_median,median_radial_m_rms,median_radial_m_mad,median_radial_m_p16,median_radial_m_p84,n_precision_runs
+0-1 d,0,1,0,0,,,,,,,,,,,,,,,,0
+1-3 d,1,3,0,0,,,,,,,,,,,,,,,,0
+3-7 d,3,7,0,0,,,,,,,,,,,,,,,,0
+7-14 d,7,14,0,0,,,,,,,,,,,,,,,,0
+>14 d,14,inf,1,1,2859594.845,2859594.845,0,2859594.845,2859594.845,369660.7716,369660.7716,0,369660.7716,369660.7716,2765350.403,2765350.403,0,2765350.403,2765350.403,0

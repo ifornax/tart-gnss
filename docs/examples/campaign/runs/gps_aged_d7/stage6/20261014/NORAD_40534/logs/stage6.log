@@ -1,0 +1,13 @@
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: input Stage-5 manifest: docs/examples/campaign/runs/gps_aged_d7/stage5/20261014/NORAD_40534/stage5_manifest.json
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: NORAD 40534; Stage-5 rows 24 (table docs/examples/campaign/runs/gps_aged_d7/stage5/20261014/NORAD_40534/trajectory.parquet)
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: reference TLE: GPS BIIF-9  (PRN 26) (tle-file); epoch 2026-10-06T17:48:11.977Z; only element set for this NORAD ID in the file
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: Stage-5 rows compared under 'strict' policy: 24 of 24
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: TLE age: median 7.332 d, max |age| 7.334 d; forward propagation
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: TLE ensemble: 2 distinct set(s) in the 7.0-day window (fewer than 3: no reference-aware statistics)
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: precision validation: True
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: 3-D position residual: median 11.46 km, RMS 11.84 km; 3-D velocity residual median 43.08 m/s
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: median RTN residual (km): R -3.045, T 11.04, N 0.3091; median conditional position D^2 1435
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6: outputs: docs/examples/campaign/runs/gps_aged_d7/stage6/20261014/NORAD_40534
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6:   residuals_csv: docs/examples/campaign/runs/gps_aged_d7/stage6/20261014/NORAD_40534/residuals.csv
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6:   residuals_parquet: docs/examples/campaign/runs/gps_aged_d7/stage6/20261014/NORAD_40534/residuals.parquet
+2026-10-15T14:53:06Z INFO    tart_gnss.stage6:   tle_trajectory_parquet: docs/examples/campaign/runs/gps_aged_d7/stage6/20261014/NORAD_40534/tle_trajectory.parquet
