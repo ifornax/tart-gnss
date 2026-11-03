@@ -1,0 +1,1 @@
+segment_id,start_utc,end_utc,possible_duration_s,station_ids,n_stations,files_mg_tana,files_za_rhodes,files_mu_udm,file_counts_per_station,inventory_status,coverage_confidence,coverage_status,n_matched_candidates,meets_min_common_duration

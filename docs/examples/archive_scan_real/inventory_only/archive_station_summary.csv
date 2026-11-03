@@ -1,0 +1,5 @@
+station_id,archive_name,days_queried,days_found,days_empty,days_error,days_unknown,files,total_bytes,candidate_intervals,possible_covered_s,scan_interval_s,possible_coverage_fraction,earliest_filename_utc,latest_filename_utc,inventory_complete
+mg-tana,mg-tana,27,14,13,0,0,9529,1396570240,75,506676.784531,2160000.0,0.234572585,2026-10-08T00:00:42.865177Z,2026-10-29T07:14:16.399788Z,True
+za-rhodes,za-rhodes,27,25,2,0,0,32448,4755578880,8,1910020.203433,2160000.0,0.884268613,2026-10-08T00:00:28.328629Z,2026-11-02T04:48:26.653213Z,True
+mu-udm,mu-udm,27,0,27,0,0,0,0,0,0.0,2160000.0,0.0,,,True
+ALL_STATIONS,,27,,,,,,,0,0.0,2160000.0,0.0,,,True

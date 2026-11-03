@@ -1,0 +1,59 @@
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan: Stage-1 results ../sat_position/results/common_gnss_20261009.json (SHA-256 5e268e8d5e4b4bd57b5cbd7208cdccddbc328c2f743ecfd7d32e49827b3d6d6d): 3323 windows
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan: Station mg-tana: TART id mg-tana, archive 'mg-tana'
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan: Station za-rhodes: TART id za-rhodes, archive 'za-rhodes'
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan: Station mu-udm: TART id mu-udm, archive 'mu-udm'
+2026-11-03T14:46:02Z INFO    tart_gnss.archive_scan.inventory: Inventory: 81 prefixes, 3 listed live (3 list calls), 78 cache hits, 3 stale, 0 corrupt cache files, 0 failures, 0 unknown
+2026-11-03T14:46:02Z INFO    tart_gnss.archive_scan: Matched 2186 of 3323 Stage-1 windows (after filters) with 69 shared segments: 1086 candidates (476 shorter than 300 s, 0 excluded by TLE age)
+TART ARCHIVE SCAN
+Interval: 2026-10-09T00:00:00.000Z -- 2026-11-03T00:00:00.000Z (half-open)
+Stations: mg-tana, za-rhodes, mu-udm
+Mode: STAGE1_MATCHING
+
+Station          Days queried  Days with data  Empty    Files  Listing errors  Unknown
+--------------------------------------------------------------------------------------
+mg-tana                    27              14     13     9529               0        0
+za-rhodes                  27              25      2    32448               0        0
+mu-udm                     27               0     27        0               0        0
+
+Possible 3-station candidate segments: 0
+Candidate segments >= 300 s: 0
+Possible 3-station shared candidate time (no double counting): 0.00 h
+DIAGNOSTIC segments covered by 2..2 of 3 stations: 69 (131.05 h; NOT valid retrieval inputs)
+Stage-1 windows: 3323 total, 2186 after filters
+3-station satellite x segment intersections >= 300 s: 0
+In-band 3-station satellite intersections: 0
+DIAGNOSTIC (partial-network) intersections: 1086
+Inventory completeness: COMPLETE
+Coverage class: FILENAME_CANDIDATE (NOT NATIVE VALIDATED; no radio detection implied)
+Exit classification: NO_CANDIDATE_OVERLAP_WITH_COMPLETE_LISTINGS
+
+Top candidates (showing 20 of 1086; all are in the CSV):
+    #  rank  NORAD relevance   overlap start -- end (UTC)                  possible s  TLE age d  status
+    1  1868  41861 GALILEO_E1  2026-10-25T12:27:56Z -- 2026-10-25T15:04:16Z        9381      -0.20  TWO_STATION_DIAGNOSTIC
+    2  1868  41861 GALILEO_E1  2026-10-25T11:11:40Z -- 2026-10-25T12:24:48Z        4388      -0.28  TWO_STATION_DIAGNOSTIC
+    3  2701  44709 BEIDOU_B1C  2026-10-28T23:08:20Z -- 2026-10-29T02:05:42Z       10642      -0.32  TWO_STATION_DIAGNOSTIC
+    4  3240  41861 GALILEO_E1  2026-10-25T02:40:32Z -- 2026-10-25T03:47:16Z        4004      -0.64  TWO_STATION_DIAGNOSTIC
+    5   520  41175 GALILEO_E1  2026-10-28T19:10:17Z -- 2026-10-29T00:45:47Z       20130      -0.67  TWO_STATION_DIAGNOSTIC
+    6   454  40128 GALILEO_E1  2026-10-28T14:07:20Z -- 2026-10-28T14:49:22Z        2522      -1.02  TWO_STATION_DIAGNOSTIC
+    7   454  40128 GALILEO_E1  2026-10-28T12:03:23Z -- 2026-10-28T14:06:20Z        7377      -1.08  TWO_STATION_DIAGNOSTIC
+    8    63  41861 GALILEO_E1  2026-10-26T20:47:35Z -- 2026-10-26T22:31:36Z        6241      +1.13  TWO_STATION_DIAGNOSTIC
+    9   454  40128 GALILEO_E1  2026-10-28T11:44:04Z -- 2026-10-28T12:02:28Z        1104      -1.13  TWO_STATION_DIAGNOSTIC
+   10   454  40128 GALILEO_E1  2026-10-28T10:21:34Z -- 2026-10-28T11:38:23Z        4610      -1.17  TWO_STATION_DIAGNOSTIC
+   11  2724  44709 BEIDOU_B1C  2026-10-27T23:12:38Z -- 2026-10-28T02:08:41Z       10563      -1.32  TWO_STATION_DIAGNOSTIC
+   12  3069  43056 GALILEO_E1  2026-10-28T18:54:22Z -- 2026-10-28T20:49:59Z        6937      -1.39  TWO_STATION_DIAGNOSTIC
+   13   311  40544 GALILEO_E1  2026-10-29T04:45:00Z -- 2026-10-29T06:47:41Z        7361      -1.47  TWO_STATION_DIAGNOSTIC
+   14   486  43001 BEIDOU_B1C  2026-10-28T18:11:17Z -- 2026-10-28T19:48:37Z        5839      -1.65  TWO_STATION_DIAGNOSTIC
+   15  1806  43056 GALILEO_E1  2026-10-28T11:44:04Z -- 2026-10-28T12:02:28Z        1104      -1.73  TWO_STATION_DIAGNOSTIC
+   16  1806  43056 GALILEO_E1  2026-10-28T10:21:34Z -- 2026-10-28T11:38:23Z        4610      -1.76  TWO_STATION_DIAGNOSTIC
+   17   100  40545 GALILEO_E1  2026-10-28T14:07:20Z -- 2026-10-28T15:00:41Z        3201      -1.78  TWO_STATION_DIAGNOSTIC
+   18   486  43001 BEIDOU_B1C  2026-10-28T14:07:20Z -- 2026-10-28T16:45:08Z        9468      -1.80  TWO_STATION_DIAGNOSTIC
+   19   100  40545 GALILEO_E1  2026-10-28T12:03:23Z -- 2026-10-28T14:06:20Z        7377      -1.84  TWO_STATION_DIAGNOSTIC
+   20  1806  43056 GALILEO_E1  2026-10-28T08:06:36Z -- 2026-10-28T08:56:26Z        2990      -1.87  TWO_STATION_DIAGNOSTIC
+
+Retrieval (manual; whole Stage-1 window, dry run):
+  tart-retrieve --visibility-results ../sat_position/results/common_gnss_20261009.json --rank 1868 --dry-run
+  Note: tart-retrieve targets the predicted window, not the archive overlap; --max-duration centres on the window midpoint and can miss a short overlap.
+Note: --min-stations 2: rows covered by fewer than 3 stations are DIAGNOSTICS, not valid retrieval inputs
+Note: some day listings were made before the day had settled (partial days)
+
+Outputs: docs/examples/archive_scan_real/two_station_diagnostic/archive_candidates.csv (+ companions); manifest docs/examples/archive_scan_real/two_station_diagnostic/archive_scan_manifest.json

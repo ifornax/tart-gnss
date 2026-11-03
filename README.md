@@ -16,6 +16,7 @@ completed runs into population statistics.**
 | Stage | Command | What it does |
 |---|---|---|
 | 1 | `tart-common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
+| 1→2 | `tart-archive-scan` | Utility between Stages 1 and 2. Lists the TART archive once per station and UTC day (with a checksummed cache), turns the filenames into conservative per-station *candidate* coverage, intersects the stations, matches the shared segments with **every** Stage-1 window, and ranks the in-band candidates. Each candidate gets a safe `tart-retrieve --dry-run` command. Nothing is downloaded; results are archive-coverage candidates, not validated data. |
 | 2 | `tart-retrieve` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
 | 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
@@ -24,7 +25,7 @@ completed runs into population statistics.**
 | 7 | `tart-diagnose` | Follows the recorded provenance from Stage 6 back to Stage 2, verifying the hashes, and aligns everything by time and station. Recomputes leave-one-station-out and pairwise solutions with the Stage-4 solver, compares every station direction with the Stage-5 trajectory, and tests calibration, localisation, timing, geometry and trajectory-model correlations (time-detrended, autocorrelation-aware, effect size plus Holm). Assigns non-exclusive evidence tags, rule-based evidence levels 0–5 and a descriptive confidence. Writes `diagnosis`, `station_influence`, `pairwise`, `correlations.csv`, `summary.json`, `stage7_manifest.json` and seven plots. No physical cause is asserted, and no upstream output is modified. |
 | campaign | `tart-campaign` | Aggregates many completed Stage-7 runs, reading only their recorded upstream products (re-hashed; nothing is rerun). Produces run, epoch and station population tables, and reports: measurement uncertainty (including the Stage-4 covariance principal axes); TLE-relative residuals (precision cohort); station stability; constellation, satellite and station-set comparisons (with effect sizes and minimum group sizes); geometry, elevation, SNR and TLE-age dependence; evidence-level and tag rates; and pass-to-pass repeatability. Confidence intervals come from a run-level bootstrap, and runs — never epochs — are the independent units. |
 
-> **Status:** Stages 1–7 and the campaign layer complete, with dynamic TART station-registry integration (v0.8.0). The repository is private and under active development.
+> **Status:** Stages 1–7, the campaign layer and archive-aware candidate discovery complete, with dynamic TART station-registry integration (v0.9.0). The repository is private and under active development.
 
 ---
 
@@ -34,6 +35,7 @@ completed runs into population statistics.**
 - [Installation](#installation)
 - [Stations](#stations)
 - [Stage 1: common visibility (`tart-common-gnss`)](#stage-1-common-visibility-tart-common-gnss)
+- [Archive scan: finding archived overlaps (`tart-archive-scan`)](#archive-scan-finding-archived-overlaps-tart-archive-scan)
 - [Stage 2: observation retrieval (`tart-retrieve`)](#stage-2-observation-retrieval-tart-retrieve)
 - [Stage 3: direction estimation (`tart-localise`)](#stage-3-direction-estimation-tart-localise)
 - [Stage 4: 3-D localisation (`tart-triangulate`)](#stage-4-3-d-localisation-tart-triangulate)
@@ -237,6 +239,63 @@ such as `mauritius`, and Stage 2 still reads them.
 **Method:** propagate each satellite on a coarse grid. Common visibility is
 `min_i E_i(t) ≥ E_min`. Split the visible samples into maximal runs, refine
 each rise and set by bisection on the exact predicate, then rank by duration.
+
+## Archive scan: finding archived overlaps (`tart-archive-scan`)
+
+Stage 1 finds *geometric* visibility, and a Stage-2 dry run checks one
+window at a time. Before retrieving anything, check where the stations
+actually archived data at the same time:
+
+```bash
+# 1. archive inventory only (no Stage-1 input)
+tart-archive-scan --stations madagascar south_africa mauritius \
+    --start 2026-10-09T00:00:00Z --end 2026-11-03T00:00:00Z \
+    --min-common-duration 300 --output results/archive_candidates.csv
+
+# 2. match every Stage-1 window, reusing the cached listings
+tart-archive-scan --visibility-results results/common_gnss_20261009.json \
+    --signal-relevance GPS_L1 GALILEO_E1 BEIDOU_B1C \
+    --cache-policy reuse --output results/archive_candidates.csv
+```
+
+How it works:
+
+- **Listing.** Each `(station, UTC day)` prefix is listed **once**, using
+  the Stage-2 archive backend, prefix builder and filename parser. Only
+  metadata is read; no file is ever downloaded.
+- **Status per day.** `FOUND`, `EMPTY`, `ERROR` or `UNKNOWN`. A listing
+  error never counts as an empty day.
+- **Candidate coverage.** A file named `T` is *assumed* to cover
+  `[T − 120 s, T]`. Gaps are never filled. The stations are intersected,
+  and the shared segments are matched with all Stage-1 windows.
+- **Labels.** Every row is labelled `ARCHIVE_COVERAGE_CANDIDATE` /
+  `FILENAME_CANDIDATE`, and `verified_overlap_duration_s` stays null.
+- **Ranking.** Rows are ranked by:
+  1. complete inventory;
+  2. in-band signal;
+  3. duration, capped at 600 s;
+  4. |TLE age|;
+  5. Stage-1 geometry;
+  6. Stage-1 rank.
+- **Handoff.** Each row gives `tart-retrieve --visibility-results … --rank N --dry-run`.
+
+**Exit status:**
+
+- `0`: complete inventory, even with zero candidates;
+- `3`: inventory incomplete (listing errors or unknown days);
+- `2`: invalid input or a station set that differs from Stage 1;
+- `1`: a failure, or every listing failed.
+
+**Outputs:** `archive_candidates.csv/.json`, `archive_candidate_stations.csv`,
+`archive_common_segments.csv`, `archive_station_days.csv`,
+`archive_station_summary.csv` and `archive_scan_manifest.json`. The cache is
+written to `data/archive_inventory/` (git-ignored).
+
+**2026-10-09 → 11-03 result:** `mu-udm` has no archived files at all (its
+archive ends on 2026-06-26), so with a complete inventory there is **no**
+three-station overlap. A `--min-stations 2` diagnostic finds 131 h of
+mg-tana + za-rhodes candidate time. Method, cache, ranking, real results
+and the decision log are in [`docs/archive_scan.md`](docs/archive_scan.md).
 
 ## Stage 2: observation retrieval (`tart-retrieve`)
 
@@ -669,10 +728,12 @@ tart-gnss/
 ├── tart_gnss_stage6_implementation.md   # Stage-6 specification
 ├── tart_gnss_stage7_implementation.md   # Stage-7 specification
 ├── tart_gnss_campaign_analysis_implementation.md  # campaign-layer specification
+├── tart_gnss_archive_scan_implementation.md       # archive-scan specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
 ├── data/observations/               # Stage-2 output (git-ignored)
+├── data/archive_inventory/          # tart-archive-scan listing cache (git-ignored)
 ├── results/                         # Stage-1 example runs (2026-10-01, 2026-06-25)
 ├── docs/report/                     # LaTeX technical report (registry, Stages 1-2), PDF, figures
 ├── docs/examples/stage2/            # example Stage-2 manifests (valid and invalid)
@@ -693,6 +754,8 @@ tart-gnss/
 ├── docs/examples/campaign_real/     # campaign over the real Stage-7 runs (descriptive only, exit 3)
 ├── docs/stage7_diagnosis.md         # Stage-7 provenance, influence, correlations, evidence rules, validation, real data
 ├── docs/campaign_analysis.md        # campaign inputs, cohorts, statistics, outputs, synthetic validation, real run
+├── docs/examples/archive_scan_real/ # real 2026-10-09..11-03 scans (inventory-only, Stage-1 matching, two-station diagnostic)
+├── docs/archive_scan.md             # archive scan: method, cache, ranking, real result, decision log, handoff
 ├── scripts/make_report_figures.py
 ├── scripts/stage3_synthetic_demo.py
 ├── scripts/stage4_synthetic_demo.py
@@ -775,14 +838,19 @@ tart-gnss/
 │       ├── statistics.py  bootstrap.py   # run-level statistics, comparisons, cluster bootstrap
 │       ├── output.py  plotting.py  synthetic.py  errors.py
 │       └── cli.py              # tart-campaign
-└── tests/                           # 613 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, campaign: 58, CLI names: 3
+│   └── archive_scan/
+│       ├── inventory.py  cache.py       # station/day listings (Stage-2 backend), versioned checksummed cache
+│       ├── intervals.py  matching.py    # filename candidate segments, intersections, Stage-1 matching
+│       ├── ranking.py  output.py  errors.py
+│       └── cli.py              # tart-archive-scan
+└── tests/                           # 667 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, campaign: 58, archive scan: 54, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 613 tests, ~2.5 min, no network needed
+pytest                       # 667 tests, ~3 min, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
@@ -815,6 +883,17 @@ tests build a 17-run synthetic campaign once, then check:
 - run-level bootstrap coverage and clustering;
 - cohorts, filters and exclusions;
 - that no pipeline stage is run during a campaign.
+
+The archive-scan tests use a mocked archive that records every listing and
+refuses downloads, together with synthetic Stage-1 JSON. They check:
+- one listing per station/day;
+- the edge days, and the `EMPTY`/`ERROR`/`UNKNOWN` distinctions;
+- cache refresh, reuse, offline mode and checksums;
+- that gaps are never filled;
+- the two-station, minimum-duration and TLE-age rules;
+- that ranking is not dominated by long GEO windows;
+- the retrieval handoff;
+- that `tart-retrieve` is never run.
 
 ## Technical report
 

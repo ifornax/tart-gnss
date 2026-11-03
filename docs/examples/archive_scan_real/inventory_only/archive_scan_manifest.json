@@ -1,0 +1,1109 @@
+{
+  "schema_version": "1.0",
+  "analysis": "archive_scan",
+  "run_tag": "20261103T144509Z",
+  "run_timestamp_utc": "2026-11-03T14:45:09.923Z",
+  "command_line": [
+    "tart-archive-scan",
+    "--stations",
+    "madagascar",
+    "south_africa",
+    "mauritius",
+    "--start",
+    "2026-10-09T00:00:00Z",
+    "--end",
+    "2026-11-03T00:00:00Z",
+    "--min-common-duration",
+    "300",
+    "--output",
+    "docs/examples/archive_scan_real/inventory_only/archive_candidates.csv"
+  ],
+  "arguments": {
+    "stations": [
+      "madagascar",
+      "south_africa",
+      "mauritius"
+    ],
+    "start": "2026-10-09T00:00:00Z",
+    "end": "2026-11-03T00:00:00Z",
+    "visibility_results": null,
+    "min_common_duration": 300.0,
+    "signal_relevance": null,
+    "constellations": null,
+    "max_abs_tle_age_days": null,
+    "station_file": null,
+    "aliases": null,
+    "file_span_assumption_s": 120.0,
+    "gap_tolerance_s": 0.0,
+    "duration_cap_s": 600.0,
+    "cache_dir": "data/archive_inventory",
+    "cache_policy": "refresh",
+    "cache_max_age_hours": 24.0,
+    "output": "docs/examples/archive_scan_real/inventory_only/archive_candidates.csv",
+    "inventory_output": null,
+    "min_stations": null,
+    "top": 20,
+    "verbose": false
+  },
+  "software": {
+    "tart_gnss": "0.9.0",
+    "python": "3.13.15",
+    "git_commit": "0a910cebfd39e1648c8af7d6df9b2bf4fc41715e",
+    "git_dirty": false
+  },
+  "evidence_class": "ARCHIVE_COVERAGE_CANDIDATE",
+  "coverage_confidence": "FILENAME_CANDIDATE",
+  "evidence_classes_not_claimed": [
+    "VALIDATED_THREE_STATION_DATA",
+    "TIMESTAMP_OVERLAP_VERIFIED",
+    "RADIO_DETECTED"
+  ],
+  "archive": {
+    "host": "s3.us-west-2.amazonaws.com",
+    "bucket": "tart",
+    "access": "anonymous, read-only listing (no downloads)",
+    "layout": "<archive_name>/vis/<year>/<month>/<day>/vis_<UTC>.hdf (no zero padding)"
+  },
+  "interval": {
+    "start_utc": "2026-10-09T00:00:00.000Z",
+    "end_utc": "2026-11-03T00:00:00.000Z",
+    "convention": "half-open [start, end)",
+    "days_listed": [
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-10",
+      "2026-10-11",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16",
+      "2026-10-17",
+      "2026-10-18",
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-21",
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-24",
+      "2026-10-25",
+      "2026-10-26",
+      "2026-10-27",
+      "2026-10-28",
+      "2026-10-29",
+      "2026-10-30",
+      "2026-10-31",
+      "2026-11-01",
+      "2026-11-02",
+      "2026-11-03"
+    ]
+  },
+  "stations": [
+    {
+      "id": "mg-tana",
+      "name": "Madagascar - Antananarivo",
+      "latitude_deg": -18.8971446,
+      "longitude_deg": 47.5551677,
+      "altitude_m": 1280.0,
+      "source": "TART network registry https://map.elec.ac.nz/api/v1/telescopes (node mg-tana), retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9",
+      "tart_id": "mg-tana",
+      "api_url": "https://api.elec.ac.nz/tart/mg-tana",
+      "archive_name": "mg-tana",
+      "archive_verified": true,
+      "archive_verified_utc": "2026-10-09T16:06:41Z",
+      "station_metadata_changed": false
+    },
+    {
+      "id": "za-rhodes",
+      "name": "Rhodes University, Grahamstown",
+      "latitude_deg": -33.319413,
+      "longitude_deg": 26.507688,
+      "altitude_m": 642.26,
+      "source": "TART network registry https://map.elec.ac.nz/api/v1/telescopes (node za-rhodes), retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9",
+      "tart_id": "za-rhodes",
+      "api_url": "https://api.elec.ac.nz/tart/za-rhodes",
+      "archive_name": "za-rhodes",
+      "archive_verified": true,
+      "archive_verified_utc": "2026-10-09T16:06:41Z",
+      "station_metadata_changed": false
+    },
+    {
+      "id": "mu-udm",
+      "name": "Bel Air - Mauritius",
+      "latitude_deg": -20.2587508,
+      "longitude_deg": 57.7591989,
+      "altitude_m": 20.0,
+      "source": "TART network registry https://map.elec.ac.nz/api/v1/telescopes (node mu-udm), retrieved 2026-10-09T16:06:41Z, snapshot sha256 df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9",
+      "tart_id": "mu-udm",
+      "api_url": "https://api.elec.ac.nz/tart/mu-udm",
+      "archive_name": "mu-udm",
+      "archive_verified": true,
+      "archive_verified_utc": "2026-10-09T16:06:41Z",
+      "station_metadata_changed": false
+    }
+  ],
+  "station_file": "/home/nadeem/GitHub/TART/tart-gnss/src/tart_gnss/config/stations_registry.yaml",
+  "station_file_sha256": "482bc395ab02a20fe3033797304d1ec2e5f1b1bb6bbdcbf762b1dbb64d2d2a87",
+  "station_registry": {
+    "format_version": 1,
+    "generated_by": "tart-stations-update",
+    "source": "https://map.elec.ac.nz/api/v1/telescopes",
+    "retrieved_utc": "2026-10-09T16:06:41Z",
+    "sha256": "df55cafbbb9f47138c0f5585d162a11458b406b1caa0e1051b6ba67eb225d0e9",
+    "snapshot_file": "registry_20261009T160641Z.json",
+    "registry_entry_count": 18,
+    "station_count": 17,
+    "api_url_note": "api_url is convention-derived (https://api.elec.ac.nz/tart/<tart_id>) unless the registry publishes one; it is not a statement that the API is online",
+    "api_url_from_registry": [],
+    "archive_note": "archive_name is set only for a verified archive prefix; registry presence does not imply archived data",
+    "skipped_entries": [
+      {
+        "index": 10,
+        "tart_id": "bw-biust",
+        "reason": "missing valid coordinates: Station 'bw-biust': 'altitude_m' is missing (null). Coordinates must come from an authoritative source and are never guessed."
+      }
+    ],
+    "previous_catalogue": "src/tart_gnss/config/stations.yaml",
+    "changes_from_previous": {
+      "added": [
+        "bd-iub",
+        "it-ant",
+        "nz-dunedin",
+        "nz-elec",
+        "nz-nelson",
+        "nz-nelson-32",
+        "nz-rock2f",
+        "nz-test",
+        "se-kth",
+        "tart3-test"
+      ],
+      "removed": [],
+      "coordinate_changes": [],
+      "name_changes": [
+        {
+          "tart_id": "ghana",
+          "old": "TART Ghana (GRAO)",
+          "new": "GRAO - Ghana"
+        },
+        {
+          "tart_id": "mg-tana",
+          "old": "TART Madagascar (Antananarivo)",
+          "new": "Madagascar - Antananarivo"
+        },
+        {
+          "tart_id": "mu-udm",
+          "old": "TART Mauritius (Bel Air)",
+          "new": "Bel Air - Mauritius"
+        },
+        {
+          "tart_id": "na-unam",
+          "old": "TART Namibia (UNAM)",
+          "new": "Namibia - UNAM"
+        },
+        {
+          "tart_id": "za-hammanskraal",
+          "old": "TART South Africa (Kwalata, Hammanskraal)",
+          "new": "Kwalata - South Africa"
+        },
+        {
+          "tart_id": "za-rhodes",
+          "old": "TART South Africa (Rhodes University, Makhanda)",
+          "new": "Rhodes University, Grahamstown"
+        },
+        {
+          "tart_id": "zm-cbu",
+          "old": "TART Zambia (Copperbelt University)",
+          "new": "Copperbelt University - Zambia"
+        }
+      ],
+      "metadata_changes": [
+        {
+          "tart_id": "ghana",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "mg-tana",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "mu-udm",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "na-unam",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "za-hammanskraal",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "za-rhodes",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        },
+        {
+          "tart_id": "zm-cbu",
+          "field": "archive_verified",
+          "old": null,
+          "new": true
+        }
+      ]
+    }
+  },
+  "alias_file": null,
+  "stage1": null,
+  "assumptions": {
+    "file_span_assumption_s": 120.0,
+    "file_span_meaning": "a file named T is ASSUMED to hold samples in [T - span, T]; a search envelope, not a verified exposure time or a proven upper bound",
+    "filename_time": "last-sample time in previously inspected files (Stage 2)",
+    "gaps": "candidate intervals are unioned only where they overlap or touch; gaps are never covered",
+    "possible_overlap_duration_s": "planning estimate under the span assumption; verified_overlap_duration_s is always null (no native timestamps were read)",
+    "s3_last_modified": "recorded only; never used as observation time",
+    "gap_tolerance_s": 0.0
+  },
+  "filters": {
+    "signal_relevance": null,
+    "constellations": null,
+    "max_abs_tle_age_days": null,
+    "min_common_duration_s": 300.0,
+    "min_stations": 3,
+    "window_exclusions": {},
+    "n_intersections_below_min_duration": 0,
+    "n_excluded_tle_age": 0
+  },
+  "ranking": {
+    "rule": [
+      "inventory_complete (True first)",
+      "all_selected_stations (True first)",
+      "in_band_signal (GPS_L1/GALILEO_E1/BEIDOU_B1C first)",
+      "min(possible_overlap_duration_s, duration_cap_s) descending",
+      "abs(tle_age_days) ascending (missing last)",
+      "stage1_min_mid_elevation_deg descending (missing last)",
+      "rank_stage1, norad_id, overlap_start_utc ascending"
+    ],
+    "duration_cap_s": 600.0,
+    "in_band": [
+      "GPS_L1",
+      "GALILEO_E1",
+      "BEIDOU_B1C"
+    ]
+  },
+  "cache": {
+    "dir": "data/archive_inventory",
+    "policy": "refresh",
+    "max_age_hours": 24.0,
+    "schema_version": 1
+  },
+  "listing": {
+    "prefixes_required": 81,
+    "live_listings": 81,
+    "live_list_calls": 81,
+    "cache_hits": 0,
+    "cache_stale": 0,
+    "cache_corrupt": 0,
+    "failures": 0,
+    "unknown": 0,
+    "inventory_complete": true,
+    "status_counts": {
+      "FOUND": 39,
+      "EMPTY": 42,
+      "ERROR": 0,
+      "UNKNOWN": 0
+    },
+    "snapshots": [
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-08",
+        "prefix": "mg-tana/vis/2026/10/8/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "fd495eeb8b75ddf7b82a311c8649d0ab988a3b088b05ca7807bf127aad96d7f1",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/8/listing_20261103T144512660262Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-09",
+        "prefix": "mg-tana/vis/2026/10/9/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "a8d38bb0c8a6fc97bcc3c1811e02c262f9d5f1469fa9296121c0ad87ce9bd2d5",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/9/listing_20261103T144513020995Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-10",
+        "prefix": "mg-tana/vis/2026/10/10/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/10/listing_20261103T144513306779Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-11",
+        "prefix": "mg-tana/vis/2026/10/11/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/11/listing_20261103T144513590493Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-12",
+        "prefix": "mg-tana/vis/2026/10/12/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/12/listing_20261103T144513873530Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-13",
+        "prefix": "mg-tana/vis/2026/10/13/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/13/listing_20261103T144514155842Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-14",
+        "prefix": "mg-tana/vis/2026/10/14/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/14/listing_20261103T144514437112Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-15",
+        "prefix": "mg-tana/vis/2026/10/15/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/15/listing_20261103T144514721536Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-16",
+        "prefix": "mg-tana/vis/2026/10/16/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/16/listing_20261103T144515003070Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-17",
+        "prefix": "mg-tana/vis/2026/10/17/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "92c96c415fe062b75159bd3189f5f2166e0c7cc01a522f5d81d081a000bf8afc",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/17/listing_20261103T144517568739Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-18",
+        "prefix": "mg-tana/vis/2026/10/18/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "291c0a345543517cab15ab301c790e391a8d789574b6dcbabdf251a4176c1aef",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/18/listing_20261103T144517971671Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-19",
+        "prefix": "mg-tana/vis/2026/10/19/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "0ee1c6579c75a13811c5ffecf400c39dbd42d3037499c16bc37022b7003aa48d",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/19/listing_20261103T144518263799Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-20",
+        "prefix": "mg-tana/vis/2026/10/20/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "2115b14940a7f591a4d9fab9d578c30813384582be345fe80326446fa8af0997",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/20/listing_20261103T144518562205Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-21",
+        "prefix": "mg-tana/vis/2026/10/21/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "19f27863a9fd2c8c878ddab66ca3fae321dbe56a3e889e8743dfbf0b48cd8418",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/21/listing_20261103T144518861205Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-22",
+        "prefix": "mg-tana/vis/2026/10/22/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/22/listing_20261103T144519144720Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-23",
+        "prefix": "mg-tana/vis/2026/10/23/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "34f2ec8288dc5378e31ce1fad06499bda08690dcb52be2ec69b0a222c5c2af7e",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/23/listing_20261103T144519503591Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-24",
+        "prefix": "mg-tana/vis/2026/10/24/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "7a60b86722f41b7a839cb07f2d08b3a887d0f4320fad138d651fd3c5d2eed7ee",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/24/listing_20261103T144519885174Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-25",
+        "prefix": "mg-tana/vis/2026/10/25/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "231be5d5620bccae4cd80b02600eebbbdfa8afb05977dab837773e40de1c0492",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/25/listing_20261103T144520851954Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-26",
+        "prefix": "mg-tana/vis/2026/10/26/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "7d28b9f08caa124ad5f3872b43bc13e483e7b2a17ffe24b4e2250c86d982a0e7",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/26/listing_20261103T144521183719Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-27",
+        "prefix": "mg-tana/vis/2026/10/27/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "a859d9416882446a883fc0fba1dd93bc8ff354577e8028b289d2ad61e7278474",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/27/listing_20261103T144521955437Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-28",
+        "prefix": "mg-tana/vis/2026/10/28/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "9f7254543d6c883980633ae6188440577398c07e7f615326f979f1f3b43ba6b6",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/28/listing_20261103T144522670706Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-29",
+        "prefix": "mg-tana/vis/2026/10/29/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "3ea85250bf3fccc60c28369e0169cdc9e360d7ea1dc6e7f841c407d87195aa42",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/29/listing_20261103T144523017430Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-30",
+        "prefix": "mg-tana/vis/2026/10/30/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/30/listing_20261103T144523306830Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-10-31",
+        "prefix": "mg-tana/vis/2026/10/31/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/10/31/listing_20261103T144523590143Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-11-01",
+        "prefix": "mg-tana/vis/2026/11/1/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/11/1/listing_20261103T144523876868Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-11-02",
+        "prefix": "mg-tana/vis/2026/11/2/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/11/2/listing_20261103T144524156874Z.json"
+      },
+      {
+        "station_id": "mg-tana",
+        "day": "2026-11-03",
+        "prefix": "mg-tana/vis/2026/11/3/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mg-tana/vis/2026/11/3/listing_20261103T144524436961Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-08",
+        "prefix": "za-rhodes/vis/2026/10/8/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "cc700a3573ea8108b59a4eed6af07a2991606877313e0d840bf80dd64cc8db2a",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/8/listing_20261103T144525184061Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-09",
+        "prefix": "za-rhodes/vis/2026/10/9/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "7bcd01f6d25eef48db98c1d6a311a8ab2e25596cd77119d46ecc1270810e19be",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/9/listing_20261103T144525940387Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-10",
+        "prefix": "za-rhodes/vis/2026/10/10/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "07e9e220ac4edb602f5cf45b386d0e5a948e8a870eef1d7fddf15f7a0f3ac589",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/10/listing_20261103T144527018294Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-11",
+        "prefix": "za-rhodes/vis/2026/10/11/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "824de61c701b31d585956d17f7b3f976ae8682dcce435696e724fe9029bece72",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/11/listing_20261103T144527997527Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-12",
+        "prefix": "za-rhodes/vis/2026/10/12/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "5836e3cbefead714a90251312f10a4507cfbdcbe8474444e94bb355851185e07",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/12/listing_20261103T144528969902Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-13",
+        "prefix": "za-rhodes/vis/2026/10/13/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "9005f26f38bb61895f9c36f24f03edf901b678a481d9cf237e9b607f4775e144",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/13/listing_20261103T144529956871Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-14",
+        "prefix": "za-rhodes/vis/2026/10/14/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "bb86d12bde9b3c6236fa7537e5180f0779068d44f38295b1714600efb487a0ac",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/14/listing_20261103T144530985122Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-15",
+        "prefix": "za-rhodes/vis/2026/10/15/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "f05f9743e05e42722fc6514fc662573faade4f44b301b6fb7b44a1882f657cf5",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/15/listing_20261103T144531955729Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-16",
+        "prefix": "za-rhodes/vis/2026/10/16/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "0593e29c2fc16a59008eac3cd07ba838c47378526728ea3b03808b5ab7d7a92b",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/16/listing_20261103T144532942006Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-17",
+        "prefix": "za-rhodes/vis/2026/10/17/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "c7a22bf933acd8309c4783869ee229ed81efbd90c5471918e2ef02d15292be5c",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/17/listing_20261103T144533924901Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-18",
+        "prefix": "za-rhodes/vis/2026/10/18/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "820b56d30a2c9dc62bd9b7f916d4cc6b42866e6d837a9c29012312533cd9dc66",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/18/listing_20261103T144534316820Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-19",
+        "prefix": "za-rhodes/vis/2026/10/19/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "b70d16c4faa854694f69c4bcd8f88d8b0b74c0d87c0b07923c903952e4b04b6e",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/19/listing_20261103T144535265664Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-20",
+        "prefix": "za-rhodes/vis/2026/10/20/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "f9a65f9bc0580db6287b32c3a891d4cd926b5af881997ed8bf4855a24d0393a8",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/20/listing_20261103T144536227710Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-21",
+        "prefix": "za-rhodes/vis/2026/10/21/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "a754795947a26d89fd349322ebfe124ec352828fda9027203f1b9bd9c52ffadc",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/21/listing_20261103T144537196183Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-22",
+        "prefix": "za-rhodes/vis/2026/10/22/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "d4717a0bf8763977a567cca5caf9bb12569dc162686475040d2d1191e812f5e4",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/22/listing_20261103T144538151056Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-23",
+        "prefix": "za-rhodes/vis/2026/10/23/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/23/listing_20261103T144538445127Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-24",
+        "prefix": "za-rhodes/vis/2026/10/24/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "f647b49264fcd01c3f9d2ab004b9957e517f6f6c4c2ad024b952c610272a363c",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/24/listing_20261103T144539440680Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-25",
+        "prefix": "za-rhodes/vis/2026/10/25/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "a7e7cce508a62ec6e2a72d06d42acf4e57b8ec06b4e35930fd106292d0ff8323",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/25/listing_20261103T144540690122Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-26",
+        "prefix": "za-rhodes/vis/2026/10/26/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "4501a62a86e0432cd45738fbe053df612b8cbb8994aaa141854b7606b9703eb6",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/26/listing_20261103T144541706597Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-27",
+        "prefix": "za-rhodes/vis/2026/10/27/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "d78178a4efc213de994cbc46321c6ee64c9271611782f487a9324ba002b66836",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/27/listing_20261103T144542723682Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-28",
+        "prefix": "za-rhodes/vis/2026/10/28/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "bde8ee53fe8a999c5c280557e255114a606e7345b0218dad6ba63a363e3adcb7",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/28/listing_20261103T144543713346Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-29",
+        "prefix": "za-rhodes/vis/2026/10/29/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "9c65d79526e403034284fceefeff01e7a53d17b96595be9fc2adc85f3f679ddd",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/29/listing_20261103T144544707240Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-30",
+        "prefix": "za-rhodes/vis/2026/10/30/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "9f628b33f4a3190868e8394a6bfd1f87e66fa65c231333807ed0cc91915ccfde",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/30/listing_20261103T144545687625Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-10-31",
+        "prefix": "za-rhodes/vis/2026/10/31/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "376fe713562988bda891d1e650d6b9856bd487b0ad28b16e06daef9d1839c8f9",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/10/31/listing_20261103T144546660325Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-11-01",
+        "prefix": "za-rhodes/vis/2026/11/1/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "b38ef0a704aad5b5470209b32d8a848a9d829ac74118f81376558d9a17a57f22",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/11/1/listing_20261103T144547637602Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-11-02",
+        "prefix": "za-rhodes/vis/2026/11/2/",
+        "status": "FOUND",
+        "source": "live",
+        "checksum": "aec2111488a8ccb382a187d5ceea795f96e8090eac3d19c906aa3e9400f299cc",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/11/2/listing_20261103T144547989497Z.json"
+      },
+      {
+        "station_id": "za-rhodes",
+        "day": "2026-11-03",
+        "prefix": "za-rhodes/vis/2026/11/3/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/za-rhodes/vis/2026/11/3/listing_20261103T144548282025Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-08",
+        "prefix": "mu-udm/vis/2026/10/8/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/8/listing_20261103T144548577099Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-09",
+        "prefix": "mu-udm/vis/2026/10/9/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/9/listing_20261103T144548863169Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-10",
+        "prefix": "mu-udm/vis/2026/10/10/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/10/listing_20261103T144549148636Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-11",
+        "prefix": "mu-udm/vis/2026/10/11/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/11/listing_20261103T144549459616Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-12",
+        "prefix": "mu-udm/vis/2026/10/12/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/12/listing_20261103T144549747780Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-13",
+        "prefix": "mu-udm/vis/2026/10/13/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/13/listing_20261103T144550038689Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-14",
+        "prefix": "mu-udm/vis/2026/10/14/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/14/listing_20261103T144550326586Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-15",
+        "prefix": "mu-udm/vis/2026/10/15/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/15/listing_20261103T144550614687Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-16",
+        "prefix": "mu-udm/vis/2026/10/16/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/16/listing_20261103T144550906865Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-17",
+        "prefix": "mu-udm/vis/2026/10/17/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/17/listing_20261103T144551193902Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-18",
+        "prefix": "mu-udm/vis/2026/10/18/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/18/listing_20261103T144551488022Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-19",
+        "prefix": "mu-udm/vis/2026/10/19/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/19/listing_20261103T144551777476Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-20",
+        "prefix": "mu-udm/vis/2026/10/20/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/20/listing_20261103T144552066514Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-21",
+        "prefix": "mu-udm/vis/2026/10/21/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/21/listing_20261103T144552360737Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-22",
+        "prefix": "mu-udm/vis/2026/10/22/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/22/listing_20261103T144552648458Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-23",
+        "prefix": "mu-udm/vis/2026/10/23/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/23/listing_20261103T144552932276Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-24",
+        "prefix": "mu-udm/vis/2026/10/24/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/24/listing_20261103T144553216890Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-25",
+        "prefix": "mu-udm/vis/2026/10/25/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/25/listing_20261103T144553500989Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-26",
+        "prefix": "mu-udm/vis/2026/10/26/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/26/listing_20261103T144553793568Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-27",
+        "prefix": "mu-udm/vis/2026/10/27/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/27/listing_20261103T144555173326Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-28",
+        "prefix": "mu-udm/vis/2026/10/28/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/28/listing_20261103T144555457869Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-29",
+        "prefix": "mu-udm/vis/2026/10/29/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/29/listing_20261103T144555742342Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-30",
+        "prefix": "mu-udm/vis/2026/10/30/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/30/listing_20261103T144556026003Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-10-31",
+        "prefix": "mu-udm/vis/2026/10/31/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/10/31/listing_20261103T144556312128Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-11-01",
+        "prefix": "mu-udm/vis/2026/11/1/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/11/1/listing_20261103T144556602232Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-11-02",
+        "prefix": "mu-udm/vis/2026/11/2/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/11/2/listing_20261103T144556886068Z.json"
+      },
+      {
+        "station_id": "mu-udm",
+        "day": "2026-11-03",
+        "prefix": "mu-udm/vis/2026/11/3/",
+        "status": "EMPTY",
+        "source": "live",
+        "checksum": "0cfbbf7ca78e3dc288d765ab3eb806862052c52de700efac88c53c2865a1cade",
+        "cache_path": "data/archive_inventory/s3.us-west-2.amazonaws.com/tart/mu-udm/vis/2026/11/3/listing_20261103T144557169189Z.json"
+      }
+    ]
+  },
+  "gap_groups": null,
+  "retrieval_handoff": {
+    "command": "tart-retrieve --visibility-results <stage1> --rank <rank> --dry-run",
+    "note": "full-window Stage-2 dry run; tart-retrieve selects files around the predicted Stage-1 window (--max-duration centres on the window midpoint, not on this archive overlap), so compare the overlap_start_utc/overlap_end_utc interval with the dry-run file listing",
+    "not_emitted": "no --max-duration command is emitted: it centres on the predicted window midpoint"
+  },
+  "summary": {
+    "interval": [
+      "2026-10-09T00:00:00.000Z",
+      "2026-11-03T00:00:00.000Z"
+    ],
+    "stations": [
+      "mg-tana",
+      "za-rhodes",
+      "mu-udm"
+    ],
+    "mode": "INVENTORY_ONLY",
+    "min_stations": 3,
+    "all_station_mode": true,
+    "min_common_duration_s": 300.0,
+    "n_segments": 0,
+    "n_segments_min_duration": 0,
+    "n_diagnostic_segments": 0,
+    "shared_possible_s": 0.0,
+    "diagnostic_possible_s": 0.0,
+    "n_windows_total": 0,
+    "n_windows_after_filters": 0,
+    "n_candidates": 0,
+    "n_diagnostic_candidates": 0,
+    "n_in_band_candidates": 0,
+    "in_band_candidate_union_s": 0.0,
+    "n_intersections_below_min_duration": 0,
+    "n_excluded_tle_age": 0,
+    "inventory_complete": true,
+    "classification": "NO_CANDIDATE_OVERLAP_WITH_COMPLETE_LISTINGS",
+    "exit_code": 0,
+    "visibility_results": "",
+    "notes": [
+      "some day listings were made before the day had settled (partial days)"
+    ]
+  },
+  "outputs": {
+    "candidates_csv": "docs/examples/archive_scan_real/inventory_only/archive_candidates.csv",
+    "candidates_json": "docs/examples/archive_scan_real/inventory_only/archive_candidates.json",
+    "candidate_stations_csv": "docs/examples/archive_scan_real/inventory_only/archive_candidate_stations.csv",
+    "common_segments_csv": "docs/examples/archive_scan_real/inventory_only/archive_common_segments.csv",
+    "station_days_csv": "docs/examples/archive_scan_real/inventory_only/archive_station_days.csv",
+    "station_summary_csv": "docs/examples/archive_scan_real/inventory_only/archive_station_summary.csv",
+    "manifest": "docs/examples/archive_scan_real/inventory_only/archive_scan_manifest.json"
+  },
+  "exit_classification": "NO_CANDIDATE_OVERLAP_WITH_COMPLETE_LISTINGS",
+  "exit_code": 0
+}

@@ -1,0 +1,39 @@
+{
+  "evidence_class": "ARCHIVE_COVERAGE_CANDIDATE",
+  "summary": {
+    "interval": [
+      "2026-10-09T00:00:00.000Z",
+      "2026-11-03T00:00:00.000Z"
+    ],
+    "stations": [
+      "mg-tana",
+      "za-rhodes",
+      "mu-udm"
+    ],
+    "mode": "STAGE1_MATCHING",
+    "min_stations": 3,
+    "all_station_mode": true,
+    "min_common_duration_s": 300.0,
+    "n_segments": 0,
+    "n_segments_min_duration": 0,
+    "n_diagnostic_segments": 0,
+    "shared_possible_s": 0.0,
+    "diagnostic_possible_s": 0.0,
+    "n_windows_total": 3323,
+    "n_windows_after_filters": 2186,
+    "n_candidates": 0,
+    "n_diagnostic_candidates": 0,
+    "n_in_band_candidates": 0,
+    "in_band_candidate_union_s": 0.0,
+    "n_intersections_below_min_duration": 0,
+    "n_excluded_tle_age": 0,
+    "inventory_complete": true,
+    "classification": "NO_CANDIDATE_OVERLAP_WITH_COMPLETE_LISTINGS",
+    "exit_code": 0,
+    "visibility_results": "../sat_position/results/common_gnss_20261009.json",
+    "notes": [
+      "some day listings were made before the day had settled (partial days)"
+    ]
+  },
+  "candidates": []
+}

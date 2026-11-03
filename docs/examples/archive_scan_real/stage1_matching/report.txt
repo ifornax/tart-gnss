@@ -1,0 +1,30 @@
+2026-11-03T14:45:57Z INFO    tart_gnss.archive_scan: Stage-1 results ../sat_position/results/common_gnss_20261009.json (SHA-256 5e268e8d5e4b4bd57b5cbd7208cdccddbc328c2f743ecfd7d32e49827b3d6d6d): 3323 windows
+2026-11-03T14:45:57Z INFO    tart_gnss.archive_scan: Station mg-tana: TART id mg-tana, archive 'mg-tana'
+2026-11-03T14:45:57Z INFO    tart_gnss.archive_scan: Station za-rhodes: TART id za-rhodes, archive 'za-rhodes'
+2026-11-03T14:45:57Z INFO    tart_gnss.archive_scan: Station mu-udm: TART id mu-udm, archive 'mu-udm'
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan.inventory: Inventory: 81 prefixes, 3 listed live (3 list calls), 78 cache hits, 3 stale, 0 corrupt cache files, 0 failures, 0 unknown
+2026-11-03T14:46:00Z INFO    tart_gnss.archive_scan: Matched 2186 of 3323 Stage-1 windows (after filters) with 0 shared segments: 0 candidates (0 shorter than 300 s, 0 excluded by TLE age)
+TART ARCHIVE SCAN
+Interval: 2026-10-09T00:00:00.000Z -- 2026-11-03T00:00:00.000Z (half-open)
+Stations: mg-tana, za-rhodes, mu-udm
+Mode: STAGE1_MATCHING
+
+Station          Days queried  Days with data  Empty    Files  Listing errors  Unknown
+--------------------------------------------------------------------------------------
+mg-tana                    27              14     13     9529               0        0
+za-rhodes                  27              25      2    32448               0        0
+mu-udm                     27               0     27        0               0        0
+
+Possible 3-station candidate segments: 0
+Candidate segments >= 300 s: 0
+Possible 3-station shared candidate time (no double counting): 0.00 h
+Stage-1 windows: 3323 total, 2186 after filters
+3-station satellite x segment intersections >= 300 s: 0
+In-band 3-station satellite intersections: 0
+Inventory completeness: COMPLETE
+Coverage class: FILENAME_CANDIDATE (NOT NATIVE VALIDATED; no radio detection implied)
+Exit classification: NO_CANDIDATE_OVERLAP_WITH_COMPLETE_LISTINGS
+
+Note: some day listings were made before the day had settled (partial days)
+
+Outputs: docs/examples/archive_scan_real/stage1_matching/archive_candidates.csv (+ companions); manifest docs/examples/archive_scan_real/stage1_matching/archive_scan_manifest.json
