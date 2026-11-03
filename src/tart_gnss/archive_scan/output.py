@@ -247,18 +247,24 @@ def format_report(summary: Mapping[str, object], station_rows: Sequence[Mapping[
         lines.append(f"{r['station_id']:<16}{r['days_queried']:>13}{r['days_found']:>16}{r['days_empty']:>7}"
                      f"{r['files']:>9}{r['days_error']:>16}{r['days_unknown']:>9}")
     lines.append("")
-    k = summary["min_stations"]
-    label = "all-station" if summary["all_station_mode"] else f"{k}-of-{len(summary['stations'])}-station DIAGNOSTIC"
+    n_st = len(summary["stations"])
     lines += [
-        f"Possible {label} candidate segments: {summary['n_segments']}",
+        f"Possible {n_st}-station candidate segments: {summary['n_segments']}",
         f"Candidate segments >= {summary['min_common_duration_s']:g} s: {summary['n_segments_min_duration']}",
-        f"Possible shared candidate time (no double counting): {summary['shared_possible_s'] / 3600:.2f} h",
+        f"Possible {n_st}-station shared candidate time (no double counting): {summary['shared_possible_s'] / 3600:.2f} h",
     ]
+    if not summary["all_station_mode"]:
+        lines.append(f"DIAGNOSTIC segments covered by {summary['min_stations']}..{n_st - 1} of {n_st} stations: "
+                     f"{summary['n_diagnostic_segments']} ({summary['diagnostic_possible_s'] / 3600:.2f} h; "
+                     "NOT valid retrieval inputs)")
     if summary["mode"] == "STAGE1_MATCHING":
         lines += [f"Stage-1 windows: {summary['n_windows_total']} total, {summary['n_windows_after_filters']} after filters",
-                  f"Satellite x segment intersections >= {summary['min_common_duration_s']:g} s: {summary['n_candidates']}"
+                  f"{n_st}-station satellite x segment intersections >= {summary['min_common_duration_s']:g} s: "
+                  f"{summary['n_candidates']}"
                   + (f" ({summary['n_excluded_tle_age']} more excluded by TLE age)" if summary.get("n_excluded_tle_age") else ""),
-                  f"In-band satellite intersections: {summary['n_in_band_candidates']}"]
+                  f"In-band {n_st}-station satellite intersections: {summary['n_in_band_candidates']}"]
+        if not summary["all_station_mode"]:
+            lines.append(f"DIAGNOSTIC (partial-network) intersections: {summary['n_diagnostic_candidates']}")
     lines += [f"Inventory completeness: {'COMPLETE' if summary['inventory_complete'] else 'INCOMPLETE'}",
               f"Coverage class: {COVERAGE_CONFIDENCE} (NOT NATIVE VALIDATED; no radio detection implied)",
               f"Exit classification: {summary['classification']}", ""]
