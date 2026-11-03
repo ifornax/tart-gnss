@@ -400,8 +400,7 @@ The tests also pass on Python 3.9.
 
 ### Issue (ticket text)
 
-The repository issue could not be created from the agent session (the
-`gh issue create` call was not permitted), so the ticket is recorded here.
+Tracked as [issue #1](https://github.com/ifornax/tart-gnss/issues/1). Summary:
 
 > **Archive-first candidate discovery (`tart-archive-scan`).**
 >
