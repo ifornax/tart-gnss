@@ -16,6 +16,7 @@ CANONICAL = {
     "tart-validate": "tart_gnss.stage6.cli:main",
     "tart-diagnose": "tart_gnss.stage7.cli:main",
     "tart-campaign": "tart_gnss.campaign.cli:main",
+    "tart-archive-scan": "tart_gnss.archive_scan.cli:main",
 }
 LEGACY = ("common-gnss", "retrieve-tart", "update-tart-stations", "list-tart-stations")
 

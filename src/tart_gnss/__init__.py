@@ -26,6 +26,6 @@ statistics, with runs as the independent units.
 Every public command is named ``tart-*`` (see ``tests/test_cli_names.py``).
 """
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 __all__ = ["__version__"]

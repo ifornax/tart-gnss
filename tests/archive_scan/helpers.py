@@ -23,6 +23,9 @@ NOW = datetime(2026, 11, 10, 12, tzinfo=UTC)
 
 def t(text: str) -> datetime:
     """Parse ``YYYY-MM-DDTHH:MM:SS[.f]`` as UTC."""
+    if "." in text:  # Python 3.9 fromisoformat needs 3 or 6 fractional digits
+        head, frac = text.split(".")
+        text = f"{head}.{frac.ljust(6, '0')}"
     return datetime.fromisoformat(text).replace(tzinfo=UTC)
 
 

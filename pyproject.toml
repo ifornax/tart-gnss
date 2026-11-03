@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tart-gnss"
-version = "0.8.0"
+version = "0.9.0"
 description = "TART GNSS satellite-localisation pipeline: common visibility windows, observation retrieval, per-station direction estimation, multi-station triangulation, TLE-independent trajectory tracking, TLE validation, sensor-network diagnosis and campaign statistics"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -56,6 +56,7 @@ tart-track = "tart_gnss.stage5.cli:main"
 tart-validate = "tart_gnss.stage6.cli:main"
 tart-diagnose = "tart_gnss.stage7.cli:main"
 tart-campaign = "tart_gnss.campaign.cli:main"
+tart-archive-scan = "tart_gnss.archive_scan.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ifornax/tart-gnss"

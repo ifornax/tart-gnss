@@ -13,5 +13,7 @@ docs/report/*.fls
 docs/report/*.fdb_latexmk
 docs/report/*.synctex.gz
 data/observations/
+# tart-archive-scan inventory cache (station/day listing snapshots)
+data/archive_inventory/
 # tart2ms writes its own log into the working directory
 tart2ms.*.log
