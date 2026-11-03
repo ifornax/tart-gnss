@@ -305,10 +305,17 @@ Examples:
 NORAD 40534 is the satellite of the 2026-06-25 run.
 
 **Next action for the real campaign.** A three-station campaign with this
-triad needs `mu-udm` to resume archiving, or an older interval when all
-three archived. For example, 2026-06 has `mu-udm` data up to 06-26, and
-`mg-tana` from 06 onward. Alternatively, choose a different third station.
-Run an inventory-only scan over the candidate period first.
+triad needs one of these:
+
+- `mu-udm` resumes archiving;
+- an older interval when all three stations archived. The 2026-06-25
+  Stage-2 run had all three, so an inventory-only scan over June 2026 is
+  the next step;
+- a different third station.
+
+`za-rhodes` stops at 2026-11-02T04:48Z, and 11-03 was empty at listing
+time. This could be an outage or upload lag; a later `--cache-policy
+refresh` scan will tell which.
 
 ## 6. Validation
 
@@ -384,6 +391,8 @@ The tests also pass on Python 3.9.
 - Long Stage-1 searches made with one current TLE catalogue propagate
   backwards for weeks. The TLE ages in the real run reach about −25 d. Use
   contemporaneous element sets for science.
+- The one-hour "settled" margin used to judge whether a day's listing was
+  complete is a heuristic for upload lag, not a guarantee.
 - The edge-day allowance assumes a file's day directory is never *later*
   than the day after its filename time.
 
