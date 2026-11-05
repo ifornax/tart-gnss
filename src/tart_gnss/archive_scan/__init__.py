@@ -18,7 +18,9 @@ The scanner never downloads native files and never runs ``tart-retrieve``.
 
 Modules: :mod:`.inventory` (listing), :mod:`.cache` (station/day snapshots),
 :mod:`.intervals` (candidate segments and intersections), :mod:`.matching`
-(Stage-1 windows), :mod:`.ranking`, :mod:`.output` and :mod:`.cli`.
+(Stage-1 windows), :mod:`.ranking`, :mod:`.output` and :mod:`.cli`; network-wide
+discovery (``--all-stations``) in :mod:`.network` (eligibility, physical sites,
+geodesic baselines, sweep, triads) and :mod:`.network_run`.
 """
 
 #: Evidence class of every scanner result (see the module docstring).

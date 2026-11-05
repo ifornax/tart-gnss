@@ -8,6 +8,11 @@ the intersections. Results are ``ARCHIVE_COVERAGE_CANDIDATE`` evidence only:
 nothing is downloaded, no sample timestamp is verified, and ``tart-retrieve``
 is never run (a dry-run command is printed for manual use).
 
+With ``--all-stations`` the command runs network-wide discovery instead
+(:mod:`tart_gnss.archive_scan.network_run`): every eligible registry station,
+one sweep for intervals with at least ``--min-stations`` distinct physical
+sites, and ranked station triads with proposed Stage-1 commands.
+
 Exit status:
 
 * ``0``: complete inventory, scan finished (even with zero candidates);
@@ -30,7 +35,7 @@ from types import SimpleNamespace
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from tart_gnss import __version__
-from tart_gnss.archive_scan import COVERAGE_CONFIDENCE, EVIDENCE_CLASS
+from tart_gnss.archive_scan import COVERAGE_CONFIDENCE, EVIDENCE_CLASS, network
 from tart_gnss.archive_scan import output as out
 from tart_gnss.archive_scan.cache import CACHE_SCHEMA_VERSION, InventoryCache
 from tart_gnss.archive_scan.errors import ArchiveScanError, ArchiveScanInputError
@@ -85,9 +90,13 @@ def build_parser() -> argparse.ArgumentParser:
                     "archive overlaps from filenames (candidates, NOT validated data), and match them with "
                     "every Stage-1 common-visibility window. Nothing is downloaded.",
     )
-    p.add_argument("--stations", nargs="+", metavar="ID",
-                   help="station ids or aliases (default: the frozen Stage-1 stations); with "
-                        "--visibility-results the set must match Stage 1")
+    who = p.add_mutually_exclusive_group()
+    who.add_argument("--stations", nargs="+", metavar="ID",
+                     help="station ids or aliases (default: the frozen Stage-1 stations); with "
+                          "--visibility-results the set must match Stage 1")
+    who.add_argument("--all-stations", action="store_true",
+                     help="NETWORK mode: every registry station with an archive_name and valid coordinates; "
+                          "finds intervals and station triads at >= --min-stations distinct physical sites")
     p.add_argument("--start", help="scan start, ISO-8601 UTC (default: Stage-1 start); half-open [start, end)")
     p.add_argument("--end", help="scan end, ISO-8601 UTC (default: Stage-1 end)")
     p.add_argument("--visibility-results", metavar="PATH",
@@ -116,10 +125,22 @@ def build_parser() -> argparse.ArgumentParser:
                    help="refresh: list live; reuse: valid cache younger than --cache-max-age-hours; "
                         "offline: cache only, missing days UNKNOWN (default refresh)")
     p.add_argument("--cache-max-age-hours", type=float, default=24.0, metavar="H", help="TTL for reuse (default 24)")
-    p.add_argument("--output", default="results/archive_candidates.csv", help="ranked candidates CSV")
+    p.add_argument("--output", help="main CSV: ranked candidates (default results/archive_candidates.csv), or "
+                                    "ranked triads with --all-stations (default results/network_overlap.csv)")
     p.add_argument("--inventory-output", help="station/day CSV (default: alongside --output)")
     p.add_argument("--min-stations", type=int, metavar="N",
-                   help="stations needed for an overlap (default: all selected); fewer gives DIAGNOSTIC rows only")
+                   help="stations needed for an overlap (default: all selected); fewer gives DIAGNOSTIC rows only. "
+                        "With --all-stations: distinct physical SITES per interval and station-set size (default 3)")
+    net = p.add_argument_group("network mode (--all-stations only)")
+    net.add_argument("--include-stations", nargs="+", metavar="ID", help="restrict eligible stations to these")
+    net.add_argument("--exclude-stations", nargs="+", metavar="ID", help="exclude these stations")
+    net.add_argument("--min-baseline-km", type=float, metavar="KM",
+                     help="require EVERY pairwise geodesic baseline of a station set >= KM (default: no cut); a "
+                          "site-diversity filter, not a triangulation-quality metric")
+    net.add_argument("--site-tolerance-km", type=float, default=network.DEFAULT_SITE_TOLERANCE_KM, metavar="KM",
+                     help="stations within KM (geodesic, single linkage) are one physical site (default 1)")
+    net.add_argument("--max-triads", type=int, metavar="N",
+                     help="export/print only the top N ranked station sets (counts and scanning are unaffected)")
     p.add_argument("--top", type=int, default=20, help="rows printed (all rows are written; default 20)")
     p.add_argument("--verbose", "-v", action="store_true", help="debug logging")
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -154,10 +175,23 @@ def _validate_numbers(args: argparse.Namespace) -> None:
         (args.cache_max_age_hours > 0, "--cache-max-age-hours must be > 0"),
         (args.top >= 0, "--top must be >= 0"),
         (args.max_abs_tle_age_days is None or args.max_abs_tle_age_days > 0, "--max-abs-tle-age-days must be > 0"),
+        (args.min_baseline_km is None or args.min_baseline_km >= 0, "--min-baseline-km must be >= 0"),
+        (args.site_tolerance_km >= 0, "--site-tolerance-km must be >= 0"),
+        (args.max_triads is None or args.max_triads >= 1, "--max-triads must be >= 1"),
     ]
     for ok, msg in checks:
         if not ok:
             raise ArchiveScanInputError(msg)
+
+
+def _reject_network_options(args: argparse.Namespace) -> None:
+    """Network-only options are an input error without ``--all-stations``."""
+    for opt, value in (("--include-stations", args.include_stations), ("--exclude-stations", args.exclude_stations),
+                       ("--min-baseline-km", args.min_baseline_km), ("--max-triads", args.max_triads)):
+        if value is not None:
+            raise ArchiveScanInputError(f"{opt} needs --all-stations")
+    if args.site_tolerance_km != network.DEFAULT_SITE_TOLERANCE_KM:
+        raise ArchiveScanInputError("--site-tolerance-km needs --all-stations")
 
 
 def _canonical(st: Station) -> str:
@@ -280,11 +314,18 @@ def run(args: argparse.Namespace, argv: Sequence[str],
     ``archive`` (a mock in tests) replaces the public S3 archive; ``now`` and
     ``sleep`` are injectable for cache-age and retry tests.
     """
-    run_ts = now()
-    run_tag = run_ts.strftime("%Y%m%dT%H%M%SZ")
     _validate_numbers(args)
     if args.cache_policy not in CACHE_POLICIES:
         raise ArchiveScanInputError(f"--cache-policy must be one of {CACHE_POLICIES}")
+    if getattr(args, "all_stations", False):
+        from tart_gnss.archive_scan.network_run import run_network
+
+        return run_network(args, argv, archive=archive, now=now, sleep=sleep)
+    _reject_network_options(args)
+    if args.output is None:
+        args.output = "results/archive_candidates.csv"
+    run_ts = now()
+    run_tag = run_ts.strftime("%Y%m%dT%H%M%SZ")
 
     doc = results_path = None
     stage1_sha = None

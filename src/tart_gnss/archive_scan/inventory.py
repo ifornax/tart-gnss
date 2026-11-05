@@ -295,6 +295,10 @@ class _CountingBackend:
         return self._backend.list_objects(prefix)
 
 
+#: Log a progress line every this many station/day prefixes.
+PROGRESS_EVERY = 100
+
+
 def build_inventory(
     stations: Sequence[Station],
     days: Sequence[date],
@@ -336,8 +340,13 @@ def build_inventory(
     stats = InventoryStats(prefixes_required=len(stations) * len(days))
     backend: Optional[_CountingBackend] = None
     out: Dict[Tuple[str, date], DayListing] = {}
+    done = 0
     for st in stations:
         for day in days:
+            done += 1
+            if done % PROGRESS_EVERY == 0:
+                logger.info("Inventory progress: %d/%d prefixes (%d live, %d cache hits, %d failures)", done,
+                            stats.prefixes_required, stats.live_listings, stats.cache_hits, stats.failures)
             key = (st.id, day)
             if not st.archive_name:
                 out[key] = list_day_live(None, st, day, host, bucket, software_version)  # type: ignore[arg-type]

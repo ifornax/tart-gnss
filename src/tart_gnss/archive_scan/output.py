@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import shlex
 from datetime import datetime
 from pathlib import Path
@@ -200,20 +201,24 @@ STATION_SUMMARY_COLUMNS = ["station_id", "archive_name", "days_queried", "days_f
 
 
 def write_csv(path: Path, columns: Sequence[str], rows: Iterable[Mapping[str, object]]) -> Path:
-    """Write rows (``None`` -> empty cell, booleans as ``True``/``False``)."""
+    """Write rows atomically (``None`` -> empty cell, booleans as ``True``/``False``)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="", encoding="utf-8") as fh:
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=list(columns), extrasaction="raise")
         writer.writeheader()
         for row in rows:
             writer.writerow({k: ("" if v is None else v) for k, v in row.items()})
+    os.replace(tmp, path)
     return path
 
 
 def write_json(path: Path, doc: object) -> Path:
-    """Write indented JSON with a trailing newline."""
+    """Write indented JSON with a trailing newline, atomically."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(doc, indent=2, default=str) + "\n", encoding="utf-8")
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(doc, indent=2, default=str) + "\n", encoding="utf-8")
+    os.replace(tmp, path)
     return path
 
 
