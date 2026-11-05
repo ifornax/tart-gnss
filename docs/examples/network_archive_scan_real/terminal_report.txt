@@ -1,0 +1,62 @@
+TART NETWORK ARCHIVE DISCOVERY
+Interval: 2026-07-01T00:00:00.000Z -- 2026-11-03T00:00:00.000Z (half-open)
+Registry stations: 18
+Eligible archive stations: 14 (excluded: 4)
+Distinct geographic sites: 13 (site tolerance 1 km)
+S3 station/day prefixes: 1778  listed live: 0  cache hits: 1778  failures: 0  unknown: 0
+
+Station          Site                   Days with data    Files  First filename UTC   Last filename UTC     Inventory
+---------------------------------------------------------------------------------------------------------------------
+bd-iub           SITE_bd-iub                       125   169245  2026-07-01T00:00:19  2026-11-02T04:47:42    complete
+ghana            SITE_ghana                         84   111016  2026-08-02T21:03:01  2026-11-02T04:47:17    complete
+it-ant           SITE_it-ant                         1      198  2026-09-28T05:59:05  2026-09-28T13:42:43    complete
+mg-tana          SITE_mg-tana                       65    49724  2026-07-02T13:23:53  2026-10-29T07:14:16    complete
+mu-udm           SITE_mu-udm                         0        0  -                    -                      complete
+na-unam          SITE_na-unam                        0        0  -                    -                      complete
+nz-dunedin       SITE_nz-dunedin                     0        0  -                    -                      complete
+nz-elec          SITE_nz-elec                       10     9776  2026-08-23T07:39:54  2026-09-03T02:38:17    complete
+nz-nelson        SITE_nz-nelson                     58    77277  2026-07-01T00:00:08  2026-11-02T04:47:18    complete
+nz-nelson-32     SITE_nz-nelson                     30    41792  2026-10-04T04:06:30  2026-11-02T04:47:18    complete
+se-kth           SITE_se-kth                         0        0  -                    -                      complete
+za-hammanskraal  SITE_za-hammanskraal               43    51483  2026-07-01T00:00:12  2026-11-02T18:07:34    complete
+za-rhodes        SITE_za-rhodes                    123   165117  2026-07-01T00:00:25  2026-11-02T04:48:26    complete
+zm-cbu           SITE_zm-cbu                         0        0  -                    -                      complete
+
+Network active intervals with >= 3 sites: 860 (2632.64 h possible, no double counting)
+Station sets of 3 distinct sites with a contiguous segment >= 300 s: 44
+After all-pairs baseline >= 500 km: 44 (0 rejected)
+Ranked eligible triads: 44 (exported: 44)
+
+    #  Triad                                    Continuous      Total  Min baseline  Inventory
+    1  bd-iub+ghana+za-rhodes                     91:02:11 1749:48:00       5168 km  complete
+    2  bd-iub+nz-nelson+za-rhodes                125:36:47 1214:31:58       9264 km  complete
+    3  bd-iub+ghana+nz-nelson                    158:20:04 1022:11:09       9835 km  complete
+    4  ghana+nz-nelson+za-rhodes                 139:48:34  954:17:37       5168 km  complete
+    5  bd-iub+mg-tana+za-rhodes                   40:27:05  760:22:15       2633 km  complete
+    6  bd-iub+za-hammanskraal+za-rhodes           65:27:33  744:03:12        896 km  complete
+    7  bd-iub+ghana+nz-nelson-32                  96:54:47  681:14:29       9835 km  complete
+    8  bd-iub+nz-nelson-32+za-rhodes             101:33:08  645:36:11       9264 km  complete
+    9  ghana+nz-nelson-32+za-rhodes              139:48:34  631:49:21       5168 km  complete
+   10  bd-iub+ghana+za-hammanskraal               69:39:53  556:23:28       4632 km  complete
+   11  ghana+za-hammanskraal+za-rhodes           125:33:55  488:04:25        896 km  complete
+   12  bd-iub+ghana+mg-tana                       32:44:44  412:09:24       5914 km  complete
+   13  ghana+mg-tana+za-rhodes                    85:50:51  356:35:24       2633 km  complete
+   14  bd-iub+mg-tana+nz-nelson                   32:24:23  348:36:25       6632 km  complete
+   15  mg-tana+nz-nelson+za-rhodes                43:06:02  333:07:32       2633 km  complete
+   16  bd-iub+mg-tana+za-hammanskraal             32:24:14  276:01:54       2108 km  complete
+   17  mg-tana+za-hammanskraal+za-rhodes          85:50:51  256:07:36        896 km  complete
+   18  ghana+mg-tana+nz-nelson                    32:24:23  227:26:50       5914 km  complete
+   19  ghana+mg-tana+za-hammanskraal              85:50:51  184:29:09       2108 km  complete
+   20  ghana+mg-tana+nz-nelson-32                 22:22:58  173:16:24       5914 km  complete
+
+Proposed next action (NOT run; GNSS visibility not yet evaluated):
+  tart-common-gnss --stations bd-iub ghana za-rhodes --start 2026-09-17T13:55:35Z --end 2026-09-21T08:57:47Z --min-elevation 20 --step 10 --tle-file <contemporaneous-gnss-tle-catalogue>
+
+Coverage: FILENAME_CANDIDATE; timestamps not native-validated.
+Inventory completeness: COMPLETE
+Exit classification: TRIADS_FOUND
+Note: coverage is FILENAME_CANDIDATE: filename times under a 120 s file-span assumption; no HDF5 sample timestamp was read (verified durations are null)
+Note: S3 absence means no archived file, not that a telescope was not observing
+Note: --min-baseline-km 500 is a site-diversity cut, not a triangulation-quality metric; geometry is evaluated by Stage 1/4
+
+Outputs: docs/examples/network_archive_scan_real/network_overlap.csv (+ companions); manifest docs/examples/network_archive_scan_real/network_archive_scan_manifest.json

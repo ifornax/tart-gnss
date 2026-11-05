@@ -1,0 +1,24 @@
+2026-11-05T14:03:11Z INFO    tart_gnss.archive_scan: Excluded bw-biust: INVALID_COORDINATES skipped by tart-stations-update: missing valid coordinates: Station 'bw-biust': 'altitude_m' is missing (null). Coordinates must come from an authoritative source and are never guessed.
+2026-11-05T14:03:11Z INFO    tart_gnss.archive_scan: Excluded nz-rock2f: NO_ARCHIVE_NAME archive_name is null in the registry
+2026-11-05T14:03:11Z INFO    tart_gnss.archive_scan: Excluded nz-test: NO_ARCHIVE_NAME archive_name is null in the registry
+2026-11-05T14:03:11Z INFO    tart_gnss.archive_scan: Excluded tart3-test: NO_ARCHIVE_NAME archive_name is null in the registry
+2026-11-05T14:03:11Z INFO    tart_gnss.archive_scan: Registry /home/nadeem/GitHub/TART/tart-gnss/src/tart_gnss/config/stations_registry.yaml: 17 valid stations, 14 eligible archive stations at 13 distinct sites (site tolerance 1 km)
+2026-11-05T14:03:13Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 100/1778 prefixes (0 live, 99 cache hits, 0 failures)
+2026-11-05T14:03:14Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 200/1778 prefixes (0 live, 199 cache hits, 0 failures)
+2026-11-05T14:03:15Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 300/1778 prefixes (0 live, 299 cache hits, 0 failures)
+2026-11-05T14:03:15Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 400/1778 prefixes (0 live, 399 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 500/1778 prefixes (0 live, 499 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 600/1778 prefixes (0 live, 599 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 700/1778 prefixes (0 live, 699 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 800/1778 prefixes (0 live, 799 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 900/1778 prefixes (0 live, 899 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1000/1778 prefixes (0 live, 999 cache hits, 0 failures)
+2026-11-05T14:03:16Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1100/1778 prefixes (0 live, 1099 cache hits, 0 failures)
+2026-11-05T14:03:17Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1200/1778 prefixes (0 live, 1199 cache hits, 0 failures)
+2026-11-05T14:03:17Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1300/1778 prefixes (0 live, 1299 cache hits, 0 failures)
+2026-11-05T14:03:17Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1400/1778 prefixes (0 live, 1399 cache hits, 0 failures)
+2026-11-05T14:03:18Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1500/1778 prefixes (0 live, 1499 cache hits, 0 failures)
+2026-11-05T14:03:20Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1600/1778 prefixes (0 live, 1599 cache hits, 0 failures)
+2026-11-05T14:03:20Z INFO    tart_gnss.archive_scan.inventory: Inventory progress: 1700/1778 prefixes (0 live, 1699 cache hits, 0 failures)
+2026-11-05T14:03:20Z INFO    tart_gnss.archive_scan.inventory: Inventory: 1778 prefixes, 0 listed live (0 list calls), 1778 cache hits, 0 stale, 0 corrupt cache files, 0 failures, 0 unknown
+2026-11-05T14:03:21Z INFO    tart_gnss.archive_scan: Network sweep: 860 active segments with >= 3 sites; 44 candidate station sets, 44 with a contiguous segment >= 300 s, 44 after the baseline cut

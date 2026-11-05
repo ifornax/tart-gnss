@@ -16,7 +16,7 @@ completed runs into population statistics.**
 | Stage | Command | What it does |
 |---|---|---|
 | 1 | `tart-common-gnss` | Propagates GNSS orbits from TLEs (SGP4 via Skyfield) and finds every continuous window in which a satellite is above 20° at three stations at once. Windows are refined to 0.1 s, ranked, and stored with ITRS positions and TLE provenance. |
-| 1→2 | `tart-archive-scan` | Utility between Stages 1 and 2. Lists the TART archive once per station and UTC day (with a checksummed cache), turns the filenames into conservative per-station *candidate* coverage, intersects the stations, matches the shared segments with **every** Stage-1 window, and ranks the in-band candidates. Each candidate gets a safe `tart-retrieve --dry-run` command. Nothing is downloaded; results are archive-coverage candidates, not validated data. |
+| 1→2 | `tart-archive-scan` | Utility between Stages 1 and 2. Lists the TART archive once per station and UTC day (with a checksummed cache), turns the filenames into conservative per-station *candidate* coverage, intersects the stations, matches the shared segments with **every** Stage-1 window, and ranks the in-band candidates. Each candidate gets a safe `tart-retrieve --dry-run` command. With `--all-stations` it scans the whole registry for intervals and triads at ≥ 3 distinct physical sites. Nothing is downloaded; results are archive-coverage candidates, not validated data. |
 | 2 | `tart-retrieve` | Takes one Stage-1 window, queries the TART visibility archive, downloads the native HDF5 files with SHA-256 provenance, validates timestamps, frequency, station identity and calibration, measures the real three-station overlap, converts each station to its own Measurement Set with `tart2ms`, and writes `manifest.json` for Stage 3. |
 | 3 | `tart-localise` | Reads the Stage-2 manifest and, for each station independently, fits a point-source model directly to the complex visibilities in time bins (profiled-χ² grid search + robust `least_squares`), giving Az/El with covariance, SNR, goodness-of-fit and quality flags, cross-checked by a dirty-image peak finder. Writes CSV/Parquet tracks, `stage3_manifest.json` and diagnostic plots for Stage 4. |
 | 4 | `tart-triangulate` | Reads the Stage-3 directions and the frozen station coordinates, matches stations in time (nearest within tolerance, no interpolation), and intersects the ECEF sight lines — covariance-weighted (range-scaled Stage-3 angular errors) or closed-form unweighted — giving x, y, z (ITRS/ECEF) with a 3×3 covariance, station ranges, line residuals, geometry and timing diagnostics, quality flags and an optional bootstrap. TLEs never enter the fit. |
@@ -25,7 +25,7 @@ completed runs into population statistics.**
 | 7 | `tart-diagnose` | Follows the recorded provenance from Stage 6 back to Stage 2, verifying the hashes, and aligns everything by time and station. Recomputes leave-one-station-out and pairwise solutions with the Stage-4 solver, compares every station direction with the Stage-5 trajectory, and tests calibration, localisation, timing, geometry and trajectory-model correlations (time-detrended, autocorrelation-aware, effect size plus Holm). Assigns non-exclusive evidence tags, rule-based evidence levels 0–5 and a descriptive confidence. Writes `diagnosis`, `station_influence`, `pairwise`, `correlations.csv`, `summary.json`, `stage7_manifest.json` and seven plots. No physical cause is asserted, and no upstream output is modified. |
 | campaign | `tart-campaign` | Aggregates many completed Stage-7 runs, reading only their recorded upstream products (re-hashed; nothing is rerun). Produces run, epoch and station population tables, and reports: measurement uncertainty (including the Stage-4 covariance principal axes); TLE-relative residuals (precision cohort); station stability; constellation, satellite and station-set comparisons (with effect sizes and minimum group sizes); geometry, elevation, SNR and TLE-age dependence; evidence-level and tag rates; and pass-to-pass repeatability. Confidence intervals come from a run-level bootstrap, and runs — never epochs — are the independent units. |
 
-> **Status:** Stages 1–7, the campaign layer and archive-aware candidate discovery complete, with dynamic TART station-registry integration (v0.9.0). The repository is private and under active development.
+> **Status:** Stages 1–7, the campaign layer and archive-aware candidate discovery complete, with dynamic TART station-registry integration (v0.10.0). The repository is private and under active development.
 
 ---
 
@@ -296,6 +296,57 @@ archive ends on 2026-06-26), so with a complete inventory there is **no**
 three-station overlap. A `--min-stations 2` diagnostic finds 131 h of
 mg-tana + za-rhodes candidate time. Method, cache, ranking, real results
 and the decision log are in [`docs/archive_scan.md`](docs/archive_scan.md).
+
+### Network-wide discovery (`--all-stations`)
+
+Instead of guessing a triad, scan the whole registry once:
+
+```bash
+tart-archive-scan --all-stations \
+    --start 2026-07-01T00:00:00Z --end 2026-11-03T00:00:00Z \
+    --min-stations 3 --min-common-duration 300 --min-baseline-km 500 \
+    --cache-policy reuse --output results/network_overlap.csv
+```
+
+- **Stations** come from the registry at run time: an `archive_name` and
+  valid coordinates are required. Excluded entries are reported with a
+  reason (`NO_ARCHIVE_NAME`, `INVALID_COORDINATES`, ...).
+- **Physical sites.** Stations within `--site-tolerance-km` (default 1 km)
+  form one site, so co-located receivers (e.g. `nz-nelson`/`nz-nelson-32`)
+  never count as independent. `--min-stations` counts **sites**.
+- **One sweep** over all stations' candidate segments gives the network
+  intervals with at least N sites. Triads (stations at distinct sites) are
+  then built only inside those intervals, each from its *own* members'
+  intersected coverage, so a triad stays one segment while a fourth station
+  joins or leaves.
+- **Baselines** are WGS84 geodesics (Vincenty); `--min-baseline-km` requires
+  *every* pair to pass. It is a site-diversity filter, not a triangulation
+  metric.
+- **Ranking:** complete inventory, total possible shared time, longest
+  contiguous segment, minimum baseline, station ids.
+- **Outputs:** `network_overlap.csv/.json` (ranked triads),
+  `network_active_segments.csv`, `network_triad_segments.csv`,
+  `network_station_days.csv`, `network_station_summary.csv`,
+  `network_excluded_stations.csv` and `network_archive_scan_manifest.json`
+  (with output SHA-256s).
+- **Handoff.** Each triad gets a *proposed* `tart-common-gnss` command for
+  its longest segment and the follow-up explicit-station scan. Nothing is
+  run, and `--visibility-results` is rejected in this mode, because a
+  Stage-1 JSON belongs to one station set.
+
+**2026-07-01 → 11-03 result.**
+
+- **Stations.** 14 eligible stations at 13 sites, with all 1,778
+  station/day listings complete. 5 of the 14 stations have no files in the
+  interval (`mu-udm`, `na-unam`, `nz-dunedin`, `se-kth`, `zm-cbu`).
+- **Candidates.** 44 triads have candidate overlap, and all of them pass the
+  500 km cut.
+  - Top triad: `bd-iub` + `ghana` + `za-rhodes`, with 1,750 h of possible
+    shared time and a longest segment of 91 h.
+  - `bd-iub` + `mg-tana` + `za-rhodes` ranks 5th, with 760 h.
+- These are archive candidates only. Stage 1 must still establish common
+  GNSS visibility. Details are in
+  [`docs/archive_scan.md` §9](docs/archive_scan.md#9-network-wide-discovery---all-stations).
 
 ## Stage 2: observation retrieval (`tart-retrieve`)
 
@@ -729,6 +780,7 @@ tart-gnss/
 ├── tart_gnss_stage7_implementation.md   # Stage-7 specification
 ├── tart_gnss_campaign_analysis_implementation.md  # campaign-layer specification
 ├── tart_gnss_archive_scan_implementation.md       # archive-scan specification
+├── tart_gnss_network_archive_discovery_implementation.md  # --all-stations specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
@@ -755,6 +807,7 @@ tart-gnss/
 ├── docs/stage7_diagnosis.md         # Stage-7 provenance, influence, correlations, evidence rules, validation, real data
 ├── docs/campaign_analysis.md        # campaign inputs, cohorts, statistics, outputs, synthetic validation, real run
 ├── docs/examples/archive_scan_real/ # real 2026-10-09..11-03 scans (inventory-only, Stage-1 matching, two-station diagnostic)
+├── docs/examples/network_archive_scan_real/ # real 2026-07-01..11-03 --all-stations scan (44 triads)
 ├── docs/archive_scan.md             # archive scan: method, cache, ranking, real result, decision log, handoff
 ├── scripts/make_report_figures.py
 ├── scripts/stage3_synthetic_demo.py
@@ -842,15 +895,16 @@ tart-gnss/
 │       ├── inventory.py  cache.py       # station/day listings (Stage-2 backend), versioned checksummed cache
 │       ├── intervals.py  matching.py    # filename candidate segments, intersections, Stage-1 matching
 │       ├── ranking.py  output.py  errors.py
+│       ├── network.py  network_run.py   # --all-stations: sites, geodesic baselines, sweep, triads
 │       └── cli.py              # tart-archive-scan
-└── tests/                           # 667 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, campaign: 58, archive scan: 54, CLI names: 3
+└── tests/                           # 696 tests: Stage 1: 64, Stage 2: 67, registry: 36, Stage 3: 73, Stage 4: 96, Stage 5: 90, Stage 6: 62, Stage 7: 64, campaign: 58, archive scan: 83, CLI names: 3
 ```
 
 ## Development and testing
 
 ```bash
 pip install -e ".[dev,ms,stage3]"
-pytest                       # 667 tests, ~3 min, no network needed
+pytest                       # 696 tests, ~3 min, no network needed
 ```
 
 The Stage-2 tests use a mocked archive and synthetic HDF5 files that follow
@@ -893,7 +947,11 @@ refuses downloads, together with synthetic Stage-1 JSON. They check:
 - the two-station, minimum-duration and TLE-age rules;
 - that ranking is not dominated by long GEO windows;
 - the retrieval handoff;
-- that `tart-retrieve` is never run.
+- that `tart-retrieve` is never run;
+- for `--all-stations`, a synthetic five-station network (one co-located
+  pair, an outage, baseline-filtered triads) against hand-computed sweep
+  and triad durations, a fourth station joining without fragmenting a
+  triad, geodesic reference distances, and listing once per station/day.
 
 ## Technical report
 

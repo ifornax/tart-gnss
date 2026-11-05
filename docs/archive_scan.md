@@ -488,3 +488,307 @@ Tracked as [issue #1](https://github.com/ifornax/tart-gnss/issues/1). Summary:
   3. Optionally add `--verify-local-native`, which would populate
      `verified_overlap_duration_s` as `TIMESTAMP_OVERLAP_VERIFIED` and fail
      closed.
+
+## 9. Network-wide discovery (`--all-stations`)
+
+Specification: [`tart_gnss_network_archive_discovery_implementation.md`](../tart_gnss_network_archive_discovery_implementation.md).
+Code: `src/tart_gnss/archive_scan/network.py` (eligibility, sites,
+baselines, sweep, triads) and `network_run.py` (run, tables, manifest,
+report).
+
+The explicit mode needs a triad chosen in advance. The network mode finds
+**when and where the archive suggests that three or more geographically
+distinct TART stations may have recorded simultaneously**, without any
+Stage-1 input. It is still archive discovery between Stages 1 and 2, not a
+new pipeline stage, and it reports `FILENAME_CANDIDATE` coverage only.
+
+Four concepts stay separate:
+
+1. a *registered* station (registry entry): not proof of operation or data;
+2. a *filename-derived archive candidate*: what this mode reports;
+3. *native-validated* simultaneous data: Stage 2;
+4. a *detected* satellite: Stage 3.
+
+### 9.1 Usage
+
+```bash
+tart-archive-scan --all-stations \
+    --start 2026-07-01T00:00:00Z --end 2026-11-03T00:00:00Z \
+    --min-stations 3 --min-common-duration 300 --min-baseline-km 500 \
+    --cache-policy reuse --output results/network_overlap.csv
+```
+
+| Option | Meaning | Default |
+|---|---|---|
+| `--all-stations` | network mode; mutually exclusive with `--stations` | off |
+| `--include-stations ID ...` / `--exclude-stations ID ...` | restrict / drop eligible stations (aliases accepted; unknown ids or an id in both lists → exit 2) | all eligible |
+| `--min-stations N` | distinct physical **sites** per network interval, and the size of the reported station sets | 3 |
+| `--min-common-duration S` | minimum **contiguous** candidate duration of a station-set segment | 300 |
+| `--min-baseline-km KM` | every pairwise geodesic baseline of a set must be ≥ KM | no cut |
+| `--site-tolerance-km KM` | stations within KM (geodesic, single linkage) are one site | 1 |
+| `--max-triads N` | export/print only the top N sets; counts and scanning are unaffected | all |
+| `--start`, `--end` | required; half-open `[start, end)` | — |
+| `--file-span-assumption-s`, cache options, `--station-file`, `--aliases`, `--top` | as in the explicit mode | — |
+
+`--visibility-results` (and the Stage-1 filters) are **rejected** in this
+mode: a Stage-1 JSON is frozen to one station set and its geometry cannot be
+applied to other triads. The network-only options are rejected without
+`--all-stations`.
+
+### 9.2 Method
+
+1. **Eligible stations.** The catalogue is read entry by entry. Entries
+   with invalid coordinates (including `metadata.skipped_entries` of a
+   generated registry) are `INVALID_COORDINATES`; entries without an
+   `archive_name` are `NO_ARCHIVE_NAME`; a repeated `archive_name` is
+   `DUPLICATE_ARCHIVE_NAME` (listed once). `archive_verified` is recorded,
+   never treated as evidence of data.
+2. **Physical sites.** Union-find over all pairs with geodesic separation
+   ≤ the tolerance. Group ids are `SITE_<lowest station id>`.
+3. **Inventory.** The same `build_inventory` as the explicit mode: each
+   eligible `(station, day)` prefix is listed (or read from the cache) once,
+   with a progress line every 100 prefixes. The number of calls depends only
+   on stations × days, never on the number of triads.
+4. **Sweep.** One event sweep (`k_station_segments` with `k = 1`: half-open,
+   ends before starts at equal instants, zero-length pieces dropped) gives
+   maximal intervals with a constant active station set. Those whose active
+   stations span ≥ N site groups are the **network active segments**
+   (written even when a baseline cut leaves no triads). An active segment's
+   `inventory_complete` considers **all** eligible stations, because a
+   missing listing could hide a further station.
+5. **Station sets.** Only sets of N stations at N distinct sites that are
+   co-active in some active segment are considered. Each set's contiguous
+   segments are the **intersection of its own members' segments**. A triad
+   therefore stays one segment while a fourth station joins or leaves, and
+   a co-located sibling never lends coverage (Stage 2 retrieves per
+   station). The minimum duration applies to each contiguous segment;
+   shorter pieces are counted (`n_short_segments_excluded`), never bridged.
+6. **Baselines.** WGS84 Vincenty inverse geodesic (km), each pair computed
+   once; the 3-D ECEF chord (with heights) is reported separately. The
+   iteration raises on non-convergence (nearly antipodal points) rather
+   than returning a wrong value.
+7. **Ranking** (version 1, recorded in the manifest): complete inventory
+   first; total possible shared duration; longest contiguous segment;
+   minimum pairwise baseline (secondary only); station ids.
+
+### 9.3 Outputs
+
+For `--output results/network_overlap.csv`:
+
+| File | Content |
+|---|---|
+| `network_overlap.csv` | ranked sets: durations, segment counts, first/last/longest segment, min/median/max baseline, chord, `coverage_class = FILENAME_CANDIDATE`, `verified_shared_duration_s` (null), proposed commands, `handoff_status = PROPOSED_NOT_RUN` |
+| `network_overlap.json` | summary, the sets with their segments, and the baseline-rejected sets |
+| `network_active_segments.csv` | sweep output: interval, active stations (`;` list and JSON), site groups, site count, completeness |
+| `network_triad_segments.csv` | one row per set × contiguous segment: file counts per station, co-active additional stations, inventory status |
+| `network_station_days.csv` | every station/day listing (status, files, source, checksum) |
+| `network_station_summary.csv` | per station: coordinates, archive name, `archive_verified`, site group, day counts, files, first/last filename |
+| `network_excluded_stations.csv` | excluded registry entries and reasons |
+| `network_archive_scan_manifest.json` | arguments, software and git state, registry SHA-256 and metadata, archive endpoint, listing snapshots and checksums, cache statistics, interval, span assumption, site grouping, baseline method and pairs, policies, ranking rule, counts, output SHA-256s |
+
+CSV and JSON outputs are replaced atomically; an earlier manifest is kept
+under its run tag.
+
+**Classifications:** `TRIADS_FOUND` (`_INVENTORY_INCOMPLETE`),
+`THREE_SITE_OVERLAP_BUT_BASELINE_FILTER_EXCLUDES_ALL`,
+`NO_THREE_SITE_CANDIDATE_OVERLAP_WITH_COMPLETE_INVENTORY`,
+`OVERLAP_UNDETERMINED_DUE_TO_INCOMPLETE_INVENTORY`,
+`NO_ELIGIBLE_ARCHIVE_STATIONS` (exit 0, empty tables) and
+`ARCHIVE_LISTING_FAILURE`. "THREE" means `--min-stations` sites. More sites
+requested than eligible sites exist → exit 2. Exit codes are those of the
+explicit mode.
+
+### 9.4 Handoff to the GNSS pipeline
+
+The network scan never asserts GNSS visibility. For a chosen triad and
+segment (`network_triad_segments.csv`):
+
+1. run the proposed `tart-common-gnss --stations <triad> --start … --end …
+   --min-elevation 20 --step 10 --tle-file <contemporaneous catalogue>`
+   (the segment rounded outward to whole seconds);
+2. run `tart-archive-scan --stations <triad> --visibility-results <new
+   Stage-1 JSON>` to intersect in-band predictions with the archive;
+3. `tart-retrieve --visibility-results <new JSON> --rank N --dry-run`;
+4. download and validate (Stage 2) only viable candidates, then Stages 3–7.
+
+Never reuse a Stage-1 JSON of another station set, and use element sets
+contemporaneous with the segment.
+
+### 9.5 Real-data result: 2026-07-01 → 2026-11-03
+
+The §9.1 command, run with `--cache-policy reuse` at commit `ddcaeed`
+(clean tree). Outputs, terminal report and log:
+[`docs/examples/network_archive_scan_real/`](examples/network_archive_scan_real).
+
+- **Registry:** 18 entries; 14 eligible archive stations at 13 sites
+  (`nz-nelson` + `nz-nelson-32` are one site). Excluded: `bw-biust`
+  (`INVALID_COORDINATES`), `nz-rock2f`, `nz-test` and `tart3-test`
+  (`NO_ARCHIVE_NAME`).
+- **Inventory:** 1,778 station/day prefixes (14 × 127 days, including the
+  two edge days), 1,700 listed live and 78 from the cache on the first run.
+  There were no failures and no unknown days, so the inventory is
+  **complete**. The rerun for the example used only cache hits.
+- **Stations with no files in the interval:** `mu-udm`, `na-unam`,
+  `nz-dunedin`, `se-kth` and `zm-cbu`. All of them are `archive_verified`
+  in the registry.
+
+| Station | Days with data | Files in interval | Possible coverage | Last filename UTC |
+|---|---:|---:|---:|---|
+| bd-iub | 125 | 169,245 | 96.4 % | 2026-11-02 04:47 |
+| za-rhodes | 123 | 165,117 | 94.0 % | 2026-11-02 04:48 |
+| ghana | 84 | 111,016 | 63.2 % | 2026-11-02 04:47 |
+| nz-nelson | 58 | 77,277 | 43.1 % | 2026-11-02 04:47 |
+| za-hammanskraal | 43 | 51,483 | 29.3 % | 2026-11-02 18:07 |
+| mg-tana | 65 | 49,724 | 28.5 % | 2026-10-29 07:14 |
+| nz-nelson-32 | 30 | 41,792 | 23.2 % | 2026-11-02 04:47 |
+| nz-elec | 10 | 9,776 | 5.6 % | 2026-09-03 02:38 |
+| it-ant | 1 | 198 | 0.1 % | 2026-09-28 13:42 |
+
+(Exact values for every station are in `network_station_summary.csv`.)
+
+- **Sweep:** 860 network active segments with ≥ 3 sites, totalling
+  2,632.6 h of possible time with no double counting. Up to 6 sites are
+  active at once.
+- **Triads:** 44 sets of 3 distinct sites have a contiguous segment of at
+  least 300 s. All 44 pass the 500 km all-pairs cut; the shortest pair is
+  `za-hammanskraal`–`za-rhodes` at 896 km. All 44 have complete inventory.
+
+| # | Triad | Total possible | Longest contiguous | Min baseline |
+|---:|---|---:|---:|---:|
+| 1 | bd-iub + ghana + za-rhodes | 1,749.8 h (107 segments) | 91.0 h, 09-17 13:55 → 09-21 08:57 | 5,168 km |
+| 2 | bd-iub + nz-nelson + za-rhodes | 1,214.5 h | 125.6 h | 9,264 km |
+| 3 | bd-iub + ghana + nz-nelson | 1,022.2 h | 158.3 h | 9,835 km |
+| 4 | ghana + nz-nelson + za-rhodes | 954.3 h | 139.8 h | 5,168 km |
+| 5 | bd-iub + mg-tana + za-rhodes | 760.4 h (232 segments) | 40.5 h, 07-28 23:51 → 07-30 16:18 | 2,633 km |
+
+- **The previous triad.** `mg-tana` + `za-rhodes` + `mu-udm` has **no**
+  candidate overlap, because `mu-udm` has no files after 2026-06-26.
+  `mg-tana` + `za-rhodes` does pair with other third stations:
+  - `bd-iub` (rank 5);
+  - `ghana` (rank 13, 356.6 h);
+  - `nz-nelson` (rank 15);
+  - `za-hammanskraal` (rank 17).
+
+These are filename candidates only. Ranking by archive duration says
+nothing about GNSS geometry: `bd-iub` + `ghana` + `za-rhodes` spans Asia,
+West Africa and South Africa, and satellites common to all three must be
+established by Stage 1.
+
+**Next actions** (proposed; none has been run):
+
+1. Run `tart-common-gnss --stations bd-iub ghana za-rhodes --start
+   2026-09-17T13:55:35Z --end 2026-09-21T08:57:47Z --min-elevation 20 --step
+   10` with a TLE catalogue contemporaneous with September 2026. Do the same
+   for `bd-iub mg-tana za-rhodes` on 2026-07-28T23:51:45Z → 07-30T16:18:51Z,
+   which keeps the two stations already characterised in Stages 3–7.
+2. Run the explicit `tart-archive-scan --stations … --visibility-results
+   <new JSON>` on each result, then `tart-retrieve --dry-run`.
+3. Promote a candidate only after Stage-2 native validation.
+
+### 9.6 Validation
+
+`tests/archive_scan/test_network.py` (29 tests, no network). The synthetic
+five-station demo (docstring of the test module) has a co-located pair
+(`cc`/`cc-2`, 110 m), an outage (`dd`), a station without an archive name
+and one with invalid coordinates. Hand-computed truth that the tests check:
+
+- network intervals with ≥ 3 sites: 10:30–11:50, 4 800 s in 7
+  constant-membership pieces;
+- `aa+bb+cc` is **one** 1 800 s segment although `dd` joins at 11:10;
+  `aa+bb+cc-2` is 3 600 s; `cc` and `cc-2` never share a triad;
+- the 240 s `dd` piece is excluded by the 300 s minimum and counted;
+- a 500 km cut removes exactly the three sets containing both `aa` and `dd`
+  (222 km); 1 000 km also removes the `bb–dd` (~890 km) sets;
+- 15 listing calls for 5 stations × 3 days, none for excluded stations;
+  cache reuse makes none; offline without a cache is a listing failure;
+- a station/day error is `ERROR`, not an empty day, gives exit 3 and flags
+  only the affected sets; no overlap with an incomplete inventory is
+  `OVERLAP_UNDETERMINED…`;
+- identical output bytes for different S3 listing orders;
+- the Flinders Peak–Buninyong geodesic (54 972.271 m), the equatorial
+  degree and the WGS84 quadrant; every packaged-registry pair converges;
+- output SHA-256s, the proposed commands, and the CLI conflicts.
+
+### 9.7 Limitations
+
+- Everything in §7 applies (filename candidates, 120 s span assumption).
+- `nz-dunedin` and `nz-elec` are 1.39 km apart, so at the default 1 km
+  tolerance they are **separate** sites; use `--site-tolerance-km 2` (or a
+  baseline cut) to merge them. `nz-nelson`/`nz-nelson-32` share coordinates
+  and are always one site.
+- A baseline cut is a coarse site-diversity filter. Crossing angles,
+  elevations, clocks and calibration decide triangulation quality, and are
+  evaluated after Stage 1 (Stage 4).
+- S3 absence means no archived file, not that a telescope was not observing.
+- Sets of size N = `--min-stations` only; there is no separate set-size
+  option.
+
+### 9.8 Issue, decisions and handoff
+
+**Issue.** Ticket text (to be filed as a GitHub issue; creating issues from the
+coding agent is blocked):
+
+> **Network-wide archive discovery (`tart-archive-scan --all-stations`).**
+> The archive scan checks one hand-picked station set, and the chosen triad
+> can have no overlap at all (`mu-udm` ends on 2026-06-26).
+>
+> **Scope:**
+> - registry-derived eligible stations, with exclusions reported;
+> - physical-site grouping;
+> - one listing per station/day;
+> - one sweep for intervals with ≥ N sites;
+> - triads built from intersected per-station coverage;
+> - an all-pairs geodesic baseline cut;
+> - deterministic ranking and proposed Stage-1 commands.
+>
+> **Acceptance:** the §15 checklist of the specification.
+>
+> **Known limitations:**
+> - filename candidates only;
+> - a baseline cut is not a triangulation metric;
+> - S3 absence does not prove that a telescope was not observing;
+> - `nz-dunedin`/`nz-elec` (1.39 km apart) count as separate sites at
+>   1 km.
+
+**Decision log**
+
+1. **Extend `tart-archive-scan`, do not add a command.** The inventory,
+   cache, filename parser and outputs are shared; `--all-stations`
+   dispatches to `network_run.run_network`, and the explicit mode is
+   untouched (its 54 tests pass unchanged).
+2. **Sites, not ids.** `--min-stations` counts physical sites; co-located
+   receivers would otherwise inflate the count. Single linkage at 1 km (the
+   spec's example) is the default, independent of `--min-baseline-km`.
+3. **One sweep, then per-set intersections.** The sweep finds where ≥ N
+   sites are active; triads are enumerated only from co-active stations
+   there, and each set's segments come from intersecting its own members'
+   coverage. Stitching sweep pieces would have split a triad when a fourth
+   station joins; unioning a site's stations would have credited coverage
+   no single station has.
+4. **Vincenty, no new dependency.** Neither `geographiclib` nor `pyproj` is
+   a dependency. Vincenty is sub-millimetre on the reference line and fails
+   loudly (rather than silently) near antipodes; no registry pair is close
+   to antipodal.
+5. **Reject `--visibility-results` in network mode.** The spec allows either
+   rejection or identical-triad matching; rejection is the simplest
+   guarantee that a Stage-1 JSON is never applied to another triad.
+6. **Active-segment completeness uses all eligible stations**, set-segment
+   completeness only the set's members. A missing listing elsewhere cannot
+   remove a set's coverage, but it can hide a further active station.
+7. **Exclusion of no-archive stations happens before listing.** Otherwise
+   every run would carry `ERROR` days and exit 3.
+8. **Atomic CSV/JSON writes** (both modes); the manifest keeps its earlier
+   versions under their run tags and now records output SHA-256s in network
+   mode.
+
+**Handoff**
+
+- Branch `network-archive-discovery` from `main` at `0d66eb0` (v0.9.0);
+  version 0.10.0.
+- New: `archive_scan/network.py`, `archive_scan/network_run.py`,
+  `tests/archive_scan/test_network.py`. Changed: `cli.py` (options,
+  dispatch), `inventory.py` (progress log), `output.py` (atomic writes).
+- Tests: `pytest tests/archive_scan` (83 tests); full suite as in §8.
+- Next actions are listed in §9.5.
+- The real example was generated at `ddcaeed` (clean); the listing cache
+  stays in `data/archive_inventory/` (git-ignored).

@@ -1,0 +1,5 @@
+station_id,tart_id,reason,detail,archive_name,archive_verified
+bw-biust,bw-biust,INVALID_COORDINATES,skipped by tart-stations-update: missing valid coordinates: Station 'bw-biust': 'altitude_m' is missing (null). Coordinates must come from an authoritative source and are never guessed.,,
+nz-rock2f,nz-rock2f,NO_ARCHIVE_NAME,archive_name is null in the registry,,False
+nz-test,nz-test,NO_ARCHIVE_NAME,archive_name is null in the registry,,False
+tart3-test,tart3-test,NO_ARCHIVE_NAME,archive_name is null in the registry,,False
