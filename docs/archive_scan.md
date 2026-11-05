@@ -732,8 +732,7 @@ and one with invalid coordinates. Hand-computed truth that the tests check:
 
 ### 9.8 Issue, decisions and handoff
 
-**Issue.** Ticket text (to be filed as a GitHub issue; creating issues from the
-coding agent is blocked):
+**Issue.** Tracked as [issue #2](https://github.com/ifornax/tart-gnss/issues/2). Summary:
 
 > **Network-wide archive discovery (`tart-archive-scan --all-stations`).**
 > The archive scan checks one hand-picked station set, and the chosen triad
