@@ -293,6 +293,17 @@ def test_filename_time_not_upload_time(tmp_path):
     assert aa["earliest_filename_utc"].startswith(f"{DAY}T10:02:00")  # mock last_modified is 3 min later
 
 
+def test_station_summary_counts_only_files_reaching_the_interval(tmp_path):
+    files = demo_files()
+    files["aa"] = files["aa"] + [t("2026-10-08T23:59:00"), t("2026-10-10T00:01:00"), t("2026-10-10T00:03:00")]
+    code, m, paths = nscan(tmp_path, MockArchive(files))
+    aa = next(r for r in read_csv(paths["station_summary_csv"]) if r["station_id"] == "aa")
+    # 23:59 (ends before start) and 00:03 (starts after end) are outside; 00:01 reaches back into the interval.
+    assert aa["files_listed"] == "122" and aa["files"] == "120"
+    assert aa["earliest_filename_utc"].startswith(f"{DAY}T10:02:00")
+    assert aa["latest_filename_utc"].startswith("2026-10-10T00:01:00")
+
+
 def test_colocated_only_network_is_rejected(tmp_path, capsys):
     reg = write_registry(tmp_path / "co.yaml", {"aa": (0, 0), "aa-2": (0, 0), "aa-3": (0, 0.0001), "bb": (0, 9)},
                          extra=False)

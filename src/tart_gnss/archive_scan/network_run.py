@@ -87,7 +87,7 @@ ACTIVE_SEGMENT_COLUMNS = [
 NETWORK_STATION_SUMMARY_COLUMNS = [
     "station_id", "name", "tart_id", "latitude_deg", "longitude_deg", "altitude_m", "archive_name",
     "archive_verified", "site_group_id", "days_queried", "days_found", "days_empty", "days_error", "days_unknown",
-    "first_day_with_files", "last_day_with_files", "files", "total_bytes", "candidate_intervals",
+    "first_day_with_files", "last_day_with_files", "files_listed", "files", "total_bytes", "candidate_intervals",
     "possible_covered_s", "possible_coverage_fraction", "earliest_filename_utc", "latest_filename_utc",
     "inventory_complete",
 ]
@@ -358,7 +358,9 @@ def run_network(args: argparse.Namespace, argv: Sequence[str],
     for st in eligible:
         ls = [listings[(st.id, d)] for d in days]
         with_files = [L.day for L in ls if L.n_files]
-        times = file_times[st.id]
+        # Files whose candidate envelope [T - span, T] reaches into [start, end); edge-day files outside are
+        # counted in files_listed only.
+        times = [x for x in file_times[st.id] if x > start and x - timedelta(seconds=span) < end]
         covered = total_seconds(per_station[st.id])
         summary_rows.append({
             "station_id": st.id, "name": st.name, "tart_id": st.tart_id, "latitude_deg": st.latitude_deg,
@@ -369,7 +371,7 @@ def run_network(args: argparse.Namespace, argv: Sequence[str],
             "days_unknown": sum(L.status == STATUS_UNKNOWN for L in ls),
             "first_day_with_files": with_files[0].isoformat() if with_files else None,
             "last_day_with_files": with_files[-1].isoformat() if with_files else None,
-            "files": len(times), "total_bytes": sum(L.total_bytes for L in ls),
+            "files_listed": len(file_times[st.id]), "files": len(times), "total_bytes": sum(L.total_bytes for L in ls),
             "candidate_intervals": len(per_station[st.id]), "possible_covered_s": round(covered, 6),
             "possible_coverage_fraction": round(covered / scan_s, 9),
             "earliest_filename_utc": _t(times[0]) if times else None,
