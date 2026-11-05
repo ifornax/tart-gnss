@@ -111,9 +111,13 @@ def test_every_registry_pair_converges_and_chord_is_shorter():
         assert g >= 0 and c <= g + dh_km + 1e-3  # the chord includes station heights
 
 
-def test_nearly_antipodal_points_raise():
+def test_nearly_antipodal_points_raise_but_are_separate_sites():
     with pytest.raises(net.GeodesicError):
         net.geodesic_distance_km(0, 0, 0.5, 179.7)
+    from tart_gnss.stations import Station
+
+    sts = [Station("p", "p", 0, 0, 0, "test", archive_name="p"), Station("q", "q", 0.5, 179.7, 0, "test", archive_name="q")]
+    assert net.site_groups(sts, net.Baselines({s.id: s for s in sts}), 1.0) == {"p": "SITE_p", "q": "SITE_q"}
 
 
 # --------------------------------------------------------------------------- registry and sites

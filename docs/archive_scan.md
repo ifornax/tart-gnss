@@ -616,8 +616,15 @@ contemporaneous with the segment.
 
 ### 9.5 Real-data result: 2026-07-01 → 2026-11-03
 
-The §9.1 command, run with `--cache-policy reuse` at commit `ddcaeed`
-(clean tree). Outputs, terminal report and log:
+Run at commit `ddcaeed` (clean tree) with exactly:
+
+```bash
+tart-archive-scan --all-stations --start 2026-07-01T00:00:00Z --end 2026-11-03T00:00:00Z \
+    --min-stations 3 --min-common-duration 300 --min-baseline-km 500 \
+    --cache-policy reuse --cache-max-age-hours 240 \
+    --output docs/examples/network_archive_scan_real/network_overlap.csv
+```
+ Outputs, terminal report and log:
 [`docs/examples/network_archive_scan_real/`](examples/network_archive_scan_real).
 
 - **Registry:** 18 entries; 14 eligible archive stations at 13 sites
@@ -754,8 +761,9 @@ coding agent is blocked):
 
 1. **Extend `tart-archive-scan`, do not add a command.** The inventory,
    cache, filename parser and outputs are shared; `--all-stations`
-   dispatches to `network_run.run_network`, and the explicit mode is
-   untouched (its 54 tests pass unchanged).
+   dispatches to `network_run.run_network`, and the explicit mode's
+   behaviour is unchanged (its 54 tests pass unchanged; its CSV/JSON writes
+   are now atomic, with the same bytes).
 2. **Sites, not ids.** `--min-stations` counts physical sites; co-located
    receivers would otherwise inflate the count. Single linkage at 1 km (the
    spec's example) is the default, independent of `--min-baseline-km`.

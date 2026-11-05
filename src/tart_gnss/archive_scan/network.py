@@ -276,7 +276,11 @@ def site_groups(stations: Sequence[Station], baselines: Baselines, tolerance_km:
         return x
 
     for a, b in itertools.combinations(ids, 2):
-        if baselines.geodesic_km(a, b) <= tolerance_km:
+        try:
+            near = baselines.geodesic_km(a, b) <= tolerance_km
+        except GeodesicError:  # nearly antipodal: certainly not one site
+            near = False
+        if near:
             ra, rb = find(a), find(b)
             if ra != rb:
                 parent[max(ra, rb)] = min(ra, rb)
