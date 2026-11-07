@@ -12,7 +12,7 @@ Outputs:
 
 Logic:
     Generate the same numeric Julian dates used in the simulator. Compare
-    (1) Skyfield UTC input via ts.utc_jd and (2) the simulator's use of
+    (1) Skyfield UTC input via ts.from_datetimes and (2) the simulator's use of
     ts.ut1_jd on those numeric dates. Use Skyfield ITRSPosition for antennas
     in BOTH cases, matching the simulator's frame path, so the only
     experimental variable is the time-scale interpretation.
@@ -23,6 +23,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+from datetime import timezone
 
 import numpy as np
 from astropy.time import Time
@@ -72,7 +73,8 @@ def model_for_scale(d: dict, omm: dict, jd_utc: np.ndarray,
         Tuple of model averaged baseline phasors, and Az/El at t0.
     """
     ts = load.timescale()
-    times = ts.utc_jd(jd_utc) if convention == "utc" else ts.ut1_jd(jd_utc)
+    times = (ts.from_datetimes(Time(jd_utc, format="jd", scale="utc").to_datetime(timezone=timezone.utc))
+             if convention == "utc" else ts.ut1_jd(jd_utc))
     sat = earth_satellite(omm, ts)
     sat_xyz = sat.at(times).position.m.T
     antennas = np.stack(
@@ -93,7 +95,8 @@ def model_for_scale(d: dict, omm: dict, jd_utc: np.ndarray,
     ).mean(axis=0)
     # Evaluate topocentric direction at exact MS timestamp, not first fine sample.
     jd0 = float(Time(d["ms_time"] / 86400.0, format="mjd", scale="utc").jd)
-    t0 = ts.utc_jd(jd0) if convention == "utc" else ts.ut1_jd(jd0)
+    t0 = (ts.from_datetime(Time(jd0, format="jd", scale="utc").to_datetime(timezone=timezone.utc))
+          if convention == "utc" else ts.ut1_jd(jd0))
     centre = np.mean(d["antenna_ecef"], axis=0)
     from astropy.coordinates import EarthLocation
     from astropy import units as u
