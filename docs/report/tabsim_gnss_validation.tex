@@ -1,0 +1,256 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=23mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,listings,xcolor,longtable}
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=blue}
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,frame=single,columns=fullflexible}
+\title{Finite-Range GNSS Visibility Simulation and Direction Recovery with a Distributed TART Network\\\large Technical Validation Report (Ghana pilot)}
+\author{TART--GNSS collaboration\\Working technical record}
+\date{7 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+This technical note documents the reproducible preliminary validation of GPS satellite
+NORAD 39166 (NAVSTAR 68) in simulated Telescope Array Radio Telescope (TART)
+visibilities. Three 24-element interferometers (Ghana, Antananarivo and Rhodes)
+were simulated at GNSS L1. We distinguish the confirmed properties of the generated
+measurement sets from the Ghana-only localisation tests. An orbit-blind
+two-angle spherical-wave visibility fit agrees with an independent orbit prediction
+to a few arcseconds in a high-signal, no-gain-error simulation; this is \emph{not}
+a real-world localisation-accuracy claim.
+\end{abstract}
+\section{Purpose and scope}
+The objective is to establish a reliable forward model before applying Bayesian
+inference to multi-station GNSS localisation. A physically consistent
+simulation must preserve satellite orbital elements, antenna positions, time
+standards, signal phase-centre conventions, and complex visibility formation.
+This work is a \emph{simulation validation}, not a validated inference on
+on-sky observations. The operational \texttt{tart-gnss} stages 1--7 remain
+unchanged. Scripts and run instructions are in
+\texttt{docs/tabsim\_gnss/README.md} and \texttt{scripts/tabsim\_gnss\_fit.py}.
+\section{Data provenance}
+\begin{itemize}
+\item Satellite: NORAD 39166, NAVSTAR 68 (USA 242), GPS L1
+$\nu=1575.42\,\mathrm{MHz}$; saved OMM epoch
+\texttt{2026-10-30T07:09:07.795296} UTC.
+\item Data interval: 2026-10-29 01:10:00--01:12:01 UTC;
+120 integrations, each $1.024\,\mathrm{s}$, $33$ internal samples.
+\item Each MS: 24 antennas, 276 unique cross-baselines,
+$120\times276=33120$ rows, one frequency channel of width $1$ MHz,
+one complex correlation. The three stations have independently
+generated MSs with matching displayed orbital elements.
+\item Input: \texttt{tab\_sim\_\{ghana,mg-tana,za-rhodes\}.yaml}
+in \texttt{configs/tart\_tabsim} of the user's local simulation working tree.
+The MS and \texttt{used\_orbits.json} are deliberately not committed.
+\item Software: \texttt{tabsim} v0.0.13 from
+\url{https://github.com/chrisfinlay/tab-sim}; Python \texttt{casacore},
+\texttt{astropy}, \texttt{skyfield}, NumPy and SciPy.
+The source package is named \texttt{tabsim}, not \texttt{tab-sim}.
+\end{itemize}
+In an earlier installed simulator revision, a null Space-Track path prevented
+the TLE simulation step from running. The resulting \texttt{0SAT} MS
+contained noise but no RFI model. After upgrading, SatChecker delivered
+one record 1.2487 days from the requested epoch, and the three \texttt{1SAT}
+datasets contained nonzero RFI signals. The archive orbit is adequate for
+\emph{internal simulation consistency}; its ephemeris accuracy against a
+precision GNSS orbit has not been established.
+\section{Visibility physics and conventions}
+For station $s$ and antennas $i,j$, with satellite geocentric position
+$\mathbf r_\mathrm{sat}(t)$, antenna positions $\mathbf r_{s,i}(t)$
+in the \emph{same} celestial frame, and wavelength $\lambda=c/\nu$, define
+\begin{equation}
+d_{s,i}(t)=\|\mathbf r_\mathrm{sat}(t)-\mathbf r_{s,i}(t)\|,\qquad
+\Delta d_{s,ij}(t)=d_{s,i}(t)-d_{s,j}(t).
+\end{equation}
+The simulator's satellite visibility uses phase-corrected distances
+\begin{equation}
+d^{\rm corr}_{s,i}=d_{s,i}+w_{s,i},\qquad
+\Delta d^{\rm corr}_{s,ij}=\Delta d_{s,ij}+w_{s,ij},
+\end{equation}
+where $w_{s,ij}=w_{s,i}-w_{s,j}$ is the difference of
+antenna phase-centre $w$ coordinates in metres. In the actual
+\texttt{tabsim} implementation the sampled complex phasor is
+\begin{equation}
+q_{s,ij}(t)=\exp\!\left[-\frac{2\pi i}{\lambda}
+\left(\Delta d_{s,ij}(t)+w_{s,ij}(t)\right)\right].
+\label{eq:near}
+\end{equation}
+The one-second visibility is an average of internal samples, not the
+phasor evaluated only at an interval midpoint:
+\begin{equation}
+m_{s,ij}(\boldsymbol\theta,R)=
+\frac{1}{N_\mathrm{int}}\sum_{k=1}^{N_\mathrm{int}}
+q_{s,ij}(t_k;\boldsymbol\theta,R).
+\end{equation}
+A more complete simulator forward model uses antenna-dependent apparent
+amplitudes $A_{s,i}(t_k)$ inside the sum:
+\begin{equation}
+V^{\mathrm{sim}}_{s,ij}=
+\frac1{N_\mathrm{int}}\sum_k
+A_{s,i}(t_k) A_{s,j}^{*}(t_k)\,
+q_{s,ij}(t_k)+\epsilon_{s,ij}.
+\label{eq:vis}
+\end{equation}
+Our initial fit approximates the baseline-dependent amplitude with a single
+complex scalar $a$; this is appropriate for a diagnostic but not a full
+instrumental calibration model.
+
+For a trial local direction $\boldsymbol\theta=(Az,El)$,
+\begin{equation}
+\hat{\mathbf n}_{\rm ENU}=
+\begin{bmatrix}
+\sin Az\cos El\\ \cos Az\cos El\\ \sin El
+\end{bmatrix},\quad
+\mathbf r_{\rm trial}(t)=\mathbf r_{\rm centre}(t)
++R\hat{\mathbf n}_{\rm GCRS}(t).
+\label{eq:direction}
+\end{equation}
+The ENU basis must be rotated into the same GCRS frame as the antenna
+positions. The source position is held at fixed \emph{local}
+$(Az,El,R)$ during one integration; this is a short-snapshot approximation,
+not a dynamics model.
+
+For a far-field direction $(l,m,n)$ relative to the MS FIELD phase centre,
+$n=\sqrt{1-l^2-m^2}$, the usual Fourier kernel depends on
+$ul+vm+w(n-1)$. The first dirty-image experiment used a sign inconsistent
+with the simulator's satellite visibility convention; a sign-flipped
+diagnostic improved orbit agreement but did not fully resolve it.
+These are conventions to \emph{test}, not arbitrary fixes to observations.
+\section{Inference objective}
+For complex visibilities $V_b$ and a unit-amplitude model $m_b$,
+with equal weights as used in this pilot,
+\begin{equation}
+\chi^2(\boldsymbol\theta,R,a)
+=\sum_b |V_b-a\,m_b(\boldsymbol\theta,R)|^2,
+\end{equation}
+where $a\in\mathbb C$ is an unconstrained nuisance amplitude. It is
+eliminated analytically:
+\begin{equation}
+\hat a(\boldsymbol\theta,R)
+=\frac{\sum_b m_b^*V_b}{\sum_b|m_b|^2},\quad
+J(\boldsymbol\theta,R)=
+\frac{\sum_b|V_b-\hat a m_b|^2}{\sum_b|V_b|^2}.
+\label{eq:profile}
+\end{equation}
+The amplitude-weighted phase coherence is
+\begin{equation}
+C=\frac{|\sum_b m_b^* V_b|}
+{\sqrt{\sum_b|m_b|^2\,\sum_b|V_b|^2}}\in[0,1].
+\end{equation}
+It quantifies \emph{model coherence}, not the probability that
+the satellite is correctly localised. Real-data analysis will require
+per-baseline weights, residual assessment, source association and gain terms.
+
+The search centre is inferred from the MS FIELD phase centre;
+the saved satellite orbit is never passed into the angle optimiser.
+The optimiser uses differential evolution followed by local Nelder--Mead.
+The global search has not reported success in the observed runs, whereas
+local searches did. Uniqueness and coverage remain open.
+\section{Measured validation results}
+\subsection{MS signal components}
+Mean complex visibility amplitudes (Jy-like simulated MS units) were:
+\begin{center}\begin{tabular}{lrr}
+\toprule
+Station & $|V_{\rm RFI\,model}|$ & $|V_{\rm noise}|$\\\midrule
+Ghana & $8.86947\times10^6$ & 8.76995\\
+Antananarivo & $9.10358\times10^6$ & 8.76995\\
+Rhodes & $8.72081\times10^6$ & 8.76995\\\bottomrule
+\end{tabular}\end{center}
+These signals are vastly stronger than the injected noise. They were used
+to debug the geometry, not to establish representative GNSS receiver sensitivity.
+\subsection{Image convention and finite-range phase test}
+Using the original far-field imaging kernel, a $5^\circ$ RA rephase
+produced expected $(l,m)=(-0.087058,-0.000180)$ and recovered
+$(-0.088000,-0.008800)$. The displayed image discrepancy was about
+$0.50^\circ$ from the \emph{original phase centre}, not necessarily
+from the satellite truth. Direct comparison at the unshifted centre
+against the OMM direction gave:
+\begin{center}\begin{tabular}{lrrr}
+\toprule
+Image Fourier sign&$l$&$m$&orbit separation\\\midrule
+$+1$&$-0.000600$&$-0.009000$&$1.070426^\circ$\\
+$-1$&$+0.000600$&$+0.009000$&$0.339008^\circ$\\
+Orbit&$-0.005316$&$+0.009077$&--\\\bottomrule
+\end{tabular}\end{center}
+A full spherical-wave model, sampled at 33 timestamps over
+$1.024$ s and compared against \texttt{RFI\_MODEL\_DATA},
+gave:
+\begin{center}\begin{tabular}{lrr}
+\toprule
+Phase prescription & Coherence & circular phase RMS\\\midrule
+$\Delta d+w_{ij}$ & 1.000000 (rounded) & $0.0479^\circ$\\
+$\Delta d$ only & 0.037762 & $103.4545^\circ$\\
+Conjugate of corrected model & 0.826855 & $35.0277^\circ$\\\bottomrule
+\end{tabular}\end{center}
+The phase RMS is a \emph{visibility phase} error; it is not a sky-coordinate
+uncertainty. The test used stored snapshot $w$ throughout the short interval
+and simplified amplitude weights, so its tiny residual is not exactly zero.
+\subsection{Orbit-blind direction fit}
+At 2026-10-29T01:10:00 UTC, the saved OMM predicts
+$Az=100.950025^\circ$, $El=51.728246^\circ$,
+range $21498.801$ km. For a fixed nominal range of $21500$ km
+the independent visibility fit returned
+$Az=100.948434157^\circ$ and $El=51.728550893^\circ$.
+The azimuth/elevation differences are
+$-0.001590843^\circ$ and $+0.000304893^\circ$;
+the small-angle great-circle residual is about $3.7$ arcsec
+using $\Delta\theta^2\simeq(\cos El\,\Delta Az)^2+\Delta El^2$.
+The profile residual was $5.7500\times10^{-12}$ and
+$C=0.999999999997$. This is internal consistency under idealised
+conditions, not demonstrated empirical precision.
+\subsection{Fixed-range sensitivity}
+\begin{center}\begin{tabular}{rrrr}
+\toprule
+$R$ (km)& fitted $Az$ (deg)& fitted $El$ (deg)&$J$\\\midrule
+18000&100.948434160&51.728550879&$5.7995\times10^{-12}$\\
+20000&100.948434131&51.728550875&$5.7625\times10^{-12}$\\
+21500&100.948434157&51.728550893&$5.7500\times10^{-12}$\\
+23000&100.948434220&51.728550884&$5.7492\times10^{-12}$\\
+26000&100.948434198&51.728550899&$5.7582\times10^{-12}$\\\bottomrule
+\end{tabular}\end{center}
+The fitted direction is numerically stable over this assumed range interval.
+The near-constant residual implies little evidence for recovering range
+from a single short-baseline station; the modest differences in $J$
+must not be interpreted as a reliable range estimate. Optimiser and
+floating-point sensitivity should be studied before assigning meaningful
+sub-arcsecond uncertainties.
+\section{Limitations, statistical requirements, and next experiments}
+\begin{enumerate}
+\item Fix and record the exact orbit input and software version for
+all station runs. Matching displayed OMM fields are reassuring but a full
+record hash is preferable for reproducibility.
+\item Confirm global-optimum stability with multiple seeds and search bounds.
+Test local identifiability and weak range curvature explicitly.
+\item Lower simulated power and include realistic gains, phase offsets,
+bandpass errors and flagged antennas. Fit \texttt{DATA}, not just the
+noise-free model, when assessing empirical performance.
+\item Simulate independent noise realisations and recover a covariance
+$\Sigma_{Az,El}$; validate calibration by frequentist coverage of the
+nominal $68\%$ intervals. Do not equate a tiny $J$ with a calibrated
+uncertainty.
+\item Repeat the orbit-blind direction fit for Antananarivo and Rhodes.
+Only after quality control, infer a global ECEF satellite position:
+\begin{equation}
+p(\mathbf x\mid D)\propto p(\mathbf x)
+\prod_s p\!\left(\hat{\boldsymbol\theta}_s
+\mid\operatorname{AzEl}_s(\mathbf x),\Sigma_s\right).
+\end{equation}
+For a Gaussian local likelihood, properly wrap azimuth, account for the
+elevation-dependent metric, and handle station-dependent systematic errors.
+A direct joint-visibility model provides an important cross-check.
+\end{enumerate}
+\section{Reproducibility}
+See \texttt{docs/tabsim\_gnss/README.md} for exact commands and path variables.
+The companion script \texttt{scripts/tabsim\_gnss\_fit.py}
+implements orbit-blind fitting and MS component inspection.
+A provided output JSON is a local product; do not commit absolute machine
+paths, bulky MS contents, or private credentials into the repository.
+\section{Source code provenance}
+Physics/convention verified against the open simulator implementation:
+\url{https://github.com/chrisfinlay/tab-sim},
+notably \texttt{tabsim/dask/observation.py} (distance plus antenna $w$)
+and \texttt{tabsim/jax/interferometry.py} (baseline phase and averaging).
+The local \texttt{tart-gnss} pipeline is:
+\url{https://github.com/ifornax/tart-gnss}.
+No claims about independent observational orbit accuracy or measured
+TART instrumental SEFD are made here.
+\end{document}
