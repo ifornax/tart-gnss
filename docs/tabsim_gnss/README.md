@@ -288,3 +288,66 @@ propagation conventions before applying a bias correction.
 The script is a diagnostic: it does not modify or recalibrate
 the Monte Carlo covariance results and has not yet been run
 against the user's local Ghana Measurement Set.
+
+
+## Rescore the existing Monte Carlo runs after the UTC/UT1 diagnosis
+
+A controlled Skyfield phase test using identical antenna geometry showed:
+
+- physical UTC: profile residual \(J=3.82488077454\times10^{-7}\);
+- simulator-compatible UT1: \(J=1.20662429051\times10^{-12}\);
+- simulated minus physical UTC reference: East \(-3.54816\) arcsec,
+  North \(+1.09650\) arcsec.
+
+This exactly explains the noise-free \(\approx 3.713\)-arcsec
+reference discrepancy. The fit itself recovers the direction
+encoded by the simulated phases. For this run, \`tabsim\` propagates
+numeric observation Julian dates through \`ts.ut1_jd\`, although the
+observation calendar date is recorded as UTC. Document both references;
+do not silently redefine UTC as UT1.
+
+Rescore the original 1,200 trial records **without rerunning fits**:
+
+~~~bash
+python scripts/tabsim_ghana_rescore_truth.py \
+  --trials results/tabsim_validation/ghana_uncertainty/ghana_direction_trials.csv \
+  --time-check results/tabsim_validation/ghana_audit/time_scale_check.json \
+  --output-dir results/tabsim_validation/ghana_truth_corrected
+~~~
+
+If \`time_scale_check.json\` is absent, explicit reference values from
+the verified diagnostic can be supplied via \`--sim-az\`, \`--sim-el\`,
+\`--utc-az\`, and \`--utc-el\`. This writes parallel
+\`simulator_ut1\` and \`physical_utc\` subdirectories containing
+trial CSV, per-SNR summaries, covariance JSON and error plots.
+
+Observed rescoring of the supplied 200-trial-per-SNR CSV:
+
+| SNR | UTC median (arcsec) | Simulator median (arcsec) | Simulator raw 68% held-out coverage |
+|---:|---:|---:|---:|
+| 3 | 110.72 | 111.45 | 55% |
+| 5 | 63.62 | 63.97 | 71% |
+| 10 | 30.54 | 30.43 | 74% |
+| 20 | 16.05 | 16.48 | 54% |
+| 50 | 7.05 | 6.55 | 71% |
+| 100 | 4.90 | 3.35 | 67% |
+
+At SNR 100, training-set East/North bias reduces from
+approximately (-3.57,+0.88) to (-0.03,-0.22) arcsec. Corrected
+covariances are numerically almost unchanged because they are centered
+on the training errors; the angular coordinate scale changes slightly
+with the chosen reference elevation.
+
+**Upstream simulator fix is not yet applied.** In the installed
+\`tabsim\` code, investigate the observation times in
+\`tabsim/dask/observation.py\` and transforms in
+\`tabsim/dask/coordinates.py\`, together with
+\`tabsim/tle.py:get_satellite_positions\`. A candidate resolution is
+to convert UTC timestamp values to *actual UT1 JD* using an authoritative
+time-scale conversion before passing them to the Skyfield \`ts.ut1_jd\`
+functions, or to use Skyfield UTC datetimes consistently. This must
+apply identically to satellite and antenna propagation, not only to
+the truth-evaluation script. Add a regression test comparing orbit
+Az/El and baseline phases at a known UTC time across the simulator and
+an independent implementation. Do not patch a simulator installation
+or regenerate production MS files before those tests pass.
