@@ -247,3 +247,44 @@ systematic bias as the same quantity as bias-corrected coverage.
 These runs have **not** been executed with the locally stored MS
 in this GitHub change; no uncertainty numbers or plotted points
 are claimed yet.
+
+
+## Diagnosing the persistent 3.713-arcsec noise-free offset
+
+The earlier Ghana audit found a deterministic noise-free fit residual of
+(E, N) = (-3.548, +1.096) arcsec. It remained stable when changing
+the fixed nominal range 18,000--26,000 km and grid spacing 1.0--0.5 deg.
+The unsuccessful Nelder-Mead status flags at finite SNR did not
+correspond to obviously worse fits, but termination details still need
+to be recorded.
+
+To distinguish a coordinate-frame mismatch from the moving-source
+approximation, run the new frame and time audit:
+
+~~~bash
+python scripts/tabsim_ghana_frame_time_audit.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --samples 33 --range-km 21500 \
+  --search-deg 3 --coarse-step-deg 0.5 \
+  --output results/tabsim_validation/ghana_audit/frame_time_bias.json
+~~~
+
+The report compares (a) topocentric Skyfield Az/El,
+(b) orbital Az/El computed with exactly the estimator's GCRS
+antenna-centroid ENU basis, (c) time-mean orbital direction over
+the integration, and (d) the noise-free fitted direction.
+It also evaluates matched near-field visibilities under a moving-orbit
+model and stationary-direction models.
+
+Interpretation guide: if Skyfield and GCRS/ENU truth differ by
+about 3.7 arcsec, a reference-frame or observer-location mismatch
+is implicated. If the frame values agree but the mean orbital
+direction shifts toward the fit, motion/integration conventions
+are implicated. If neither matches, compare time-dependent
+station antenna-w coordinates, beam weighting, and orbital/GCRS
+propagation conventions before applying a bias correction.
+
+The script is a diagnostic: it does not modify or recalibrate
+the Monte Carlo covariance results and has not yet been run
+against the user's local Ghana Measurement Set.
