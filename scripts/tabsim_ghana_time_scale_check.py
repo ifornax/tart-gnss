@@ -28,9 +28,8 @@ import numpy as np
 from astropy.time import Time
 from casacore.tables import table
 from scipy.constants import c
-from skyfield.api import load, wgs84
-from skyfield.positionlib import ITRSPosition
-from skyfield.units import Distance
+from skyfield.api import Distance, load, wgs84
+from skyfield.toposlib import ITRSPosition
 
 from tabsim_gnss_fit import read_snapshot
 from tabsim_gnss_diagnostics import read_saved_omm
