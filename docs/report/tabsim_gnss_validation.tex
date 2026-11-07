@@ -350,4 +350,64 @@ reported. Subsequent calibration must include gain perturbations,
 station-specific errors and independent snapshots before
 $\Sigma_{EN}$ is used as a triangulation likelihood.
 
+
+\section{Post hoc correction of the orbital time reference}
+\label{sec:utc-ut1}
+After the initial Monte Carlo analysis, a controlled diagnostic
+compared the same saved OMM trajectory and Skyfield antenna geometry
+using two interpretations of the numerical observation Julian date:
+an explicit UTC interpretation and the installed simulator's
+\texttt{ts.ut1\_jd} interpretation. The UTC-labelled observation
+timestamp was 2026-10-29T01:10:00.000.
+The simulator-compatible geometry yielded
+$J=1.20662429051\times10^{-12}$, compared with
+$J=3.82488077454\times10^{-7}$ for the UTC interpretation.
+The predicted direction shift was
+\begin{equation}
+(\Delta E,\Delta N)_{\mathrm{sim-UTC}}
+=(-3.54816'',+1.09650'').
+\end{equation}
+This explains the previously observed noise-free direction-fit
+discrepancy of approximately $3.713''$: that offset is primarily a
+truth-reference convention mismatch rather than measured
+interferometric bias. The simulator itself has not yet been corrected
+or regenerated, so the distinction between \emph{simulation-consistent}
+direction and physically timestamped UTC direction must be retained.
+
+Re-scoring the same $200$ saved Monte Carlo estimates at each SNR
+against simulator-consistent truth (without rerunning fits) gave:
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+Per-visibility SNR & UTC median error (
+'$) &
+ Simulator median error (
+'$) & Raw held-out 68\% coverage\\
+\midrule
+3 & 110.72 & 111.45 & 0.55\\
+5 & 63.62 & 63.97 & 0.71\\
+10 & 30.54 & 30.43 & 0.74\\
+20 & 16.05 & 16.48 & 0.54\\
+50 & 7.05 & 6.55 & 0.71\\
+100 & 4.90 & 3.35 & 0.67\\
+\bottomrule
+\end{tabular}
+\end{center}
+At SNR 100, training-sample East/North bias changed from
+approximately $(-3.57'',+0.88'')$ to
+$(-0.03'',-0.22'')$, and nominal raw held-out ellipse coverage
+improved from 0.37 to 0.67. The covariance does not change materially
+under subtraction of a constant error offset; it remains a
+noise-conditional training-sample covariance and is not yet a
+calibrated observation posterior. Raw coverage at SNR 20 remains
+only 0.54 and should be investigated. Fitting failures and
+systematic instrumental effects have not been resolved.
+
+The reanalysis script is
+\texttt{scripts/tabsim\_ghana\_rescore\_truth.py}; commands are in
+\texttt{docs/tabsim\_gnss/README.md}. Future validation must fix and
+test time-scale conversion at the simulator source and regenerate
+a new Ghana measurement set before using a physical UTC reference
+as a source of absolute position truth.
+
 \end{document}
