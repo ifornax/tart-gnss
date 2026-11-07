@@ -148,3 +148,102 @@ three-site Bayesian triangulation with existing Stage 4.
 simulator; use phase-centre-corrected spherical-wave delays; keep
 two-stage direction → 3D inference as a working hypothesis pending
 uncertainty calibration. This report does not modify operational stages.
+
+
+## Ghana directional-uncertainty Monte Carlo (next experiment)
+
+The new [uncertainty script](../../scripts/tabsim_ghana_uncertainty.py) generates
+independent synthetic noise perturbations of the existing satellite
+`RFI_MODEL_DATA`, fits each perturbed snapshot with the same orbit-blind
+finite-range + \(w\)-corrected forward model, and uses saved-orbit truth
+**only after the fitting loop** to assess accuracy.
+
+The per-visibility SNR is defined as
+
+\[
+{\rm SNR}_{\rm vis} =
+\frac{\sqrt{\langle |S_b|^2\rangle_b}}
+{\sqrt{\langle |N_b|^2\rangle_b}}
+=\frac{\sqrt{\langle |S_b|^2\rangle_b}}{\sqrt{2}\,\sigma},
+\]
+
+where independent noise is generated as
+\(N_b=\sigma(Z_{1b}+iZ_{2b})\), with independent standard normal
+\(Z_{1b},Z_{2b}\). The value of \(\sigma\) is estimated from the
+full MS `NOISE_DATA` (all unflagged samples), while the template
+\(S_b\) comes from the selected `RFI_MODEL_DATA` snapshot.
+This is not the coherent array detection SNR.
+
+### Initial smoke test
+
+Run from repository root after defining `GHANA_MS` and
+`GHANA_ORBITS` above:
+
+~~~bash
+python scripts/tabsim_ghana_uncertainty.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --snrs 3,10,30 \
+  --reps 12 \
+  --seed 20261107 \
+  --samples 33 \
+  --range-km 21500 \
+  --search-deg 3 \
+  --coarse-step-deg 1 \
+  --output-dir results/tabsim_validation/ghana_uncertainty_smoke
+~~~
+
+The small trial count is a programmatic smoke test **only**, not a
+stable covariance estimate. The fitter uses a bounded pointing-informed
+grid search plus local Nelder-Mead; monitor `local_success` and
+`on_edge` flags before trusting results.
+
+### Full experiment
+
+~~~bash
+python scripts/tabsim_ghana_uncertainty.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --snrs 3,5,10,20,50,100 \
+  --reps 200 \
+  --seed 20261107 \
+  --samples 33 \
+  --range-km 21500 \
+  --search-deg 3 \
+  --coarse-step-deg 1 \
+  --output-dir results/tabsim_validation/ghana_uncertainty
+~~~
+
+Outputs:
+
+- `ghana_localisation_error_vs_snr.png`: median, 68th and 95th
+  percentile sky-plane angular error as a function of input SNR.
+- `ghana_direction_trials.csv`: individual fits and ENU tangent-plane
+  errors, retaining optimisation success/boundary flags.
+- `ghana_direction_snr_summary.csv`: per-level RMSE, quantiles,
+  bias and independent held-out 68% ellipse coverage.
+- `ghana_direction_covariance.json`: covariance matrices in
+  **East/North arcsec squared**, separated by injected SNR.
+- `run_metadata.json`: all experiment parameters and RNG seed.
+
+The East/North errors are
+\(e_E=3600\cos(El_\star)\operatorname{wrap}(Az-Az_\star)\) and
+\(e_N=3600(El-El_\star)\), in arcseconds. Each SNR group is split:
+first 50% to estimate mean bias and covariance, remaining 50%
+to check joint-Gaussian 68% ellipse coverage
+(\(D^2\le\chi^2_{2,0.68}\approx2.279\)).
+
+**Triangulation caution:** \(\Sigma_{EN}\) here is empirical
+estimator scatter **conditional on one synthetic source direction
+and one injected noise model**. It is not automatically the
+posterior covariance of an individual direction estimate.
+Check calibration and bias, then convert to
+\(\Sigma_{Az,El} = D^{-1}\Sigma_{EN}(D^{-1})^\mathsf{T}\),
+\(D=\operatorname{diag}(3600\cos El_\star,3600)\)
+for degree-squared covariance if Stage 4 accepts degrees.
+Avoid treating held-out coverage estimated using an uncorrected
+systematic bias as the same quantity as bias-corrected coverage.
+
+These runs have **not** been executed with the locally stored MS
+in this GitHub change; no uncertainty numbers or plotted points
+are claimed yet.
