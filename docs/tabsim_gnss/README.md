@@ -148,3 +148,206 @@ three-site Bayesian triangulation with existing Stage 4.
 simulator; use phase-centre-corrected spherical-wave delays; keep
 two-stage direction → 3D inference as a working hypothesis pending
 uncertainty calibration. This report does not modify operational stages.
+
+
+## Ghana directional-uncertainty Monte Carlo (next experiment)
+
+The new [uncertainty script](../../scripts/tabsim_ghana_uncertainty.py) generates
+independent synthetic noise perturbations of the existing satellite
+`RFI_MODEL_DATA`, fits each perturbed snapshot with the same orbit-blind
+finite-range + \(w\)-corrected forward model, and uses saved-orbit truth
+**only after the fitting loop** to assess accuracy.
+
+The per-visibility SNR is defined as
+
+\[
+{\rm SNR}_{\rm vis} =
+\frac{\sqrt{\langle |S_b|^2\rangle_b}}
+{\sqrt{\langle |N_b|^2\rangle_b}}
+=\frac{\sqrt{\langle |S_b|^2\rangle_b}}{\sqrt{2}\,\sigma},
+\]
+
+where independent noise is generated as
+\(N_b=\sigma(Z_{1b}+iZ_{2b})\), with independent standard normal
+\(Z_{1b},Z_{2b}\). The value of \(\sigma\) is estimated from the
+full MS `NOISE_DATA` (all unflagged samples), while the template
+\(S_b\) comes from the selected `RFI_MODEL_DATA` snapshot.
+This is not the coherent array detection SNR.
+
+### Initial smoke test
+
+Run from repository root after defining `GHANA_MS` and
+`GHANA_ORBITS` above:
+
+~~~bash
+python scripts/tabsim_ghana_uncertainty.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --snrs 3,10,30 \
+  --reps 12 \
+  --seed 20261107 \
+  --samples 33 \
+  --range-km 21500 \
+  --search-deg 3 \
+  --coarse-step-deg 1 \
+  --output-dir results/tabsim_validation/ghana_uncertainty_smoke
+~~~
+
+The small trial count is a programmatic smoke test **only**, not a
+stable covariance estimate. The fitter uses a bounded pointing-informed
+grid search plus local Nelder-Mead; monitor `local_success` and
+`on_edge` flags before trusting results.
+
+### Full experiment
+
+~~~bash
+python scripts/tabsim_ghana_uncertainty.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --snrs 3,5,10,20,50,100 \
+  --reps 200 \
+  --seed 20261107 \
+  --samples 33 \
+  --range-km 21500 \
+  --search-deg 3 \
+  --coarse-step-deg 1 \
+  --output-dir results/tabsim_validation/ghana_uncertainty
+~~~
+
+Outputs:
+
+- `ghana_localisation_error_vs_snr.png`: median, 68th and 95th
+  percentile sky-plane angular error as a function of input SNR.
+- `ghana_direction_trials.csv`: individual fits and ENU tangent-plane
+  errors, retaining optimisation success/boundary flags.
+- `ghana_direction_snr_summary.csv`: per-level RMSE, quantiles,
+  bias and independent held-out 68% ellipse coverage.
+- `ghana_direction_covariance.json`: covariance matrices in
+  **East/North arcsec squared**, separated by injected SNR.
+- `run_metadata.json`: all experiment parameters and RNG seed.
+
+The East/North errors are
+\(e_E=3600\cos(El_\star)\operatorname{wrap}(Az-Az_\star)\) and
+\(e_N=3600(El-El_\star)\), in arcseconds. Each SNR group is split:
+first 50% to estimate mean bias and covariance, remaining 50%
+to check joint-Gaussian 68% ellipse coverage
+(\(D^2\le\chi^2_{2,0.68}\approx2.279\)).
+
+**Triangulation caution:** \(\Sigma_{EN}\) here is empirical
+estimator scatter **conditional on one synthetic source direction
+and one injected noise model**. It is not automatically the
+posterior covariance of an individual direction estimate.
+Check calibration and bias, then convert to
+\(\Sigma_{Az,El} = D^{-1}\Sigma_{EN}(D^{-1})^\mathsf{T}\),
+\(D=\operatorname{diag}(3600\cos El_\star,3600)\)
+for degree-squared covariance if Stage 4 accepts degrees.
+Avoid treating held-out coverage estimated using an uncorrected
+systematic bias as the same quantity as bias-corrected coverage.
+
+These runs have **not** been executed with the locally stored MS
+in this GitHub change; no uncertainty numbers or plotted points
+are claimed yet.
+
+
+## Diagnosing the persistent 3.713-arcsec noise-free offset
+
+The earlier Ghana audit found a deterministic noise-free fit residual of
+(E, N) = (-3.548, +1.096) arcsec. It remained stable when changing
+the fixed nominal range 18,000--26,000 km and grid spacing 1.0--0.5 deg.
+The unsuccessful Nelder-Mead status flags at finite SNR did not
+correspond to obviously worse fits, but termination details still need
+to be recorded.
+
+To distinguish a coordinate-frame mismatch from the moving-source
+approximation, run the new frame and time audit:
+
+~~~bash
+python scripts/tabsim_ghana_frame_time_audit.py \
+  --ms "$GHANA_MS" \
+  --orbits "$GHANA_ORBITS" \
+  --samples 33 --range-km 21500 \
+  --search-deg 3 --coarse-step-deg 0.5 \
+  --output results/tabsim_validation/ghana_audit/frame_time_bias.json
+~~~
+
+The report compares (a) topocentric Skyfield Az/El,
+(b) orbital Az/El computed with exactly the estimator's GCRS
+antenna-centroid ENU basis, (c) time-mean orbital direction over
+the integration, and (d) the noise-free fitted direction.
+It also evaluates matched near-field visibilities under a moving-orbit
+model and stationary-direction models.
+
+Interpretation guide: if Skyfield and GCRS/ENU truth differ by
+about 3.7 arcsec, a reference-frame or observer-location mismatch
+is implicated. If the frame values agree but the mean orbital
+direction shifts toward the fit, motion/integration conventions
+are implicated. If neither matches, compare time-dependent
+station antenna-w coordinates, beam weighting, and orbital/GCRS
+propagation conventions before applying a bias correction.
+
+The script is a diagnostic: it does not modify or recalibrate
+the Monte Carlo covariance results and has not yet been run
+against the user's local Ghana Measurement Set.
+
+
+## Rescore the existing Monte Carlo runs after the UTC/UT1 diagnosis
+
+A controlled Skyfield phase test using identical antenna geometry showed:
+
+- physical UTC: profile residual \(J=3.82488077454\times10^{-7}\);
+- simulator-compatible UT1: \(J=1.20662429051\times10^{-12}\);
+- simulated minus physical UTC reference: East \(-3.54816\) arcsec,
+  North \(+1.09650\) arcsec.
+
+This exactly explains the noise-free \(\approx 3.713\)-arcsec
+reference discrepancy. The fit itself recovers the direction
+encoded by the simulated phases. For this run, \`tabsim\` propagates
+numeric observation Julian dates through \`ts.ut1_jd\`, although the
+observation calendar date is recorded as UTC. Document both references;
+do not silently redefine UTC as UT1.
+
+Rescore the original 1,200 trial records **without rerunning fits**:
+
+~~~bash
+python scripts/tabsim_ghana_rescore_truth.py \
+  --trials results/tabsim_validation/ghana_uncertainty/ghana_direction_trials.csv \
+  --time-check results/tabsim_validation/ghana_audit/time_scale_check.json \
+  --output-dir results/tabsim_validation/ghana_truth_corrected
+~~~
+
+If \`time_scale_check.json\` is absent, explicit reference values from
+the verified diagnostic can be supplied via \`--sim-az\`, \`--sim-el\`,
+\`--utc-az\`, and \`--utc-el\`. This writes parallel
+\`simulator_ut1\` and \`physical_utc\` subdirectories containing
+trial CSV, per-SNR summaries, covariance JSON and error plots.
+
+Observed rescoring of the supplied 200-trial-per-SNR CSV:
+
+| SNR | UTC median (arcsec) | Simulator median (arcsec) | Simulator raw 68% held-out coverage |
+|---:|---:|---:|---:|
+| 3 | 110.72 | 111.45 | 55% |
+| 5 | 63.62 | 63.97 | 71% |
+| 10 | 30.54 | 30.43 | 74% |
+| 20 | 16.05 | 16.48 | 54% |
+| 50 | 7.05 | 6.55 | 71% |
+| 100 | 4.90 | 3.35 | 67% |
+
+At SNR 100, training-set East/North bias reduces from
+approximately (-3.57,+0.88) to (-0.03,-0.22) arcsec. Corrected
+covariances are numerically almost unchanged because they are centered
+on the training errors; the angular coordinate scale changes slightly
+with the chosen reference elevation.
+
+**Upstream simulator fix is not yet applied.** In the installed
+\`tabsim\` code, investigate the observation times in
+\`tabsim/dask/observation.py\` and transforms in
+\`tabsim/dask/coordinates.py\`, together with
+\`tabsim/tle.py:get_satellite_positions\`. A candidate resolution is
+to convert UTC timestamp values to *actual UT1 JD* using an authoritative
+time-scale conversion before passing them to the Skyfield \`ts.ut1_jd\`
+functions, or to use Skyfield UTC datetimes consistently. This must
+apply identically to satellite and antenna propagation, not only to
+the truth-evaluation script. Add a regression test comparing orbit
+Az/El and baseline phases at a known UTC time across the simulator and
+an independent implementation. Do not patch a simulator installation
+or regenerate production MS files before those tests pass.

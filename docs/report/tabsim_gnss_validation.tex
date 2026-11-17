@@ -253,4 +253,161 @@ The local \texttt{tart-gnss} pipeline is:
 \url{https://github.com/ifornax/tart-gnss}.
 No claims about independent observational orbit accuracy or measured
 TART instrumental SEFD are made here.
+
+\section{Planned controlled noise experiment: directional uncertainty}
+\label{sec:uncertainty}
+The next experiment conditions on the saved Ghana satellite model snapshot
+$S_b=V_b^{\mathrm{RFI\_MODEL}}$ but generates new independent receiver
+noise for each trial. Let $b$ index unflagged complex baselines. Define
+\begin{equation}
+N_b^{(r)}=\sigma(Z_{1b}^{(r)}+iZ_{2b}^{(r)}),
+\quad Z_{kb}^{(r)}\overset{\mathrm{iid}}{\sim}\mathcal N(0,1),
+\quad E|N|^2=2\sigma^2.
+\end{equation}
+We estimate $\sigma^2$ from the stored \texttt{NOISE\_DATA} column
+over available unflagged samples, and set a prescribed
+\emph{single-complex-visibility} signal-to-noise ratio
+\begin{equation}
+\rho=\frac{\sqrt{B^{-1}\sum_b|\alpha_\rho S_b|^2}}
+{\sqrt2\,\sigma},\qquad
+\alpha_\rho=\frac{\rho\sqrt2\,\sigma}
+{\sqrt{B^{-1}\sum_b|S_b|^2}}.
+\end{equation}
+The simulated observation at each repetition is
+\begin{equation}
+V_b^{(r)}(\rho)=\alpha_\rho S_b + N_b^{(r)}.
+\end{equation}
+In particular, $\rho$ is \emph{not} the coherent phased-array SNR.
+We use a reproducible pseudorandom generator seed and avoid reading
+the saved OMM truth until the entire fit loop has finished.
+
+For each repetition $r$, minimise the complex-amplitude-profiled
+residual in Eq.~\eqref{eq:profile} over a pointing-informed bounded
+grid plus local Nelder--Mead refinement. Define the small-angle
+tangent-plane error, in arcseconds,
+\begin{equation}
+\mathbf e^{(r)}=
+3600\begin{bmatrix}
+\cos(El_\star)\,\operatorname{wrap}_{[-180,180)}(Az^{(r)}-Az_\star)\\
+El^{(r)}-El_\star
+\end{bmatrix},
+\end{equation}
+where the subscript $\star$ denotes an independent orbit-predicted
+reference and both coordinate differences are expressed in degrees.
+This tangent approximation must be revisited for very wide residuals.
+
+For each SNR level, split independent trials into training and
+held-out evaluation halves. The sample bias and covariance from
+training trials are
+\begin{align}
+\hat{\mathbf b}
+&=\frac1{N_{\rm train}}\sum_{r\in{\rm train}}\mathbf e^{(r)},\\
+\hat{\Sigma}_{EN}
+&=\frac1{N_{\rm train}-1}\sum_{r\in{\rm train}}
+(\mathbf e^{(r)}-\hat{\mathbf b})
+(\mathbf e^{(r)}-\hat{\mathbf b})^\mathsf T.
+\end{align}
+These are conditional, repeated-noise error statistics; they are
+\emph{not by themselves} a posterior uncertainty for an arbitrary
+new observation. In-sample covariance can underestimate
+out-of-distribution effects from gain errors and model misspecification.
+
+The conventional nominal joint 68\% Gaussian ellipse contains
+a held-out trial when
+\begin{equation}
+D^2=\mathbf e^\mathsf{T}\hat{\Sigma}_{EN}^{-1}\mathbf e
+\le \chi^2_{2}(0.68)\simeq2.279.
+\end{equation}
+Report both uncorrected and bias-corrected held-out coverage;
+for the latter replace $\mathbf e$ by
+$\mathbf e-\hat{\mathbf b}$. If model bias is non-negligible,
+report it separately rather than subsume it into covariance.
+Accuracy is summarised by the median, 68th and 95th percentiles of
+$\|\mathbf e\|$, and the root mean-square radial error.
+The covariance in degrees squared is obtained by
+$\Sigma_{Az,El}=D^{-1}\Sigma_{EN}(D^{-1})^\mathsf T$,
+$D=\operatorname{diag}(3600\cos El_\star,3600)$.
+
+\paragraph{Run and expected products.}
+See \texttt{docs/tabsim\_gnss/README.md} and
+\texttt{scripts/tabsim\_ghana\_uncertainty.py}. The recommended full
+design uses $\rho\in\{3,5,10,20,50,100\}$ with 200 independent
+trials per value. Outputs will be a trial-level CSV, a per-SNR
+summary CSV, a covariance JSON, and a plot of angular error versus
+SNR. \emph{No Monte Carlo result has yet been obtained for this
+new experiment}; no plot is included as if measured.
+
+\paragraph{Known limitations.}
+The experiment conditions on one fixed source, one snapshot and the
+same simulator family as the fit; the nominal 21,500 km range is held
+fixed. The satellite apparent direction can change during integration;
+a constant local direction parameterisation may create a systematic
+error floor. The source is rescaled while the Gaussian noise variance
+is kept fixed, rather than rerunning the full simulator with new
+emission and instrumental gain parameters. Optimisation failures,
+edge hits, and non-Gaussian multimodality must be retained and
+reported. Subsequent calibration must include gain perturbations,
+station-specific errors and independent snapshots before
+$\Sigma_{EN}$ is used as a triangulation likelihood.
+
+
+\section{Post hoc correction of the orbital time reference}
+\label{sec:utc-ut1}
+After the initial Monte Carlo analysis, a controlled diagnostic
+compared the same saved OMM trajectory and Skyfield antenna geometry
+using two interpretations of the numerical observation Julian date:
+an explicit UTC interpretation and the installed simulator's
+\texttt{ts.ut1\_jd} interpretation. The UTC-labelled observation
+timestamp was 2026-10-29T01:10:00.000.
+The simulator-compatible geometry yielded
+$J=1.20662429051\times10^{-12}$, compared with
+$J=3.82488077454\times10^{-7}$ for the UTC interpretation.
+The predicted direction shift was
+\begin{equation}
+(\Delta E,\Delta N)_{\mathrm{sim-UTC}}
+=(-3.54816'',+1.09650'').
+\end{equation}
+This explains the previously observed noise-free direction-fit
+discrepancy of approximately $3.713''$: that offset is primarily a
+truth-reference convention mismatch rather than measured
+interferometric bias. The simulator itself has not yet been corrected
+or regenerated, so the distinction between \emph{simulation-consistent}
+direction and physically timestamped UTC direction must be retained.
+
+Re-scoring the same $200$ saved Monte Carlo estimates at each SNR
+against simulator-consistent truth (without rerunning fits) gave:
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+Per-visibility SNR & UTC median error (
+'$) &
+ Simulator median error (
+'$) & Raw held-out 68\% coverage\\
+\midrule
+3 & 110.72 & 111.45 & 0.55\\
+5 & 63.62 & 63.97 & 0.71\\
+10 & 30.54 & 30.43 & 0.74\\
+20 & 16.05 & 16.48 & 0.54\\
+50 & 7.05 & 6.55 & 0.71\\
+100 & 4.90 & 3.35 & 0.67\\
+\bottomrule
+\end{tabular}
+\end{center}
+At SNR 100, training-sample East/North bias changed from
+approximately $(-3.57'',+0.88'')$ to
+$(-0.03'',-0.22'')$, and nominal raw held-out ellipse coverage
+improved from 0.37 to 0.67. The covariance does not change materially
+under subtraction of a constant error offset; it remains a
+noise-conditional training-sample covariance and is not yet a
+calibrated observation posterior. Raw coverage at SNR 20 remains
+only 0.54 and should be investigated. Fitting failures and
+systematic instrumental effects have not been resolved.
+
+The reanalysis script is
+\texttt{scripts/tabsim\_ghana\_rescore\_truth.py}; commands are in
+\texttt{docs/tabsim\_gnss/README.md}. Future validation must fix and
+test time-scale conversion at the simulator source and regenerate
+a new Ghana measurement set before using a physical UTC reference
+as a source of absolute position truth.
+
 \end{document}
