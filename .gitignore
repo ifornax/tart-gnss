@@ -17,3 +17,10 @@ data/observations/
 data/archive_inventory/
 # tart2ms writes its own log into the working directory
 tart2ms.*.log
+# tab-sim outputs (only the YAML/text inputs and run records are committed)
+configs/tart_tabsim/simulated/**/*.ms/
+configs/tart_tabsim/simulated/**/*.zarr/
+configs/tart_tabsim/simulated/**/*.png
+configs/tart_tabsim/simulated/**/used_orbits.json
+configs/tart_tabsim/simulated/**/*.rfimodel
+configs/tart_tabsim/simulated/**/*.loc

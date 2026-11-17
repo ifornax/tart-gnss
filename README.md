@@ -726,7 +726,9 @@ changed**, and nothing here is an accuracy claim for real TART data.
 Commands, environment and outputs are in
 [`docs/tabsim_gnss/README.md`](docs/tabsim_gnss/README.md). The report is
 [`docs/report/tabsim_gnss_validation.pdf`](docs/report/tabsim_gnss_validation.pdf)
-(source `tabsim_gnss_validation.tex`). The scripts are in `scripts/tabsim_*.py`.
+(source `tabsim_gnss_validation.tex`). The scripts are in `scripts/tabsim_*.py`, and the simulation inputs and
+run records (per-station tab-sim YAML, ITRF antenna positions, resolved
+configs and logs) are in [`configs/tart_tabsim/`](configs/tart_tabsim).
 They need astropy, scipy, skyfield and python-casacore, plus tab-sim to
 regenerate the simulations. The Measurement Sets and results are local and
 not committed.
@@ -809,6 +811,7 @@ tart-gnss/
 ├── tart_gnss_archive_scan_implementation.md       # archive-scan specification
 ├── tart_gnss_network_archive_discovery_implementation.md  # --all-stations specification
 ├── config/*.yaml                    # -> src/tart_gnss/config/*.yaml
+├── configs/tart_tabsim/             # tab-sim inputs (per-station YAML, ITRF antenna files) and run records (resolved config, logs)
 ├── data/stations/                   # archived TART registry snapshots + sidecars + diffs
 ├── data/tle/                        # archived TLE catalogues + provenance sidecars
 ├── data/observations/               # Stage-2 output (git-ignored)

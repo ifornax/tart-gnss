@@ -1,0 +1,70 @@
+2026-11-07 10:28:41.777925
+
+Theoretical synthesized beam width : 12458 arcsec
+Orbit requested epoch  : 2026-10-29T01:11:00.928005 UTC
+Satellites requested   : 1
+Fetching 1 nearest record(s) from SatChecker nearest-OMM with up to 1 concurrent requests
+  SatChecker did not improve 1 ID(s); continuing with acceptable cached records
+Remote orbit records   : 1 accepted (limit 3 d)
+  39166: managed per-satellite cache [celestrak] epoch 2026-10-30T07:09:07.795285 UTC, offset +1.2487 d, age 1.2487 d
+
+Searching which satellites satisfy max_ang_sep: 90 and min_elev: 0
+Found 1 matching satellites
+NORAD IDs included : [np.int64(39166)]
+Spectral models for 1 TLE satellites found.
+
+Adding TLE-based satellite RFI sources ...
+
+No gains added ...
+
+Maximum Fringe Frequency is : 0.00 Hz
+Maximum RFI Amplitude       : 3019.50010 sqrt(Jy)
+Maximum sampling rate is    : 3.28 Hz
+Recommended n_int is >=     : 4 (33 used)
+
+Telescope Location
+------------------
+Latitude : -18.8971446
+Longitude : 47.5551677
+Elevation : 1280.0
+
+Observation Details
+-------------------
+Phase Centre (ra, dec) :  (78.5, 4.5) deg.
+Local Hour Angle range :  (23.9, 24.5) deg.
+Source Altitude range  :  (56.4, 56.8) deg.
+Number of antennas     :   24
+Number of baselines    :   276
+Autocorrelations       :   False
+
+Frequency range        :   (1575 - 1575) MHz
+Channel width          :    1000 kHz
+Number of channels     :    1
+
+Observation time       :   (2026-10-29 01:10:00 - 2026-10-29 01:12:01)
+Integration time       :    1 s
+Sampling rate          :    32.2 Hz
+Number of time steps   :    120
+
+Source Details
+--------------
+Number of ast. sources   :  0
+Number of RFI sources    :  1
+Number of satellite RFI  :  0
+Number of stationary RFI :  0
+Orbit records used written to : /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/simulated/mg-tana/tart_mg-tana_obs_24A_120T-0000-0121_033I_001F-1.575e+09-1.575e+09_000PAST_000GAST_000EAST_1SAT_0GRD_1.0e+00RFI/input_data/used_orbits.json
+
+Writing data to : /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/simulated/mg-tana/tart_mg-tana_obs_24A_120T-0000-0121_033I_001F-1.575e+09-1.575e+09_000PAST_000GAST_000EAST_1SAT_0GRD_1.0e+00RFI
+
+Plotting source altitude ...
+
+Plotting uv coverage ...
+
+Plotting RFI angular separations ...
+
+Writing visibilities to MS ...
+MS Write Time : 0:00:00.476669
+
+Total simulation time : 0:00:11.491785
+
+2026-11-07 10:28:53.269729

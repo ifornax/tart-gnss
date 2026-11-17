@@ -1,0 +1,55 @@
+# Generated from measured TART antenna positions.
+# SEFD, dish_d, chan_width and satellite power_scale are exploratory inputs.
+telescope:
+  name: TART-za-rhodes
+  latitude: -33.319413
+  longitude: 26.507688
+  elevation: 642.26
+  itrf_path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/za-rhodes.itrf.txt
+  enu_path: null
+  n_ant: 24
+  dish_d: 0.1
+observation:
+  target_name: GNSS_NORAD_39166
+  ra: 84.31247176131207
+  dec: 8.196142480265957
+  start_time_isot: '2026-10-29T01:10:00.000'
+  int_time: 1.024
+  n_time: 120
+  n_int: 32
+  start_freq: 1575420000.0
+  chan_width: 1000000.0
+  n_freq: 1
+  SEFD: 10000.0
+  auto_corrs: false
+  random_seed: 12345
+  visibility_precision: double
+rfi_sources:
+  tle_satellite:
+    norad_ids:
+    - 39166
+    remote_max_age_days: 3
+    cache_reuse_max_age_days: 1
+    min_alt: 0
+    max_ang_sep: 90
+    vis_step: 0.1
+    power_scale: 1.0
+gains:
+  G0_mean: 1.0
+  G0_std: 0.0
+  Gt_std_amp: 0.0
+  Gt_std_phase: 0.0
+  random_seed: 999
+output:
+  path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/simulated/za-rhodes
+  prefix: tart_za-rhodes
+  zarr: true
+  ms: true
+  overwrite: false
+  flag_data: false
+diagnostics:
+  rfi_seps: true
+  src_alt: true
+  uv_cov: true
+dask:
+  max_chunk_MB: 100.0

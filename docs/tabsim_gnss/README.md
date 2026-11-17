@@ -14,14 +14,18 @@ for real TART data. Existing Stage 1–7 processing is unchanged.
 ## Environment
 
 Run from the root of a tart-gnss checkout, with the tabascal environment.
-The simulation configurations and outputs are local and are not in git;
-here they live under the `sat_position` working copy:
+The simulation inputs are committed in
+[`configs/tart_tabsim/`](../../configs/tart_tabsim) (see
+[Simulation configuration files](#simulation-configuration-files)). The
+simulated Measurement Sets, Zarr stores and `used_orbits.json` are large or
+run-specific and stay local; the runs used here were written under the
+`sat_position` working copy:
 
 ~~~bash
 conda activate tabascal
 export REPO="$HOME/GitHub/TART/tart-gnss"                         # this repository
-export TART_CONFIG="$HOME/GitHub/TART/sat_position/configs/tart_tabsim"  # local, not in git
-export TART_SIM="$TART_CONFIG/simulated"
+export TART_CONFIG="$REPO/configs/tart_tabsim"                    # committed inputs
+export TART_SIM="$HOME/GitHub/TART/sat_position/configs/tart_tabsim/simulated"  # local outputs
 cd "$REPO"
 python -m pip show tabsim
 python -m pip check
@@ -35,18 +39,53 @@ $HOME/GitHub/SBI_AI/tart_tabsim_three_station/make_configs.py,
 which derives station coordinates from actual MS antenna tables.
 Do not substitute invented station layouts or SEFD values.
 
+## Simulation configuration files
+
+Copied verbatim from the local simulation working tree
+(`sat_position/configs/tart_tabsim/`, 2026-11-17), so they are an exact
+record of the runs reported here:
+
+| File | Content |
+|---|---|
+| `tab_sim_{ghana,mg-tana,za-rhodes}.yaml` | tab-sim input for each station: site latitude/longitude/elevation, ITRF antenna file, NORAD 39166 phase centre (RA/Dec), start 2026-10-29T01:10:00 UTC, 120 × 1.024 s, 32 sub-integrations, 1575.42 MHz, 1 MHz channel, SEFD 10 000 Jy, unit gains, seeds |
+| `{ghana,mg-tana,za-rhodes}.itrf.txt` | 24 antenna positions per station (ITRF/ECEF, metres), derived from the real MS antenna tables |
+| `simulated/<station>/<run>/input_data/sim_config.yaml` | the full configuration tab-sim resolved for that run, with every default filled in |
+| `simulated/<station>/<run>/input_data/norad_ids.yaml`, `*.itrf.txt` | the NORAD list and antenna file as used by that run |
+| `simulated/<station>/<run>/log_sim_*.txt` | tab-sim run log: OMM record used (SatChecker/CelesTrak epoch 2026-10-30T07:09:07.795 UTC, age 1.25 d), source altitude, write times |
+
+The SEFD, `dish_d`, `chan_width` and `power_scale` values are exploratory
+inputs, not measured TART properties. The run directories hold only these
+text files in git; the `.ms`, `.zarr`, plots, `used_orbits.json` and
+spectral-model files are git-ignored.
+
+**Absolute paths.** `itrf_path` and `output.path` (and, in
+`sim_config.yaml`, the tab-sim package data paths) are the absolute paths
+of the original machine, kept unchanged as provenance. To regenerate
+elsewhere, rewrite them in a scratch copy rather than in the committed files:
+
+~~~bash
+mkdir -p /tmp/tart_tabsim
+for s in ghana mg-tana za-rhodes; do
+  sed -e "s#/home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim#$TART_CONFIG#" \
+      -e "s#$TART_CONFIG/simulated#/tmp/tart_tabsim/simulated#" \
+      "$TART_CONFIG/tab_sim_$s.yaml" > "/tmp/tart_tabsim/tab_sim_$s.yaml"
+done
+export TART_SIM=/tmp/tart_tabsim/simulated
+~~~
+
 ## Run simulation (when not already generated)
 
-The three site-specific YAMLs live outside the repository at TART_CONFIG.
-They specify NORAD 39166, GNSS L1 1575.42 MHz, 24 antennas,
+The three site-specific YAMLs are in `configs/tart_tabsim/` (as written
+they reproduce the original output location; use the rewritten copies
+above on another machine). They specify NORAD 39166, GNSS L1 1575.42 MHz, 24 antennas,
 120 integrations of 1.024 s, 33 samples per integration, and a
 1 MHz channel. Ensure output paths do not collide with existing
 runs if overwrite=false.
 
 ~~~bash
-sim-vis -c "$TART_CONFIG/tab_sim_ghana.yaml"
-sim-vis -c "$TART_CONFIG/tab_sim_mg-tana.yaml"
-sim-vis -c "$TART_CONFIG/tab_sim_za-rhodes.yaml"
+sim-vis -c /tmp/tart_tabsim/tab_sim_ghana.yaml     # or "$TART_CONFIG/tab_sim_ghana.yaml" on the original machine
+sim-vis -c /tmp/tart_tabsim/tab_sim_mg-tana.yaml
+sim-vis -c /tmp/tart_tabsim/tab_sim_za-rhodes.yaml
 ~~~
 
 Confirm the output directory has 1SAT, not 0SAT. The failed old
@@ -141,7 +180,8 @@ graphicx, hyperref, listings, xcolor, longtable.
 
 Orbit records are saved per run as input_data/used_orbits.json;
 archive records from different runs must be compared in full before
-claiming identical orbital truth. Never commit large MS/Zarr outputs,
+claiming identical orbital truth. Only the YAML/text inputs and run
+records in `configs/tart_tabsim/` are committed. Never commit large MS/Zarr outputs,
 credentials, or machine-specific files. We have not independently
 measured the instrument SEFD or calibrated angular uncertainty.
 

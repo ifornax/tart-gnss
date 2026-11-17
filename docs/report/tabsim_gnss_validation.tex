@@ -39,7 +39,9 @@ $120\times276=33120$ rows, one frequency channel of width $1$ MHz,
 one complex correlation. The three stations have independently
 generated MSs with matching displayed orbital elements.
 \item Input: \texttt{tab\_sim\_\{ghana,mg-tana,za-rhodes\}.yaml}
-in \texttt{configs/tart\_tabsim} of the user's local simulation working tree.
+committed in \texttt{configs/tart\_tabsim/}, with the ITRF antenna files,
+and each run's resolved \texttt{sim\_config.yaml} and tab-sim log under
+\texttt{configs/tart\_tabsim/simulated/}.
 The MS and \texttt{used\_orbits.json} are deliberately not committed.
 \item Software: \texttt{tabsim} v0.0.13 from
 \url{https://github.com/chrisfinlay/tab-sim}; Python \texttt{casacore},

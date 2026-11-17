@@ -1,0 +1,153 @@
+ast_sources:
+  exp:
+    path: null
+    random:
+      I_pow_law: 1.6
+      max_I: 1.0
+      max_sep: 50.0
+      min_I: 3sigma
+      n_beam: 5
+      n_src: 0
+      random_seed: 123456
+      si_mean: 0.7
+      si_std: 0.2
+      size_mean: 30.0
+      size_std: 5.0
+  gauss:
+    path: null
+    random:
+      I_pow_law: 1.6
+      major_mean: 30.0
+      major_std: 5.0
+      max_I: 1.0
+      max_sep: 50.0
+      min_I: 3sigma
+      minor_mean: 30.0
+      minor_std: 5.0
+      n_beam: 5
+      n_src: 0
+      random_seed: 123456
+      si_mean: 0.7
+      si_std: 0.2
+  point:
+    path: null
+    random:
+      I_pow_law: 1.6
+      max_I: 1.0
+      max_sep: 50.0
+      min_I: 3sigma
+      n_beam: 5
+      n_src: 0
+      random_seed: 123456
+      si_mean: 0.7
+      si_std: 0.2
+  pow_spec:
+    path: null
+    random:
+      A: 0.000513
+      P0: 1000000000000.0
+      beta: 1.34
+      fov_f: 1.2
+      gamma: 2.34
+      k0: 10.0
+      n_side: 128
+      random_seed: 1234
+      type: null
+dask:
+  component_workers: 2
+  disk_reserve_gb: 1.0
+  gpu_concurrency: 1
+  max_chunk_MB: 100.0
+  max_device_memory_gb: null
+  max_memory_gb: null
+  memory_fraction: 0.7
+  planned_ast_sources: 0
+  planned_rfi_sources: 0
+  task_scratch_factor: null
+  timeout_s: null
+  working_set_MB: null
+diagnostics:
+  rfi_seps: true
+  signal_stats: false
+  src_alt: true
+  uv_cov: true
+gains:
+  G0_mean: 1.0
+  G0_std: 0.0
+  Gt_corr_amp: 3
+  Gt_corr_phase: 3
+  Gt_std_amp: 0.0
+  Gt_std_phase: 0.0
+  random_seed: 999
+observation:
+  SEFD: 10000.0
+  auto_corrs: false
+  chan_width: 1000000.0
+  dec: 4.475852133874603
+  int_time: 1.024
+  n_freq: 1
+  n_int: 32
+  n_time: 120
+  no_w: false
+  ra: 78.49191856857203
+  random_seed: 12345
+  start_freq: 1575420000.0
+  start_time: null
+  start_time_isot: '2026-10-29T01:10:00.000'
+  start_time_jd: null
+  start_time_lha: null
+  target_name: GNSS_NORAD_39166
+  visibility_precision: double
+output:
+  accumulate_ms: null
+  flag_data: false
+  keep_sim: true
+  ms: true
+  output_profile: null
+  overwrite: false
+  path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/simulated/mg-tana
+  prefix: tart_mg-tana
+  save_arrays: null
+  save_rfi_amplitudes: false
+  suffix: 1.0e+00RFI
+  zarr: true
+rfi_sources:
+  satellite:
+    circ_path: null
+    power_scale: 1.0
+    sat_ids: []
+    spec_model: null
+  stationary:
+    geo_path: /home/nadeem/anaconda3/envs/tabascal/lib/python3.13/site-packages/tabsim/data/rfi/stationary.loc
+    loc_ids: []
+    power_scale: 1.0
+    spec_model: null
+    spec_path: /home/nadeem/anaconda3/envs/tabascal/lib/python3.13/site-packages/tabsim/data/rfi/stationary.rfimodel
+  tle_satellite:
+    allow_missing_checksum: false
+    cache_reuse_max_age_days: 1
+    extra_orbit_dir: null
+    extra_orbit_max_age_days: null
+    max_ang_sep: 90
+    max_n_sat: null
+    min_alt: 0
+    norad_ids:
+    - 39166
+    norad_ids_path: null
+    norad_spec_model: /home/nadeem/anaconda3/envs/tabascal/lib/python3.13/site-packages/tabsim/data/rfi/norad_satellite.rfimodel
+    offline: false
+    power_scale: 1.0
+    remote_max_age_days: 3
+    replay_orbit_dir: null
+    sat_names: []
+    search_cache_max_age_days: 1
+    vis_step: 0.1
+telescope:
+  dish_d: 0.1
+  elevation: 1280.0
+  enu_path: null
+  itrf_path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/mg-tana.itrf.txt
+  latitude: -18.8971446
+  longitude: 47.5551677
+  n_ant: 24
+  name: TART-mg-tana
