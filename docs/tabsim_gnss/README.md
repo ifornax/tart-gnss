@@ -17,8 +17,7 @@ Run from the root of a tart-gnss checkout, with the tabascal environment.
 The simulation inputs are committed in
 [`configs/tart_tabsim/`](../../configs/tart_tabsim) (see
 [Simulation configuration files](#simulation-configuration-files)). The
-simulated Measurement Sets, Zarr stores and `used_orbits.json` are large or
-run-specific and stay local; the runs used here were written under the
+simulated Measurement Sets and Zarr stores are large and stay local; the runs used here were written under the
 `sat_position` working copy:
 
 ~~~bash
@@ -51,11 +50,12 @@ record of the runs reported here:
 | `{ghana,mg-tana,za-rhodes}.itrf.txt` | 24 antenna positions per station (ITRF/ECEF, metres), derived from the real MS antenna tables |
 | `simulated/<station>/<run>/input_data/sim_config.yaml` | the full configuration tab-sim resolved for that run, with every default filled in |
 | `simulated/<station>/<run>/input_data/norad_ids.yaml`, `*.itrf.txt` | the NORAD list and antenna file as used by that run |
+| `simulated/<station>/<run>/input_data/used_orbits.json` | the exact OMM record tab-sim propagated (NAVSTAR 68, NORAD 39166, CelesTrak epoch 2026-10-30T07:09:07.795296 UTC). The scripts read it via `--orbits` to score fits. The three runs carry identical orbital elements and differ only in the `FETCHED_AT` stamp (absent for Ghana) |
 | `simulated/<station>/<run>/log_sim_*.txt` | tab-sim run log: OMM record used (SatChecker/CelesTrak epoch 2026-10-30T07:09:07.795 UTC, age 1.25 d), source altitude, write times |
 
 The SEFD, `dish_d`, `chan_width` and `power_scale` values are exploratory
 inputs, not measured TART properties. The run directories hold only these
-text files in git; the `.ms`, `.zarr`, plots, `used_orbits.json` and
+text files and `used_orbits.json` in git; the `.ms`, `.zarr`, plots and
 spectral-model files are git-ignored.
 
 **Absolute paths.** `itrf_path` and `output.path` (and, in
@@ -103,6 +103,9 @@ export GHANA_RUN="$(dirname "$GHANA_MS")"
 export GHANA_ORBITS="$GHANA_RUN/input_data/used_orbits.json"
 echo "$GHANA_MS"
 ~~~
+
+The same orbit record is committed, so `GHANA_ORBITS` can also point at
+`$TART_CONFIG/simulated/ghana/*/input_data/used_orbits.json`.
 
 ## Inspect MS and validate forward-model phases
 
@@ -181,7 +184,7 @@ graphicx, hyperref, listings, xcolor, longtable.
 Orbit records are saved per run as input_data/used_orbits.json;
 archive records from different runs must be compared in full before
 claiming identical orbital truth. Only the YAML/text inputs and run
-records in `configs/tart_tabsim/` are committed. Never commit large MS/Zarr outputs,
+records in `configs/tart_tabsim/` (including `used_orbits.json`) are committed. Never commit large MS/Zarr outputs,
 credentials, or machine-specific files. We have not independently
 measured the instrument SEFD or calibrated angular uncertainty.
 

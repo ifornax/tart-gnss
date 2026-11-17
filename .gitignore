@@ -21,6 +21,5 @@ tart2ms.*.log
 configs/tart_tabsim/simulated/**/*.ms/
 configs/tart_tabsim/simulated/**/*.zarr/
 configs/tart_tabsim/simulated/**/*.png
-configs/tart_tabsim/simulated/**/used_orbits.json
 configs/tart_tabsim/simulated/**/*.rfimodel
 configs/tart_tabsim/simulated/**/*.loc
