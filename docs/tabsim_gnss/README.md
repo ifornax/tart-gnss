@@ -2,19 +2,25 @@
 
 [Technical LaTeX report](../report/tabsim_gnss_validation.tex) ·
 [Orbit-blind fitting script](../../scripts/tabsim_gnss_fit.py) ·
-[MS and orbit diagnostics](../../scripts/tabsim_gnss_diagnostics.py)
+[MS and orbit diagnostics](../../scripts/tabsim_gnss_diagnostics.py) ·
+[Monte Carlo uncertainty](../../scripts/tabsim_ghana_uncertainty.py) ·
+[Frame/time audit](../../scripts/tabsim_ghana_frame_time_audit.py) ·
+[UTC/UT1 check](../../scripts/tabsim_ghana_time_scale_check.py) ·
+[Truth re-scoring](../../scripts/tabsim_ghana_rescore_truth.py)
 
 This is a research validation of synthetic visibilities, not an accuracy claim
 for real TART data. Existing Stage 1–7 processing is unchanged.
 
 ## Environment
 
-Run in the local tart-gnss checkout, with the tabascal environment:
+Run from the root of a tart-gnss checkout, with the tabascal environment.
+The simulation configurations and outputs are local and are not in git;
+here they live under the `sat_position` working copy:
 
 ~~~bash
 conda activate tabascal
-export REPO="$HOME/GitHub/TART/sat_position"
-export TART_CONFIG="$REPO/configs/tart_tabsim"
+export REPO="$HOME/GitHub/TART/tart-gnss"                         # this repository
+export TART_CONFIG="$HOME/GitHub/TART/sat_position/configs/tart_tabsim"  # local, not in git
 export TART_SIM="$TART_CONFIG/simulated"
 cd "$REPO"
 python -m pip show tabsim
@@ -244,9 +250,10 @@ for degree-squared covariance if Stage 4 accepts degrees.
 Avoid treating held-out coverage estimated using an uncorrected
 systematic bias as the same quantity as bias-corrected coverage.
 
-These runs have **not** been executed with the locally stored MS
-in this GitHub change; no uncertainty numbers or plotted points
-are claimed yet.
+The full experiment (200 trials per SNR, 1,200 fits) has since been
+run on the local Ghana MS. Its results, re-scored against both time
+references, are in
+[the re-scoring section](#rescore-the-existing-monte-carlo-runs-after-the-utcut1-diagnosis).
 
 
 ## Diagnosing the persistent 3.713-arcsec noise-free offset
@@ -286,8 +293,16 @@ station antenna-w coordinates, beam weighting, and orbital/GCRS
 propagation conventions before applying a bias correction.
 
 The script is a diagnostic: it does not modify or recalibrate
-the Monte Carlo covariance results and has not yet been run
-against the user's local Ghana Measurement Set.
+the Monte Carlo covariance results. Running it, together with the
+controlled UTC/UT1 test below
+(`scripts/tabsim_ghana_time_scale_check.py`), traced the offset to the
+simulator's time-scale convention, not to a frame mismatch:
+
+~~~bash
+python scripts/tabsim_ghana_time_scale_check.py \
+  --ms "$GHANA_MS" --orbits "$GHANA_ORBITS" --samples 33 \
+  --output results/tabsim_validation/ghana_audit/time_scale_check.json
+~~~
 
 
 ## Rescore the existing Monte Carlo runs after the UTC/UT1 diagnosis
@@ -301,8 +316,8 @@ A controlled Skyfield phase test using identical antenna geometry showed:
 
 This exactly explains the noise-free \(\approx 3.713\)-arcsec
 reference discrepancy. The fit itself recovers the direction
-encoded by the simulated phases. For this run, \`tabsim\` propagates
-numeric observation Julian dates through \`ts.ut1_jd\`, although the
+encoded by the simulated phases. For this run, `tabsim` propagates
+numeric observation Julian dates through `ts.ut1_jd`, although the
 observation calendar date is recorded as UTC. Document both references;
 do not silently redefine UTC as UT1.
 
@@ -315,10 +330,10 @@ python scripts/tabsim_ghana_rescore_truth.py \
   --output-dir results/tabsim_validation/ghana_truth_corrected
 ~~~
 
-If \`time_scale_check.json\` is absent, explicit reference values from
-the verified diagnostic can be supplied via \`--sim-az\`, \`--sim-el\`,
-\`--utc-az\`, and \`--utc-el\`. This writes parallel
-\`simulator_ut1\` and \`physical_utc\` subdirectories containing
+If `time_scale_check.json` is absent, explicit reference values from
+the verified diagnostic can be supplied via `--sim-az`, `--sim-el`,
+`--utc-az`, and `--utc-el`. This writes parallel
+`simulator_ut1` and `physical_utc` subdirectories containing
 trial CSV, per-SNR summaries, covariance JSON and error plots.
 
 Observed rescoring of the supplied 200-trial-per-SNR CSV:
@@ -339,12 +354,12 @@ on the training errors; the angular coordinate scale changes slightly
 with the chosen reference elevation.
 
 **Upstream simulator fix is not yet applied.** In the installed
-\`tabsim\` code, investigate the observation times in
-\`tabsim/dask/observation.py\` and transforms in
-\`tabsim/dask/coordinates.py\`, together with
-\`tabsim/tle.py:get_satellite_positions\`. A candidate resolution is
+`tabsim` code, investigate the observation times in
+`tabsim/dask/observation.py` and transforms in
+`tabsim/dask/coordinates.py`, together with
+`tabsim/tle.py:get_satellite_positions`. A candidate resolution is
 to convert UTC timestamp values to *actual UT1 JD* using an authoritative
-time-scale conversion before passing them to the Skyfield \`ts.ut1_jd\`
+time-scale conversion before passing them to the Skyfield `ts.ut1_jd`
 functions, or to use Skyfield UTC datetimes consistently. This must
 apply identically to satellite and antenna propagation, not only to
 the truth-evaluation script. Add a regression test comparing orbit

@@ -240,8 +240,14 @@ A direct joint-visibility model provides an important cross-check.
 \end{enumerate}
 \section{Reproducibility}
 See \texttt{docs/tabsim\_gnss/README.md} for exact commands and path variables.
-The companion script \texttt{scripts/tabsim\_gnss\_fit.py}
-implements orbit-blind fitting and MS component inspection.
+The companion scripts are \texttt{scripts/tabsim\_gnss\_fit.py}
+(orbit-blind fitting), \texttt{scripts/tabsim\_gnss\_diagnostics.py}
+(MS component inspection and forward-model phase checks),
+\texttt{scripts/tabsim\_ghana\_uncertainty.py} (Monte Carlo),
+\texttt{scripts/tabsim\_ghana\_frame\_time\_audit.py} and
+\texttt{scripts/tabsim\_ghana\_time\_scale\_check.py} (frame and
+time-scale audits) and \texttt{scripts/tabsim\_ghana\_rescore\_truth.py}
+(re-scoring against both time references).
 A provided output JSON is a local product; do not commit absolute machine
 paths, bulky MS contents, or private credentials into the repository.
 \section{Source code provenance}
@@ -379,10 +385,8 @@ against simulator-consistent truth (without rerunning fits) gave:
 \begin{center}
 \begin{tabular}{rrrr}
 \toprule
-Per-visibility SNR & UTC median error (
-'$) &
- Simulator median error (
-'$) & Raw held-out 68\% coverage\\
+Per-visibility SNR & UTC median error ($''$) &
+ Simulator median error ($''$) & Raw held-out 68\% coverage\\
 \midrule
 3 & 110.72 & 111.45 & 0.55\\
 5 & 63.62 & 63.97 & 0.71\\

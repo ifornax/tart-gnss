@@ -25,7 +25,7 @@ completed runs into population statistics.**
 | 7 | `tart-diagnose` | Follows the recorded provenance from Stage 6 back to Stage 2, verifying the hashes, and aligns everything by time and station. Recomputes leave-one-station-out and pairwise solutions with the Stage-4 solver, compares every station direction with the Stage-5 trajectory, and tests calibration, localisation, timing, geometry and trajectory-model correlations (time-detrended, autocorrelation-aware, effect size plus Holm). Assigns non-exclusive evidence tags, rule-based evidence levels 0–5 and a descriptive confidence. Writes `diagnosis`, `station_influence`, `pairwise`, `correlations.csv`, `summary.json`, `stage7_manifest.json` and seven plots. No physical cause is asserted, and no upstream output is modified. |
 | campaign | `tart-campaign` | Aggregates many completed Stage-7 runs, reading only their recorded upstream products (re-hashed; nothing is rerun). Produces run, epoch and station population tables, and reports: measurement uncertainty (including the Stage-4 covariance principal axes); TLE-relative residuals (precision cohort); station stability; constellation, satellite and station-set comparisons (with effect sizes and minimum group sizes); geometry, elevation, SNR and TLE-age dependence; evidence-level and tag rates; and pass-to-pass repeatability. Confidence intervals come from a run-level bootstrap, and runs — never epochs — are the independent units. |
 
-> **Status:** Stages 1–7, the campaign layer and archive-aware candidate discovery complete, with dynamic TART station-registry integration (v0.10.0). The repository is private and under active development.
+> **Status:** Stages 1–7, the campaign layer and archive-aware candidate discovery complete, with dynamic TART station-registry integration (v0.10.0). A separate research track validates direction recovery on finite-range [tab-sim](https://github.com/chrisfinlay/tab-sim) simulations ([below](#simulation-validation-tab-sim-research)). The repository is private and under active development.
 
 ---
 
@@ -43,6 +43,7 @@ completed runs into population statistics.**
 - [Stage 6: TLE validation (`tart-validate`)](#stage-6-tle-validation-tart-validate)
 - [Stage 7: network diagnosis (`tart-diagnose`)](#stage-7-network-diagnosis-tart-diagnose)
 - [Campaign analysis (`tart-campaign`)](#campaign-analysis-tart-campaign)
+- [Simulation validation (tab-sim, research)](#simulation-validation-tab-sim-research)
 - [TLEs and reproducibility](#tles-and-reproducibility)
 - [Example results](#example-results)
 - [Caveats](#caveats)
@@ -704,6 +705,32 @@ Residuals are reported as **TLE-relative**, never as absolute accuracy, and
 no physical-cause rates are produced. Method, statistics and validation are
 in [`docs/campaign_analysis.md`](docs/campaign_analysis.md).
 
+## Simulation validation (tab-sim, research)
+
+A research track, kept separate from the pipeline, checks direction recovery
+against visibilities simulated with
+[tab-sim](https://github.com/chrisfinlay/tab-sim) 0.0.13: a single GNSS
+satellite (NORAD 39166, L1) at finite range, observed by the Ghana TART
+(24 antennas, 120 × 1.024 s). The fit is orbit-blind: a spherical-wave,
+antenna-*w*-corrected forward model with a profiled complex amplitude.
+The saved orbit is used only to score the result. **Stages 1–7 are not
+changed**, and nothing here is an accuracy claim for real TART data.
+
+| Check | Result |
+|---|---|
+| Forward-model phases (orbit truth) | Finite range + antenna *w*: coherence ≈ 1.000000, circular RMS 0.048°. Without *w*: coherence 0.038. |
+| Noise-free orbit-blind fit | Az 100.9484°, El 51.7286°; residual 5.8 × 10⁻¹²; about 3.7″ from the OMM direction. Insensitive to the assumed range (18 000–26 000 km). |
+| The 3.7″ offset | Traced to time scales: tab-sim passes the UTC-labelled Julian dates to Skyfield's `ts.ut1_jd`. Against a simulator-consistent (UT1) reference the offset is (−3.548″, +1.097″) and the profile residual drops from 3.8 × 10⁻⁷ to 1.2 × 10⁻¹². It is a truth-reference convention, not an interferometric bias. The upstream simulator has not been fixed. |
+| Monte Carlo, 200 trials per SNR (1 200 fits), per-visibility SNR 3–100 | Median error against the simulator reference: 111″ (SNR 3), 30″ (SNR 10), 3.4″ (SNR 100). At SNR 100 the bias falls from (−3.57″, +0.88″) to (−0.03″, −0.22″). Raw held-out 68 % ellipse coverage is 0.54–0.74, so the empirical covariance is not yet a calibrated posterior. |
+
+Commands, environment and outputs are in
+[`docs/tabsim_gnss/README.md`](docs/tabsim_gnss/README.md). The report is
+[`docs/report/tabsim_gnss_validation.pdf`](docs/report/tabsim_gnss_validation.pdf)
+(source `tabsim_gnss_validation.tex`). The scripts are in `scripts/tabsim_*.py`.
+They need astropy, scipy, skyfield and python-casacore, plus tab-sim to
+regenerate the simulations. The Measurement Sets and results are local and
+not committed.
+
 ## TLEs and reproducibility
 
 - Without `--tle-file`, current GNSS TLEs are downloaded from CelesTrak and
@@ -787,7 +814,8 @@ tart-gnss/
 ├── data/observations/               # Stage-2 output (git-ignored)
 ├── data/archive_inventory/          # tart-archive-scan listing cache (git-ignored)
 ├── results/                         # Stage-1 example runs (2026-10-01, 2026-06-25)
-├── docs/report/                     # LaTeX technical report (registry, Stages 1-2), PDF, figures
+├── docs/report/                     # LaTeX technical report (registry, Stages 1-2), tab-sim validation report, PDFs, figures
+├── docs/tabsim_gnss/README.md       # tab-sim simulation validation: environment, commands, Ghana results
 ├── docs/examples/stage2/            # example Stage-2 manifests (valid and invalid)
 ├── docs/examples/stage3/            # synthetic end-to-end Stage-3 output
 ├── docs/examples/stage4/            # synthetic end-to-end Stage-4 output (with its Stage-3 input)
@@ -816,6 +844,9 @@ tart-gnss/
 ├── scripts/stage6_synthetic_demo.py
 ├── scripts/stage7_synthetic_demo.py
 ├── scripts/campaign_synthetic_demo.py
+├── scripts/tabsim_gnss_fit.py  tabsim_gnss_diagnostics.py      # tab-sim: orbit-blind fit, MS/phase checks
+├── scripts/tabsim_ghana_uncertainty.py  tabsim_ghana_rescore_truth.py  # Ghana Monte Carlo, re-scoring
+├── scripts/tabsim_ghana_frame_time_audit.py  tabsim_ghana_time_scale_check.py  # frame and UTC/UT1 audits
 ├── src/tart_gnss/
 │   ├── cli.py  stations.py  tle.py  propagation.py  visibility.py
 │   ├── windows.py  search.py  output.py  provenance.py      # Stage 1
@@ -968,6 +999,13 @@ python scripts/make_report_figures.py results/common_gnss_20261001.json docs/rep
     data/observations/20260625/NORAD_40534/manifest.json     # needs a --keep-native Stage-2 run
 cd docs/report && latexmk -pdf tart_gnss_report.tex
 ```
+
+A second, separate report,
+[`docs/report/tabsim_gnss_validation.pdf`](docs/report/tabsim_gnss_validation.pdf)
+(source `tabsim_gnss_validation.tex`), covers the tab-sim simulation
+validation: provenance, visibility conventions, the orbit-blind fit, the
+Ghana Monte Carlo and the UTC/UT1 correction. Rebuild it with
+`cd docs/report && latexmk -pdf tabsim_gnss_validation.tex`.
 
 ## Authors and licence
 
