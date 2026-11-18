@@ -117,6 +117,19 @@ Because the repository is private, a direct install needs SSH access:
 pip install "tart-gnss[stage2,ms] @ git+ssh://git@github.com/ifornax/tart-gnss.git"
 ```
 
+**After upgrading Python to 3.12 or later in an existing environment.** If
+`pip` fails with `AttributeError: module 'pkgutil' has no attribute
+'ImpImporter'`, the environment still has an old `pip` (before 23.1) or
+`setuptools`, written for Python ≤ 3.11. `pip` cannot upgrade itself while
+it crashes, so bootstrap it first, then reinstall this package (this also
+rewrites the `tart-*` command scripts that still point at the old Python):
+
+```bash
+python -m ensurepip --upgrade
+python -m pip install -U pip setuptools wheel
+python -m pip install -e ".[dev,ms]"
+```
+
 ## Stations
 
 Coordinates are never hard-coded. Station metadata comes from the official
