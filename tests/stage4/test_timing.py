@@ -42,7 +42,9 @@ def test_tolerance_excludes_and_each_sample_used_once():
     b = table([0.45])
     eps = match_station_epochs({"a": a, "b": b}, tolerance_s=0.75, reference_station="a")
     users = [e for e in eps if "b" in e.rows]
-    assert len(users) == 1 and users[0].offsets_s["b"] == pytest.approx(-0.05)
+    # Absolute Unix seconds (~1.8e9) as float64 resolve only ~0.24 us, and the
+    # last bits differ between pandas 2 and 3; 1 us is far below any TART need.
+    assert len(users) == 1 and users[0].offsets_s["b"] == pytest.approx(-0.05, abs=1e-6)
     eps = match_station_epochs({"a": table([0.0]), "b": table([1.0])}, tolerance_s=0.75, reference_station="a")
     assert "b" not in eps[0].rows
 
