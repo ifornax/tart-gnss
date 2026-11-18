@@ -17,14 +17,16 @@ Run from the root of a tart-gnss checkout, with the tabascal environment.
 The simulation inputs are committed in
 [`configs/tart_tabsim/`](../../configs/tart_tabsim) (see
 [Simulation configuration files](#simulation-configuration-files)). The
-simulated Measurement Sets and Zarr stores are large and stay local; the runs used here were written under the
-`sat_position` working copy:
+simulated Measurement Sets and Zarr stores are large and stay local. The
+YAML files write them to `outputs/tabsim/<station>/` (git-ignored). The
+original runs reported here were written under the author's `sat_position`
+working copy; if you already have runs elsewhere, point `TART_SIM` there:
 
 ~~~bash
 conda activate tabascal
-export REPO="$HOME/GitHub/TART/tart-gnss"                         # this repository
+export REPO="$(git rev-parse --show-toplevel)"                    # this repository (run inside the checkout)
 export TART_CONFIG="$REPO/configs/tart_tabsim"                    # committed inputs
-export TART_SIM="$HOME/GitHub/TART/sat_position/configs/tart_tabsim/simulated"  # local outputs
+export TART_SIM="$REPO/outputs/tabsim"                            # local outputs (override if your runs live elsewhere)
 cd "$REPO"
 python -m pip show tabsim
 python -m pip check
@@ -40,9 +42,12 @@ Do not substitute invented station layouts or SEFD values.
 
 ## Simulation configuration files
 
-Copied verbatim from the local simulation working tree
-(`sat_position/configs/tart_tabsim/`, 2026-11-17), so they are an exact
-record of the runs reported here:
+Copied from the local simulation working tree
+(`sat_position/configs/tart_tabsim/`, 2026-11-17). The top-level
+`tab_sim_*.yaml` inputs differ from the original runs only in
+`itrf_path` and `output.path`, which are now relative to the repository
+root so that they work on any machine. The exact as-run record is
+`simulated/<station>/<run>/input_data/sim_config.yaml`:
 
 | File | Content |
 |---|---|
@@ -58,34 +63,25 @@ inputs, not measured TART properties. The run directories hold only these
 text files and `used_orbits.json` in git; the `.ms`, `.zarr`, plots and
 spectral-model files are git-ignored.
 
-**Absolute paths.** `itrf_path` and `output.path` (and, in
-`sim_config.yaml`, the tab-sim package data paths) are the absolute paths
-of the original machine, kept unchanged as provenance. To regenerate
-elsewhere, rewrite them in a scratch copy rather than in the committed files:
-
-~~~bash
-mkdir -p /tmp/tart_tabsim
-for s in ghana mg-tana za-rhodes; do
-  sed -e "s#/home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim#$TART_CONFIG#" \
-      -e "s#$TART_CONFIG/simulated#/tmp/tart_tabsim/simulated#" \
-      "$TART_CONFIG/tab_sim_$s.yaml" > "/tmp/tart_tabsim/tab_sim_$s.yaml"
-done
-export TART_SIM=/tmp/tart_tabsim/simulated
-~~~
+**Paths.** tab-sim uses `itrf_path` and `output.path` exactly as written:
+it does not expand `~` or environment variables, and it resolves relative
+paths against the current directory. Run `sim-vis` from the repository
+root. Only the as-run records (`sim_config.yaml`, `log_sim_*.txt`) keep
+the original machine's absolute paths, as provenance; nothing reads them.
 
 ## Run simulation (when not already generated)
 
-The three site-specific YAMLs are in `configs/tart_tabsim/` (as written
-they reproduce the original output location; use the rewritten copies
-above on another machine). They specify NORAD 39166, GNSS L1 1575.42 MHz, 24 antennas,
+The three site-specific YAMLs are in `configs/tart_tabsim/`. Run them
+from the repository root; each writes to `outputs/tabsim/<station>/`. They specify NORAD 39166, GNSS L1 1575.42 MHz, 24 antennas,
 120 integrations of 1.024 s, 33 samples per integration, and a
 1 MHz channel. Ensure output paths do not collide with existing
 runs if overwrite=false.
 
 ~~~bash
-sim-vis -c /tmp/tart_tabsim/tab_sim_ghana.yaml     # or "$TART_CONFIG/tab_sim_ghana.yaml" on the original machine
-sim-vis -c /tmp/tart_tabsim/tab_sim_mg-tana.yaml
-sim-vis -c /tmp/tart_tabsim/tab_sim_za-rhodes.yaml
+cd "$REPO"
+sim-vis -c configs/tart_tabsim/tab_sim_ghana.yaml
+sim-vis -c configs/tart_tabsim/tab_sim_mg-tana.yaml
+sim-vis -c configs/tart_tabsim/tab_sim_za-rhodes.yaml
 ~~~
 
 Confirm the output directory has 1SAT, not 0SAT. The failed old

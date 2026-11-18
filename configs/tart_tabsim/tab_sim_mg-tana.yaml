@@ -1,11 +1,15 @@
 # Generated from measured TART antenna positions.
 # SEFD, dish_d, chan_width and satellite power_scale are exploratory inputs.
+# Paths are relative to the repository root: run sim-vis from there, e.g.
+#   sim-vis -c configs/tart_tabsim/tab_sim_mg-tana.yaml
+# Outputs go to outputs/tabsim/<station>/ (git-ignored). The as-run record,
+# with the original absolute paths, is simulated/<station>/<run>/input_data/sim_config.yaml.
 telescope:
   name: TART-mg-tana
   latitude: -18.8971446
   longitude: 47.5551677
   elevation: 1280.0
-  itrf_path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/mg-tana.itrf.txt
+  itrf_path: configs/tart_tabsim/mg-tana.itrf.txt
   enu_path: null
   n_ant: 24
   dish_d: 0.1
@@ -41,7 +45,7 @@ gains:
   Gt_std_phase: 0.0
   random_seed: 999
 output:
-  path: /home/nadeem/GitHub/TART/sat_position/configs/tart_tabsim/simulated/mg-tana
+  path: outputs/tabsim/mg-tana
   prefix: tart_mg-tana
   zarr: true
   ms: true
