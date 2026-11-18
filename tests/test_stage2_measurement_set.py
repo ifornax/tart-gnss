@@ -82,16 +82,32 @@ def test_antenna_count_checked():
         ms.validate_ms(dict(GOOD_SUMMARY, number_of_antennas=12), expected_antennas=24)
 
 
-def _tart2ms_available():
+def _tart2ms_unavailable_reason():
+    """Why the real-tart2ms test cannot run here, or None if it can.
+
+    A ``tart2ms`` script found on PATH may belong to another interpreter that
+    lacks its own dependencies (e.g. ``~/.local/bin/tart2ms`` under the system
+    python without ``tart_tools``), so check that it actually starts.
+    """
     try:
-        ms.find_tart2ms()
+        cmd = ms.find_tart2ms()
         import casacore.tables  # noqa: F401
-        return True
     except (MeasurementSetConversionError, ImportError):
-        return False
+        return "tart2ms / python-casacore not installed (pip install -e '.[ms]')"
+    try:
+        proc = subprocess.run([*cmd, "--help"], capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return f"{cmd[0]} cannot be run: {exc}"
+    if proc.returncode != 0:
+        last = (proc.stderr.strip().splitlines() or ["no output"])[-1]
+        return f"{cmd[0]} is broken ({last}); install tart2ms in this environment (pip install -e '.[ms]')"
+    return None
 
 
-@pytest.mark.skipif(not _tart2ms_available(), reason="tart2ms / python-casacore not installed")
+_TART2MS_SKIP = _tart2ms_unavailable_reason()
+
+
+@pytest.mark.skipif(_TART2MS_SKIP is not None, reason=_TART2MS_SKIP or "")
 def test_real_tart2ms_conversion(tmp_path):
     """End-to-end conversion of a synthetic native file with the real tart2ms."""
     src = make_tart_hdf5(tmp_path / "vis.hdf", "alpha", utc(2026, 6, 25, 10, 1), n=5)
