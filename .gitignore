@@ -23,3 +23,5 @@ configs/tart_tabsim/simulated/**/*.zarr/
 configs/tart_tabsim/simulated/**/*.png
 configs/tart_tabsim/simulated/**/*.rfimodel
 configs/tart_tabsim/simulated/**/*.loc
+# new tab-sim runs (configs/tart_tabsim/tab_sim_*.yaml write here)
+outputs/
