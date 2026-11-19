@@ -66,4 +66,50 @@ Estimate the position or trajectory of a satellite observed by geographically se
 
 ## 4. Source and provenance
 
-Transcribed from the audio provided in this conversation. This document is a draft for inclusion in the TART satellite trajectory project's documentation; no remote repository has been changed.
+Transcribed from the audio provided in this conversation. This document is a draft for inclusion in the TART satellite trajectory project's documentation; the initial note was subsequently committed to this repository.
+
+
+## 5. Discussion: Does common-satellite positional uncertainty measure calibration error?
+
+**Question:** Does the uncertainty in the recovered position of a satellite common to two stations give us the calibration errors?
+
+**Short answer:** Not directly. Positional uncertainty is influenced by residual calibration errors, but also by noise, baseline geometry, observation coverage, model mismatch, and the prior. It is not a unique estimator of calibration error.
+
+### 5.1 Measurement and calibration model
+
+For antenna pair `(p, q)`, a simplified visibility measurement equation is
+
+$$
+V_{pq}^{\mathrm{obs}} = g_p g_q^* V_{pq}^{\mathrm{true}} + n_{pq},
+$$
+
+where `g_p` and `g_q` are complex antenna gains and `n_{pq}` is measurement noise. Imperfectly estimated gains propagate residual amplitude and phase errors into calibrated visibilities.
+
+### 5.2 Satellite positional uncertainty
+
+After calibrating with *other* satellites (holding out the common target), infer the target position from its visibilities. The resulting uncertainty depends on:
+
+- Residual gain calibration uncertainty.
+- Thermal noise and other measurement errors.
+- Baseline geometry and time/frequency coverage.
+- Forward-model assumptions and uncertainty in the trajectory prior.
+
+A phase-calibration error can partially mimic a change in apparent satellite direction. The effects can be degenerate without independent constraints.
+
+### 5.3 Proposed validation using TABASCAL simulations
+
+Since the simulated satellite truth is known, compare the recovered position with that truth. A discrepancy does not automatically imply calibration error: it can also reflect noise, a modelling deficiency, or inference bias.
+
+A controlled experiment can help isolate calibration contributions:
+
+1. Simulate visibilities at a known satellite position and specified antenna gains/noise.
+2. Recover the satellite position with ideal/known gains.
+3. Repeat with gains estimated from non-target calibration satellites.
+4. Compare positional bias and uncertainty across the two cases, varying calibration quality while holding other conditions fixed.
+5. Check interval coverage over repeated simulations; distinguish reported posterior uncertainty from empirical recovery error.
+
+**Scientific question:** How much does antenna calibration uncertainty contribute to the uncertainty in the recovered satellite trajectory?
+
+**Important:** The common satellite's positional uncertainty alone cannot uniquely determine the antenna calibration errors. Quantifying the calibration contribution requires controlled comparisons or a joint model that propagates gain uncertainty.
+
+**Scope:** Brain-dump discussion only. No implementation or GitHub issue is authorised by these notes.
